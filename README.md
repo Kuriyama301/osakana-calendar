@@ -6,6 +6,9 @@ Calendar showing fish in season
 ■画面遷移図
 https://www.figma.com/design/b8hzx27bijIEnuG0EgmVIF/%E7%84%A1%E9%A1%8C?node-id=0-1&m=dev
 
+■ER図
+https://drive.google.com/file/d/1AklczGIFwVYjGe806iCxsERWpWhz5SOA/view?usp=sharing
+
 ■サービス概要
 オサカナカレンダーは、日本の魚食文化を促進するためのウェブアプリケーションです。
 ロードマップ形式のカレンダーで旬の魚を表示し、旬の魚の特色や美味しい食べ方を提供します。

@@ -1,0 +1,16 @@
+FROM node:20-alpine
+
+ARG WORKDIR=/app
+ENV WORKDIR=$WORKDIR
+
+WORKDIR $WORKDIR
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+# 開発サーバーのポート
+EXPOSE 3000
+
+CMD ["npm", "start"]

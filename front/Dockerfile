@@ -1,36 +1,38 @@
 # ビルドステージ
-FROM node:20 as build
+FROM node:20-alpine as build
 
-# WORKDIRのデフォルト値を設定
 ARG WORKDIR=/app
 ENV WORKDIR=$WORKDIR
 
-# 作業ディレクトリの設定
 WORKDIR $WORKDIR
 
-# package.jsonとpackage-lock.jsonをコピー
 COPY package*.json ./
+RUN npm ci --only=production
 
-# 依存関係のインストール
-RUN npm ci
-
-# プロジェクトファイルをコピー
 COPY . .
-
-# プロジェクトのビルド
 RUN npm run build
 
-# 本番ステージ
+# 実行ステージ
 FROM nginx:alpine
 
-# ビルドされたファイルをNginxのサーブディレクトリにコピー
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Nginxの設定ファイルをコピー
 # COPY nginx.conf /etc/nginx/nginx.conf
 
-# ポート80を公開
 EXPOSE 80
 
-# Nginxを起動
+# 非rootユーザーでNginxを実行
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup && \
+    chown -R appuser:appgroup /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html && \
+    chown -R appuser:appgroup /var/cache/nginx && \
+    chown -R appuser:appgroup /var/log/nginx && \
+    chown -R appuser:appgroup /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown -R appuser:appgroup /var/run/nginx.pid
+
+USER appuser
+
 CMD ["nginx", "-g", "daemon off;"]

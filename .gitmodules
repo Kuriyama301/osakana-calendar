@@ -2,7 +2,7 @@
     path = api
     url = https://github.com/Kuriyama301/osakana-calendar-api.git
     branch = main
-[submodule "front"]
-    path = front
-    url = https://github.com/Kuriyama301/osakana-calendar-frontend.git
-    branch = main
+# [submodule "front"]
+#     path = front
+#     url = https://github.com/Kuriyama301/osakana-calendar-frontend.git
+#     branch = main

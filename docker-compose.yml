@@ -33,15 +33,17 @@ services:
       context: ./front
       dockerfile: Dockerfile.dev
     volumes:
-      - ./front:${FRONT_WORKDIR:-/app}
+      - ./front:/app
+      - /app/app/node_modules
     ports:
-      - "${FRONT_PORT:-5000}:3000"
-    depends_on:
-      - api
+      - "5173:5173"  # このラインを確認
     environment:
-      REACT_APP_API_URL: http://localhost:${API_PORT:-3000}
+      - NODE_ENV=${NODE_ENV:-development}
+      - VITE_API_URL=${API_URL:-http://localhost:3000}
     env_file:
       - .env.development
+    depends_on:
+      - api
 
 volumes:
   postgres_data:

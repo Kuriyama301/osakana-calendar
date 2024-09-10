@@ -2,4 +2,4 @@ build:
   docker:
     web: front/Dockerfile
 run:
-  web: npm start
+  web: node front/app/server.js

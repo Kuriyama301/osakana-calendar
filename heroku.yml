@@ -1,5 +1,0 @@
-build:
-  docker:
-    web: front/Dockerfile
-run:
-  web: node front/app/server.js

@@ -13,8 +13,6 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile.dev
-      args:
-        WORKDIR: ${API_WORKDIR:-/app}
     volumes:
       - ./api:${API_WORKDIR:-/app}
     ports:
@@ -33,10 +31,10 @@ services:
       context: ./front
       dockerfile: Dockerfile.dev
     volumes:
-      - ./front:/app
-      - /app/app/node_modules
+      - ./front/app:/app
+      - /app/node_modules
     ports:
-      - "5173:5173"  # このラインを確認
+      - "5173:5173"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - VITE_API_URL=${API_URL:-http://localhost:3000}
@@ -44,6 +42,7 @@ services:
       - .env.development
     depends_on:
       - api
+    user: "node"
 
 volumes:
   postgres_data:

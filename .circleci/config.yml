@@ -7,44 +7,68 @@ jobs:
   build-front:
     docker:
       - image: cimg/node:20.0
-    working_directory: ~/repo/front/app
+    working_directory: ~/repo
     steps:
-      - checkout:
-          path: ~/repo
+      - checkout
+      - run:
+          name: Debug - List repository contents
+          command: |
+            echo "Current directory: $(pwd)"
+            ls -la
+            echo "Contents of front/app:"
+            ls -la front/app
+      - run:
+          name: Debug - Check package-lock.json
+          command: |
+            if [ -f front/app/package-lock.json ]; then
+              echo "package-lock.json exists"
+              echo "First few lines of package-lock.json:"
+              head -n 10 front/app/package-lock.json
+            else
+              echo "package-lock.json does not exist"
+              echo "Contents of front/app:"
+              ls -la front/app
+              exit 1
+            fi
       - restore_cache:
           keys:
-            - v1-front-dependencies-{{ checksum "~/repo/front/app/package.json" }}
+            - v1-front-dependencies-{{ checksum "front/app/package-lock.json" }}
             - v1-front-dependencies-
       - run:
           name: Install Dependencies
-          command: npm ci
-      - run:
-          name: Run linter
-          command: npm run lint
-      - run:
-          name: Build application
-          command: npm run build
+          command: |
+            cd front/app
+            npm ci || npm install
       - save_cache:
           paths:
-            - node_modules
-            - dist
-          key: v1-front-dependencies-{{ checksum "~/repo/front/app/package.json" }}
+            - front/app/node_modules
+          key: v1-front-dependencies-{{ checksum "front/app/package-lock.json" }}
+      - run:
+          name: Run linter
+          command: |
+            cd front/app
+            npm run lint
+      - run:
+          name: Build application
+          command: |
+            cd front/app
+            npm run build
       - persist_to_workspace:
-          root: ~/repo/front/app
+          root: .
           paths:
-            - dist
-            - package.json
+            - front/app/dist
+            - front/app/package.json
+            - front/app/package-lock.json
 
   deploy-front:
     docker:
       - image: cimg/base:stable
     steps:
-      - checkout:
-          path: ~/repo
+      - checkout
       - setup_remote_docker:
           version: 20.10.14
       - attach_workspace:
-          at: ~/repo/front/app
+          at: ~/repo
       - heroku/install
       - run:
           name: Deploy to Heroku

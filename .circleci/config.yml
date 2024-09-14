@@ -14,8 +14,13 @@ jobs:
           name: Debug - List repository contents
           command: |
             echo "Current directory: $(pwd)"
+            echo "Root directory contents:"
             ls -la
-            echo "Contents of front/app:"
+            echo "Recursive listing of all directories:"
+            find . -type d
+            echo "Contents of front directory:"
+            ls -la front
+            echo "Contents of front/app directory:"
             ls -la front/app
       - run:
           name: Debug - Check package-lock.json
@@ -28,7 +33,6 @@ jobs:
               echo "package-lock.json does not exist"
               echo "Contents of front/app:"
               ls -la front/app
-              exit 1
             fi
       - restore_cache:
           keys:

@@ -6,7 +6,7 @@ orbs:
 jobs:
   build-front:
     docker:
-      - image: cimg/node:20.0-alpine
+      - image: cimg/node:20.0
     working_directory: ~/repo/front/app
     steps:
       - checkout:

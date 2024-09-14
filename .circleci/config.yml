@@ -1,0 +1,78 @@
+version: 2.1
+
+orbs:
+  heroku: circleci/heroku@1.2.6
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:20.0-alpine
+    working_directory: ~/repo/front/app
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install Tailwind CSS
+          command: npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
+      - run:
+          name: Build CSS
+          command: npm run build:css
+      - run:
+          name: Run linter
+          command: npm run lint
+      - run:
+          name: Build application
+          command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+            - package.json
+            - server.js
+
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout:
+          path: ~/repo
+      - setup_remote_docker:
+          version: 20.10.14
+      - attach_workspace:
+          at: ~/repo/front/app
+      - heroku/install
+      - run:
+          name: Deploy to Heroku
+          command: |
+            cd ~/repo/front
+            heroku container:login
+            heroku container:push web -a $HEROKU_APP_NAME
+            heroku container:release web -a $HEROKU_APP_NAME
+      - run:
+          name: Set Heroku config
+          command: |
+            heroku config:set NODE_ENV=production -a $HEROKU_APP_NAME
+            heroku config:set VITE_API_URL=$PROD_API_URL -a $HEROKU_APP_NAME
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main

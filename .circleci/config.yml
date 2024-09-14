@@ -11,52 +11,54 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Debug - List repository contents
+          name: "Initialize and update submodules"
+          command: |
+            git submodule init
+            git submodule update --recursive --remote
+      - run:
+          name: Debug - Inspect repository and submodules
           command: |
             echo "Current directory: $(pwd)"
             echo "Root directory contents:"
             ls -la
-            echo "Recursive listing of all directories:"
-            find . -type d
+            echo "Submodule status:"
+            git submodule status
             echo "Contents of front directory:"
             ls -la front
-            echo "Contents of front/app directory:"
-            ls -la front/app
-      - run:
-          name: Debug - Check package-lock.json
-          command: |
-            if [ -f front/app/package-lock.json ]; then
-              echo "package-lock.json exists"
-              echo "First few lines of package-lock.json:"
-              head -n 10 front/app/package-lock.json
-            else
-              echo "package-lock.json does not exist"
-              echo "Contents of front/app:"
-              ls -la front/app
-            fi
-      - restore_cache:
-          keys:
-            - v1-front-dependencies-{{ checksum "front/app/package-lock.json" }}
-            - v1-front-dependencies-
+            echo "Git status of front submodule:"
+            cd front && git status && cd ..
+            echo "Contents of front/app directory (if exists):"
+            ls -la front/app || echo "front/app directory does not exist"
       - run:
           name: Install Dependencies
           command: |
-            cd front/app
-            npm ci || npm install
-      - save_cache:
-          paths:
-            - front/app/node_modules
-          key: v1-front-dependencies-{{ checksum "front/app/package-lock.json" }}
+            if [ -d "front/app" ]; then
+              cd front/app
+              npm ci || npm install
+            else
+              echo "Error: front/app directory not found"
+              exit 1
+            fi
       - run:
           name: Run linter
           command: |
-            cd front/app
-            npm run lint
+            if [ -d "front/app" ]; then
+              cd front/app
+              npm run lint
+            else
+              echo "Error: front/app directory not found"
+              exit 1
+            fi
       - run:
           name: Build application
           command: |
-            cd front/app
-            npm run build
+            if [ -d "front/app" ]; then
+              cd front/app
+              npm run build
+            else
+              echo "Error: front/app directory not found"
+              exit 1
+            fi
       - persist_to_workspace:
           root: .
           paths:
@@ -69,6 +71,11 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
+      - run:
+          name: "Initialize and update submodules"
+          command: |
+            git submodule init
+            git submodule update --recursive --remote
       - setup_remote_docker:
           version: 20.10.14
       - attach_workspace:

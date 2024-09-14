@@ -7,44 +7,48 @@ jobs:
   build-front:
     docker:
       - image: cimg/node:20.0
-    working_directory: ~/repo/front/app
+    working_directory: ~/repo
     steps:
-      - checkout:
-          path: ~/repo
+      - checkout
       - restore_cache:
           keys:
-            - v1-front-dependencies-{{ checksum "~/repo/front/app/package.json" }}
+            - v1-front-dependencies-{{ checksum "front/app/package-lock.json" }}
             - v1-front-dependencies-
       - run:
           name: Install Dependencies
-          command: npm ci
+          command: |
+            cd front/app
+            npm ci
       - run:
           name: Run linter
-          command: npm run lint
+          command: |
+            cd front/app
+            npm run lint
       - run:
           name: Build application
-          command: npm run build
+          command: |
+            cd front/app
+            npm run build
       - save_cache:
           paths:
-            - node_modules
-            - dist
-          key: v1-front-dependencies-{{ checksum "~/repo/front/app/package.json" }}
+            - front/app/node_modules
+          key: v1-front-dependencies-{{ checksum "front/app/package-lock.json" }}
       - persist_to_workspace:
-          root: ~/repo/front/app
+          root: .
           paths:
-            - dist
-            - package.json
+            - front/app/dist
+            - front/app/package.json
+            - front/app/package-lock.json
 
   deploy-front:
     docker:
       - image: cimg/base:stable
     steps:
-      - checkout:
-          path: ~/repo
+      - checkout
       - setup_remote_docker:
           version: 20.10.14
       - attach_workspace:
-          at: ~/repo/front/app
+          at: ~/repo
       - heroku/install
       - run:
           name: Deploy to Heroku

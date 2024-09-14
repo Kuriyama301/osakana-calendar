@@ -6,31 +6,34 @@ orbs:
 jobs:
   build-front:
     docker:
-      - image: cimg/node:20.0-alpine
+      - image: cimg/node:20.0
     working_directory: ~/repo/front/app
     steps:
       - checkout:
           path: ~/repo
       - restore_cache:
           keys:
-            - v1-front-dependencies-{{ checksum "package-lock.json" }}
+            - v1-front-dependencies-{{ checksum "~/repo/front/app/package.json" }}
             - v1-front-dependencies-
       - run:
-          name: Install dependencies
+          name: Install Dependencies
           command: npm ci
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-front-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Run linter
+          command: npm run lint
       - run:
           name: Build application
           command: npm run build
+      - save_cache:
+          paths:
+            - node_modules
+            - dist
+          key: v1-front-dependencies-{{ checksum "~/repo/front/app/package.json" }}
       - persist_to_workspace:
-          root: .
+          root: ~/repo/front/app
           paths:
             - dist
             - package.json
-            - server.js
 
   deploy-front:
     docker:
@@ -64,16 +67,44 @@ jobs:
   #   steps:
   #     - checkout:
   #         path: ~/repo
-  #     # Add steps to build and test the Rails API
+  #     - run:
+  #         name: Install dependencies
+  #         command: bundle install
+  #     - run:
+  #         name: Run tests
+  #         command: bundle exec rspec
+  #     - run:
+  #         name: Build Docker image
+  #         command: |
+  #           docker build -t app-api -f Dockerfile.dev .
+  #     - persist_to_workspace:
+  #         root: ~/repo/api
+  #         paths:
+  #           - .
 
-  # Future job for deploying the API (uncomment when ready)
   # deploy-api:
   #   docker:
   #     - image: cimg/base:stable
   #   steps:
   #     - checkout:
   #         path: ~/repo
-  #     # Add steps to deploy the Rails API to Heroku
+  #     - setup_remote_docker:
+  #         version: 20.10.14
+  #     - attach_workspace:
+  #         at: ~/repo/api
+  #     - heroku/install
+  #     - run:
+  #         name: Deploy to Heroku
+  #         command: |
+  #           cd ~/repo/api
+  #           heroku container:login
+  #           heroku container:push web -a $HEROKU_API_APP_NAME
+  #           heroku container:release web -a $HEROKU_API_APP_NAME
+  #     - run:
+  #         name: Set Heroku config
+  #         command: |
+  #           heroku config:set RAILS_ENV=production -a $HEROKU_API_APP_NAME
+  #           heroku config:set DATABASE_URL=$DATABASE_URL -a $HEROKU_API_APP_NAME
 
 workflows:
   version: 2
@@ -86,7 +117,6 @@ workflows:
           filters:
             branches:
               only: main
-      # API用
       # - build-api
       # - deploy-api:
       #     requires:

@@ -14,21 +14,16 @@ services:
       context: ./api
       dockerfile: Dockerfile.dev
     volumes:
-      - ./api:/app
-      - rails_cache:/app/tmp/cache:delegated
-      - rails_bootsnap:/app/tmp/bootsnap:delegated
-      - bundle_path:/usr/local/bundle
-      - api_storage:/app/storage
+      - ./api:${API_WORKDIR}
+      - rails_cache:${API_WORKDIR}/tmp/cache
+      - rails_bootsnap:${API_WORKDIR}/tmp/bootsnap
     ports:
-      - "${API_PORT:-3000}:3000"
+      - "${API_PORT}:3000"
     depends_on:
       - db
     environment:
       DATABASE_URL: postgres://postgres:${DB_PASSWORD}@db:5432/${POSTGRES_DB}
       RAILS_ENV: ${RAILS_ENV:-development}
-      BUNDLE_PATH: /usr/local/bundle
-      GEM_HOME: /usr/local/bundle
-      PATH: /usr/local/bundle/bin:${PATH}
     env_file:
       - .env.development
     command: >
@@ -44,22 +39,21 @@ services:
       context: ./front
       dockerfile: Dockerfile.dev
     volumes:
-      - ./front/app:/app
+      - ./front/app:${FRONT_WORKDIR}
       - /app/node_modules
     ports:
       - "5173:5173"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
-      - VITE_API_URL=${API_URL:-http://localhost:3000}
+      - VITE_API_URL=${API_URL}
     env_file:
       - .env.development
     depends_on:
       - api
-    user: "node"
 
 volumes:
   postgres_data:
   rails_cache:
   rails_bootsnap:
-  bundle_path:
-  api_storage:
+  # bundle_path:
+  # api_storage:

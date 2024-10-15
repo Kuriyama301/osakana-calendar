@@ -5,6 +5,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     env_file:
       - .env.development
@@ -22,8 +23,9 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://postgres:${DB_PASSWORD}@db:5432/${POSTGRES_DB}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${DB_PASSWORD}@db:5432/${POSTGRES_DB}
       RAILS_ENV: ${RAILS_ENV:-development}
+      RAILS_DEVELOPMENT_HOSTS: api,localhost,0.0.0.0
     env_file:
       - .env.development
     command: >
@@ -45,7 +47,7 @@ services:
       - "5173:5173"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
-      - VITE_API_URL=${API_URL}
+      - VITE_API_URL=http://localhost:3000
     env_file:
       - .env.development
     depends_on:

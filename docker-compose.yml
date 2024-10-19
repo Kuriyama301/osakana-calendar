@@ -15,11 +15,11 @@ services:
       context: ./api
       dockerfile: Dockerfile.dev
     volumes:
-      - ./api:${API_WORKDIR}
-      - rails_cache:${API_WORKDIR}/tmp/cache
-      - rails_bootsnap:${API_WORKDIR}/tmp/bootsnap
+      - ./api:${API_WORKDIR:-/app}
+      - rails_cache:${API_WORKDIR:-/app}/tmp/cache
+      - rails_bootsnap:${API_WORKDIR:-/app}/tmp/bootsnap
     ports:
-      - "${API_PORT}:3000"
+      - "${API_PORT:-3000}:3000"
     depends_on:
       - db
     environment:
@@ -41,13 +41,13 @@ services:
       context: ./front
       dockerfile: Dockerfile.dev
     volumes:
-      - ./front/app:${FRONT_WORKDIR}
+      - ./front/app:${FRONT_WORKDIR:-/app}
       - /app/node_modules
     ports:
-      - "5173:5173"
+      - "${FRONT_PORT:-5173}:5173"
     environment:
-      - NODE_ENV=${NODE_ENV:-development}
-      - VITE_API_URL=http://localhost:3000
+      NODE_ENV: ${NODE_ENV:-development}
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
     env_file:
       - .env.development
     depends_on:
@@ -57,5 +57,3 @@ volumes:
   postgres_data:
   rails_cache:
   rails_bootsnap:
-  # bundle_path:
-  # api_storage:

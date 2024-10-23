@@ -18,6 +18,7 @@ services:
       - ./api:${API_WORKDIR:-/app}
       - rails_cache:${API_WORKDIR:-/app}/tmp/cache
       - rails_bootsnap:${API_WORKDIR:-/app}/tmp/bootsnap
+      - storage:${API_WORKDIR:-/app}/storage
     ports:
       - "${API_PORT:-3000}:3000"
     depends_on:
@@ -57,3 +58,4 @@ volumes:
   postgres_data:
   rails_cache:
   rails_bootsnap:
+  storage:

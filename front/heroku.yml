@@ -1,13 +1,5 @@
-setup:
-  config:
-    NODE_ENV: production
-    VITE_API_URL: https://osakana-calendar-api.herokuapp.com
 build:
   docker:
-    web:
-      dockerfile: Dockerfile
-      target: production
-      args:
-        VITE_API_URL: https://osakana-calendar-api.herokuapp.com
-run:
-  web: node server.js
+    web: Dockerfile
+  config:
+    NODE_ENV: production

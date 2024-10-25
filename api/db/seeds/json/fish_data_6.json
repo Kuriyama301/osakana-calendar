@@ -1,0 +1,191 @@
+{
+  "fish": [
+    {
+      "id": 26,
+      "name": "メバチマグロ",
+      "features": "メバチマグロ（目鉢鮪、Thunnus obesus）は、スズキ目・サバ科に属する大型のマグロで、体長は通常1.5〜2m、体重は80kg前後になります。特徴的な大きな目を持ち、体型は太くて平べったい形状です。脂肪は控えめで、赤身や中トロが人気で、回転寿司やスーパーでもよく見かけます。",
+      "nutrition": "赤身部分は高タンパク質で、タウリンやビタミンE、鉄分が豊富です。トロ部分にはEPAやDHAが多く含まれています。",
+      "origin": "全世界の熱帯・温帯海域に広く分布し、日本では関東や関西で多く流通しています。",
+      "fish_seasons": [
+        {
+          "id": 26,
+          "fish_id": 26,
+          "start_month": 4,
+          "start_day": 1,
+          "end_month": 9,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 26,
+          "name": "メバチマグロ画像",
+          "record_type": "Fish",
+          "record_id": 26,
+          "blob_id": 26,
+          "created_at": "2024-10-11T16:15:00Z"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "name": "カワハギ",
+      "features": "カワハギ（皮剥、Stephanolepis cirrhifer）は、フグ目カワハギ科に属する魚で、最大で30cm程度に成長します。体は菱形で平たく、背びれの棘が特徴的です。体色は青灰色や褐色で、個体によって模様が異なります。昼行性で、夜は海藻を口にくわえて眠る習性があります。",
+      "nutrition": "肉食性で、ゴカイや貝類、甲殻類を捕食します。刺身や煮付けとして食べられ、高い栄養価があります。",
+      "origin": "日本列島周辺では北海道以南から東シナ海まで分布しており、砂底と岩礁が混じる環境を好みます。",
+      "fish_seasons": [
+        {
+          "id": 27,
+          "fish_id": 27,
+          "start_month": 9,
+          "start_day": 1,
+          "end_month": 12,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 27,
+          "name": "カワハギ画像",
+          "record_type": "Fish",
+          "record_id": 27,
+          "blob_id": 27,
+          "created_at": "2024-10-11T16:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "name": "スズキ",
+      "features": "スズキ（鱸、Lateolabrax japonicus）は、スズキ目スズキ科に属する魚で、体長は通常60cm程度、最大で1mに達することもあります。体は細長く、背中は青灰色で腹側は銀白色です。主に沿岸の砂底や岩礁に生息し、食性は肉食で小魚や甲殻類を捕食します。",
+      "nutrition": "高タンパク質で低脂肪、ビタミンB群やDHAが豊富です。刺身や焼き物、煮付けとして人気があります。",
+      "origin": "日本全国の沿岸に分布し、特に東京湾や三河湾などが有名な漁場です。",
+      "fish_seasons": [
+        {
+          "id": 28,
+          "fish_id": 28,
+          "start_month": 5,
+          "start_day": 1,
+          "end_month": 9,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 28,
+          "name": "スズキ画像",
+          "record_type": "Fish",
+          "record_id": 28,
+          "blob_id": 28,
+          "created_at": "2024-10-11T16:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "name": "カンパチ",
+      "features": "カンパチ（間八、Seriola dumerili）は、スズキ目アジ科に属する大型の海水魚で、体長は通常40〜100cm、最大で190cmに達することもあります。背中は黄褐色で、体側には目を通る斜めの褐色帯があり、これが「八」の字に見えることから名付けられました。主に水深20〜70mの海域に生息し、春から夏にかけて北上し、秋から冬に南下する回遊性があります。",
+      "nutrition": "高タンパク質で脂肪分が少なく、刺身や焼き物として人気があります。特に夏が旬とされ、味わい深い肉質が特徴です。",
+      "origin": "日本近海では東北地方以南に分布し、全世界の熱帯および温帯海域に広く見られます。",
+      "fish_seasons": [
+        {
+          "id": 29,
+          "fish_id": 29,
+          "start_month": 7,
+          "start_day": 1,
+          "end_month": 11,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 29,
+          "name": "カンパチ画像",
+          "record_type": "Fish",
+          "record_id": 29,
+          "blob_id": 29,
+          "created_at": "2024-10-11T17:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "name": "ホウボウ",
+      "features": "ホウボウ（Chelidonichthys spinosus）は、スズキ目ホウボウ科に属する魚で、体長は最大で約40cmに達します。特徴的な大きな胸びれを持ち、これを使って海底を「歩く」ように移動します。体色は赤色で、背面には灰褐色のまだら模様があります。主に水深25〜600mの砂泥底に生息し、肉食性でエビや小魚を捕食します。",
+      "nutrition": "身は淡い桜色で、クセが少なく、プリプリとした食感とほのかな甘味があります。刺身や煮物、揚げ物など多様な料理に適しています。",
+      "origin": "北海道南部から九州まで広く分布し、特に水深100〜200mの海底に多く生息しています。",
+      "fish_seasons": [
+        {
+          "id": 30,
+          "fish_id": 30,
+          "start_month": 10,
+          "start_day": 1,
+          "end_month": 3,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 30,
+          "name": "ホウボウ画像",
+          "record_type": "Fish",
+          "record_id": 30,
+          "blob_id": 30,
+          "created_at": "2024-10-11T17:15:00Z"
+        }
+      ]
+    }
+  ],
+  "active_storage_blobs": [
+    {
+      "id": 26,
+      "key": "mebachi_maguro_image_2024",
+      "filename": "mebachi_maguro.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "メバチマグロの全身"},
+      "byte_size": 2457600,
+      "checksum": "q1r2s3t4u5v6w7x8y9z0",
+      "created_at": "2024-10-11T16:15:00Z"
+    },
+    {
+      "id": 27,
+      "key": "kawahagi_image_2024",
+      "filename": "kawahagi.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "カワハギの全身"},
+      "byte_size": 1843200,
+      "checksum": "a1b2c3d4e5f6g7h8i9j0",
+      "created_at": "2024-10-11T16:30:00Z"
+    },
+    {
+      "id": 28,
+      "key": "suzuki_image_2024",
+      "filename": "suzuki.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "スズキの全身"},
+      "byte_size": 2048000,
+      "checksum": "k1l2m3n4o5p6q7r8s9t0",
+      "created_at": "2024-10-11T16:45:00Z"
+    },
+    {
+      "id": 29,
+      "key": "kanpachi_image_2024",
+      "filename": "kanpachi.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "カンパチの全身"},
+      "byte_size": 2252800,
+      "checksum": "u1v2w3x4y5z6a7b8c9d0",
+      "created_at": "2024-10-11T17:00:00Z"
+    },
+    {
+      "id": 30,
+      "key": "houbou_image_2024",
+      "filename": "houbou.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "ホウボウの全身"},
+      "byte_size": 1638400,
+      "checksum": "e1f2g3h4i5j6k7l8m9n0",
+      "created_at": "2024-10-11T17:15:00Z"
+    }
+  ]
+}

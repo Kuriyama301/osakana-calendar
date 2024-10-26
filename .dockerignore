@@ -1,0 +1,45 @@
+# 共通の除外設定
+.git
+.gitignore
+.env*
+!.env.example
+.dockerignore
+docker-compose*.yml
+README.md
+*.log
+.DS_Store
+.vscode/
+.idea/
+
+# APIサービス用の除外設定（Rails）
+api/tmp/*
+!api/tmp/.keep
+api/log/*
+!api/log/.keep
+api/storage/*
+!api/storage/.keep
+api/.bundle
+api/vendor/bundle
+api/.rspec
+api/coverage/
+api/spec/tmp
+api/public/assets
+api/public/system
+api/.byebug_history
+api/config/master.key
+
+# フロントエンド用の除外設定（React）
+front/app/node_modules/
+front/app/.pnp
+front/app/.pnp.js
+front/app/coverage
+front/app/.next/
+front/app/build
+front/app/dist
+front/app/.cache
+front/app/.env.local
+front/app/.env.*.local
+front/app/npm-debug.log*
+front/app/yarn-debug.log*
+front/app/yarn-error.log*
+front/app/.pnpm-debug.log*

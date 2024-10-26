@@ -1,0 +1,191 @@
+{
+  "fish": [
+    {
+      "id": 6,
+      "name": "サンマ",
+      "features": "サンマ（秋刀魚）は、北太平洋に広く分布する魚で、体は細長く、最大で約40cmに成長します。背中は青緑色で、腹側は銀白色です。特に秋の味覚として知られ、脂が乗ったものは塩焼きや刺身として人気があります。サンマは大きな群れを作り回遊し、産卵期には南下します。",
+      "nutrition": "DHAやEPAが豊富で、ビタミンB群やビタミンDも含まれています。",
+      "origin": "主な産地は北海道、三陸から千葉県銚子まで",
+      "fish_seasons": [
+        {
+          "id": 6,
+          "fish_id": 6,
+          "start_month": 9,
+          "start_day": 1,
+          "end_month": 11,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 6,
+          "name": "サンマ画像",
+          "record_type": "Fish",
+          "record_id": 6,
+          "blob_id": 6,
+          "created_at": "2024-10-11T11:15:00Z"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "ブリ",
+      "features": "ブリは、スズキ目アジ科に属する魚で、成長に応じて名前が変わる「出世魚」として知られています。通常、80cm以上に成長したものがブリと呼ばれ、体は紡錘形で背中は暗青色、腹側は銀灰色です。体側には黄色い縦帯が走っており、食性は肉食で、イワシやサンマなどを捕食します。",
+      "nutrition": "EPAやDHAが豊富で、ビタミンEも多く含まれています。特に脂の乗った冬のブリは栄養価が高く、健康効果が期待されます。",
+      "origin": "日本近海を中心に分布し、特に北海道から九州までの海域で漁獲されます。",
+      "fish_seasons": [
+        {
+          "id": 7,
+          "fish_id": 7,
+          "start_month": 12,
+          "start_day": 1,
+          "end_month": 3,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 7,
+          "name": "ブリ画像",
+          "record_type": "Fish",
+          "record_id": 7,
+          "blob_id": 7,
+          "created_at": "2024-10-11T11:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "マダイ",
+      "features": "マダイは、スズキ目タイ科に属する海水魚で、体型は楕円形で左右に扁平しています。体色は淡紅色で、側面には鮮やかなコバルト色の小班が散在し、尾びれの後縁が黒く縁取られています。成魚は通常50cm以下ですが、最大で1m以上に成長することもあります。食性は肉食で、甲殻類や小魚を主に捕食します。",
+      "nutrition": "良質なタンパク質を含み、淡泊ながらうま味が強い白身魚です。",
+      "origin": "日本近海を中心に分布し、全国の沿岸で見られます。",
+      "fish_seasons": [
+        {
+          "id": 8,
+          "fish_id": 8,
+          "start_month": 2,
+          "start_day": 1,
+          "end_month": 6,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 8,
+          "name": "マダイ画像",
+          "record_type": "Fish",
+          "record_id": 8,
+          "blob_id": 8,
+          "created_at": "2024-10-11T11:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "カツオ",
+      "features": "カツオ（鰹）は、スズキ目・サバ科に属する魚で、主に熱帯から温帯の海域に分布しています。体型は紡錘形で、通常50cm前後、最大で1m近く成長します。背中は青緑色で、腹側は銀白色です。特に春から夏にかけて黒潮に乗って北上し、秋には南下する回遊性があります。カツオは非常に速く泳ぐことができ、時速60km以上で移動することもあります。",
+      "nutrition": "DHAやEPAが豊富で、ビタミンB群や鉄分も含まれており、疲労回復や貧血予防に効果的です。",
+      "origin": "日本近海を中心に分布し、特に太平洋側で多く見られます。",
+      "fish_seasons": [
+        {
+          "id": 9,
+          "fish_id": 9,
+          "start_month": 4,
+          "start_day": 1,
+          "end_month": 11,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 9,
+          "name": "カツオ画像",
+          "record_type": "Fish",
+          "record_id": 9,
+          "blob_id": 9,
+          "created_at": "2024-10-11T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "アオリイカ",
+      "features": "アオリイカ（障泥烏賊、Sepioteuthis lessoniana）は、ヤリイカ科に属する大型のイカで、体長は通常40〜45cm、最大で50cm以上に達することもあります。胴は丸みを帯びており、外套膜全体に波打つようなひれがあります。雄は背中に白色の短い横線模様を持ち、雌は模様が不明瞭です。産卵期には浅場に移動し、海藻や岩の隙間に卵鞘を産み付けます。",
+      "nutrition": "高タンパク質で低脂肪、豊富なミネラルやビタミンを含むため、栄養価が高い食材です。",
+      "origin": "日本沿岸を中心に広く分布し、特に太平洋側で多く見られます。",
+      "fish_seasons": [
+        {
+          "id": 10,
+          "fish_id": 10,
+          "start_month": 4,
+          "start_day": 1,
+          "end_month": 9,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 10,
+          "name": "アオリイカ画像",
+          "record_type": "Fish",
+          "record_id": 10,
+          "blob_id": 10,
+          "created_at": "2024-10-11T12:15:00Z"
+        }
+      ]
+    }
+  ],
+  "active_storage_blobs": [
+    {
+      "id": 6,
+      "key": "sanma_image_2024",
+      "filename": "sanma.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "サンマの全身"},
+      "byte_size": 1843200,
+      "checksum": "y1z2a3b4c5d6e7f8g9h0",
+      "created_at": "2024-10-11T11:15:00Z"
+    },
+    {
+      "id": 7,
+      "key": "buri_image_2024",
+      "filename": "buri.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "ブリの全身"},
+      "byte_size": 2048000,
+      "checksum": "i1j2k3l4m5n6o7p8q9r0",
+      "created_at": "2024-10-11T11:30:00Z"
+    },
+    {
+      "id": 8,
+      "key": "madai_image_2024",
+      "filename": "madai.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "マダイの全身"},
+      "byte_size": 1638400,
+      "checksum": "s1t2u3v4w5x6y7z8a9b0",
+      "created_at": "2024-10-11T11:45:00Z"
+    },
+    {
+      "id": 9,
+      "key": "katsuo_image_2024",
+      "filename": "katsuo.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "カツオの全身"},
+      "byte_size": 1843200,
+      "checksum": "c1d2e3f4g5h6i7j8k9l0",
+      "created_at": "2024-10-11T12:00:00Z"
+    },
+    {
+      "id": 10,
+      "key": "aori_ika_image_2024",
+      "filename": "aori_ika.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "アオリイカの全身"},
+      "byte_size": 2252800,
+      "checksum": "m1n2o3p4q5r6s7t8u9v0",
+      "created_at": "2024-10-11T12:15:00Z"
+    }
+  ]
+}

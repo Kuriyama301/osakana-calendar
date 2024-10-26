@@ -1,0 +1,5 @@
+build:
+  docker:
+    web: ../docker/front/Dockerfile
+  config:
+    NODE_ENV: production

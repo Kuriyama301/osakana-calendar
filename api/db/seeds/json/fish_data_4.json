@@ -1,0 +1,191 @@
+{
+  "fish": [
+    {
+      "id": 16,
+      "name": "シマホッケ",
+      "features": "シマホッケ（縞ほっけ、Pleurogrammus monopterygius）は、主にアラスカのベーリング海やロシアのオホーツク海で漁獲される魚です。体は細長く、特徴的な横縞模様があり、最大で40cm程度に成長します。脂のノリが良く、そのジューシーさが魅力です。",
+      "nutrition": "高タンパク質で、低カロリーのため健康に良い食材です。特に焼き物や干物として人気があります。",
+      "origin": "主に北方で獲れるため、輸入品が多いですが、日本でも一部漁獲されています。",
+      "fish_seasons": [
+        {
+          "id": 16,
+          "fish_id": 16,
+          "start_month": 10,
+          "start_day": 1,
+          "end_month": 3,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 16,
+          "name": "シマホッケ画像",
+          "record_type": "Fish",
+          "record_id": 16,
+          "blob_id": 16,
+          "created_at": "2024-10-11T13:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "マダラ",
+      "features": "マダラ（Gadus macrocephalus）は、タラ目タラ科に属する魚で、最大で全長1.2mに達します。北太平洋に広く分布し、特に冷水域を好みます。体色は褐色で、背中にはまだら模様があります。大きな口と鋭い歯を持ち、肉食性で魚や甲殻類を捕食します。冬季に脂が乗り、特に鍋料理や煮物に適しています。",
+      "nutrition": "良質なタンパク質を豊富に含み、低カロリーで栄養価が高い食材です。特にオスの精巣は「白子」として珍重されます。",
+      "origin": "北太平洋の日本海や東北地方以北の太平洋岸に分布し、北海道周辺が主な漁場です。",
+      "fish_seasons": [
+        {
+          "id": 17,
+          "fish_id": 17,
+          "start_month": 12,
+          "start_day": 1,
+          "end_month": 3,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 17,
+          "name": "マダラ画像",
+          "record_type": "Fish",
+          "record_id": 17,
+          "blob_id": 17,
+          "created_at": "2024-10-11T14:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "タチウオ",
+      "features": "タチウオ（Trichiurus lepturus）は、スズキ目サバ亜目タチウオ科に属する回遊魚です。体長は最大で約1.5mに達し、銀色に輝く細長い体型が特徴です。主に沿岸部の水深200m前後に生息し、夜行性で日中は深場に、夜になると表層近くに浮上します。鋭い歯を持ち、小魚やイカを捕食します。",
+      "nutrition": "低カロリーで高タンパク質、特に刺身や塩焼きとして人気があります。",
+      "origin": "日本全国の沿岸部、特に北海道から九州まで広く分布しています。",
+      "fish_seasons": [
+        {
+          "id": 18,
+          "fish_id": 18,
+          "start_month": 9,
+          "start_day": 1,
+          "end_month": 12,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 18,
+          "name": "タチウオ画像",
+          "record_type": "Fish",
+          "record_id": 18,
+          "blob_id": 18,
+          "created_at": "2024-10-11T14:15:00Z"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "name": "ヒラメ",
+      "features": "ヒラメは、カレイ目カレイ亜目ヒラメ科に属する魚で、体は平べったく、通常は左側に目があるのが特徴です。最大で1m程度に成長し、主に沿岸の砂泥地に生息します。昼間は砂に潜んで擬態し、夜間に捕食活動を行います。食性は小魚や甲殻類、貝類など多様で、俊敏な動きで獲物を捕らえます。",
+      "nutrition": "淡白な味わいで、高タンパク質、低脂肪のため、刺身や寿司など生食用として人気があります。",
+      "origin": "日本近海全域に分布し、特に水深20〜200mの範囲で漁獲されます。",
+      "fish_seasons": [
+        {
+          "id": 19,
+          "fish_id": 19,
+          "start_month": 5,
+          "start_day": 1,
+          "end_month": 9,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 19,
+          "name": "ヒラメ画像",
+          "record_type": "Fish",
+          "record_id": 19,
+          "blob_id": 19,
+          "created_at": "2024-10-11T14:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "name": "シロサケ",
+      "features": "シロサケは、北太平洋に生息するサケの一種で、体長は通常60〜80cm、最大で1mに達します。背中は青緑色で、腹側は銀白色です。秋に産卵のために川を遡上し、産卵期には体色や形状が変化します。特に脂肪が乗った秋鮭（アキザケ）は食材として人気があります。",
+      "nutrition": "高タンパク質でオメガ-3脂肪酸（DHA、EPA）が豊富で、ビタミンDやビタミンB群も含まれています。",
+      "origin": "主に北太平洋のベーリング海、オホーツク海、日本海を含む地域で漁獲されます。",
+      "fish_seasons": [
+        {
+          "id": 20,
+          "fish_id": 20,
+          "start_month": 9,
+          "start_day": 1,
+          "end_month": 11,
+          "end_day": 30
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 20,
+          "name": "シロサケ画像",
+          "record_type": "Fish",
+          "record_id": 20,
+          "blob_id": 20,
+          "created_at": "2024-10-11T14:45:00Z"
+        }
+      ]
+    }
+  ],
+  "active_storage_blobs": [
+    {
+      "id": 16,
+      "key": "shimahokke_image_2024",
+      "filename": "shimahokke.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "シマホッケの全身"},
+      "byte_size": 1843200,
+      "checksum": "u1v2w3x4y5z6a7b8c9d0",
+      "created_at": "2024-10-11T13:45:00Z"
+    },
+    {
+      "id": 17,
+      "key": "madara_image_2024",
+      "filename": "madara.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "マダラの全身"},
+      "byte_size": 2048000,
+      "checksum": "e1f2g3h4i5j6k7l8m9n0",
+      "created_at": "2024-10-11T14:00:00Z"
+    },
+    {
+      "id": 18,
+      "key": "tachiuo_image_2024",
+      "filename": "tachiuo.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "タチウオの全身"},
+      "byte_size": 1638400,
+      "checksum": "o1p2q3r4s5t6u7v8w9x0",
+      "created_at": "2024-10-11T14:15:00Z"
+    },
+    {
+      "id": 19,
+      "key": "hirame_image_2024",
+      "filename": "hirame.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "ヒラメの全身"},
+      "byte_size": 1843200,
+      "checksum": "y1z2a3b4c5d6e7f8g9h0",
+      "created_at": "2024-10-11T14:30:00Z"
+    },
+    {
+      "id": 20,
+      "key": "shirosake_image_2024",
+      "filename": "shirosake.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {"description": "シロサケの全身"},
+      "byte_size": 2252800,
+      "checksum": "i1j2k3l4m5n6o7n8o9p0",
+      "created_at": "2024-10-11T14:45:00Z"
+    }
+  ]
+}

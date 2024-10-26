@@ -1,0 +1,201 @@
+{
+  "fish": [
+    {
+      "id": 1,
+      "name": "クロマグロ",
+      "features": "クロマグロは、マグロ類の中で最も大型になる魚で、体長は最大4mに達します。体は紡錘形で、胸ビレが短いのが特徴です。幼魚は体側に白い横縞があり、ヨコワとも呼ばれます。成魚は背中側が濃い青色、腹側が銀白色です。クロマグロは広く回遊し、低温にも適応できる能力を持っています。刺身や寿司の最高級食材として知られ、特に脂の乗った大トロは高値で取引されます。赤身は旨味が豊富で、様々な料理に使用されます。",
+      "nutrition": "良質なタンパク質、DHA、EPA、鉄分、カルシウム、ビタミン類",
+      "origin": "日本近海を含む太平洋の熱帯・温帯海域",
+      "fish_seasons": [
+        {
+          "id": 1,
+          "fish_id": 1,
+          "start_month": 12,
+          "start_day": 1,
+          "end_month": 2,
+          "end_day": 28
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 1,
+          "name": "クロマグロ画像",
+          "record_type": "Fish",
+          "record_id": 1,
+          "blob_id": 1,
+          "created_at": "2024-10-11T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "マゴチ",
+      "features": "マゴチはカサゴ目コチ科に属する大型の食用魚です。体長は50cm程度で、最大80cmにまで成長することがあります。体は左右に平たく、特に頭部がシャベル状になっています。背中側は黄褐色から褐色で細かいまだら模様があり、腹側は白くなっています。口は大きく、下顎が上顎より前に突き出ています。目は小さく、胸びれには小さな褐色の斑点があります。マゴチは周囲の環境に合わせて体色を変化させる能力を持っています。",
+      "nutrition": "良質なタンパク質を含む白身魚",
+      "origin": "日本海側は山形県以南、太平洋側は宮城県以南の沿岸域",
+      "fish_seasons": [
+        {
+          "id": 2,
+          "fish_id": 2,
+          "start_month": 5,
+          "start_day": 1,
+          "end_month": 8,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 2,
+          "name": "マゴチ画像",
+          "record_type": "Fish",
+          "record_id": 2,
+          "blob_id": 2,
+          "created_at": "2024-10-11T10:15:00Z"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "マサバ",
+      "features": "マサバは、細長い紡錘形の体型を持ち、最大で約50cmに成長します。背中は青緑色で、黒い波模様が特徴的です。腹部は銀白色で、模様はありません。主に日本近海の温帯・亜熱帯海域に分布し、春から夏には北上し、秋から冬には南下する回遊性の魚です。肉食性で、小魚やプランクトンを食べます。",
+      "nutrition": "EPAやDHAが豊富で、ビタミンB群やビタミンDも含まれています。",
+      "origin": "日本列島近海",
+      "fish_seasons": [
+        {
+          "id": 3,
+          "fish_id": 3,
+          "start_month": 10,
+          "start_day": 1,
+          "end_month": 2,
+          "end_day": 28
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 3,
+          "name": "マサバ画像",
+          "record_type": "Fish",
+          "record_id": 3,
+          "blob_id": 3,
+          "created_at": "2024-10-11T10:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "マイワシ",
+      "features": "マイワシは、細長い紡錘形の体を持ち、背中は青緑色で、腹側は銀白色です。体側には黒い斑点が並んでおり、最大で約30cmに成長します。主に群れを成して回遊し、春から夏に北上し、秋から冬に南下します。食性はプランクトンで、特に植物プランクトンを好みます。新鮮なものは刺身や塩焼きなどで楽しむことができ、料理のバリエーションも豊富です。",
+      "nutrition": "良質なタンパク質、DHA、EPA、ビタミンB群が豊富",
+      "origin": "日本近海",
+      "fish_seasons": [
+        {
+          "id": 4,
+          "fish_id": 4,
+          "start_month": 6,
+          "start_day": 1,
+          "end_month": 8,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 4,
+          "name": "マイワシ画像",
+          "record_type": "Fish",
+          "record_id": 4,
+          "blob_id": 4,
+          "created_at": "2024-10-11T10:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "マアジ",
+      "features": "マアジは、スズキ目スズキ亜目アジ科に属する海水魚で、主に北西太平洋の沿岸域に分布します。体長は通常30cm前後ですが、最大で50cmに達することもあります。背中は暗い緑色で、側面は金色、腹側は銀白色です。居付き型と回遊型があり、居付き型は体高が高く、色味が黄色みがかっています。一方、回遊型は細長く、黒っぽい体色をしています。",
+      "nutrition": "良質なタンパク質、DHA、EPAを含み、ビタミンB群も豊富です。",
+      "origin": "北海道から南シナ海までの全国沿岸～沖合い",
+      "fish_seasons": [
+        {
+          "id": 5,
+          "fish_id": 5,
+          "start_month": 3,
+          "start_day": 1,
+          "end_month": 12,
+          "end_day": 31
+        }
+      ],
+      "active_storage_attachments": [
+        {
+          "id": 5,
+          "name": "マアジ画像",
+          "record_type": "Fish",
+          "record_id": 5,
+          "blob_id": 5,
+          "created_at": "2024-10-11T11:00:00Z"
+        }
+      ]
+    }
+  ],
+  "active_storage_blobs": [
+    {
+      "id": 1,
+      "key": "kuromaguro_image_2024",
+      "filename": "kuromaguro.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {
+        "description": "クロマグロの全身"
+      },
+      "byte_size": 30688,
+      "checksum": "a1b2c3d4e5f6g7h8i9j0",
+      "created_at": "2024-10-11T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "key": "magochi_image_2024",
+      "filename": "magochi.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {
+        "description": "マゴチの全身"
+      },
+      "byte_size": 37245,
+      "checksum": "k1l2m3n4o5p6q7r8s9t0",
+      "created_at": "2024-10-11T10:15:00Z"
+    },
+    {
+      "id": 3,
+      "key": "masaba_image_2024",
+      "filename": "masaba.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {
+        "description": "マサバの全身"
+      },
+      "byte_size": 25686,
+      "checksum": "u1v2w3x4y5z6a7b8c9d0",
+      "created_at": "2024-10-11T10:30:00Z"
+    },
+    {
+      "id": 4,
+      "key": "maiwashi_image_2024",
+      "filename": "maiwashi.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {
+        "description": "マイワシの全身"
+      },
+      "byte_size": 20966,
+      "checksum": "e1f2g3h4i5j6k7l8m9n0",
+      "created_at": "2024-10-11T10:45:00Z"
+    },
+    {
+      "id": 5,
+      "key": "maaji_image_2024",
+      "filename": "maaji.jpg",
+      "content_type": "image/jpeg",
+      "metadata": {
+        "description": "マアジの全身"
+      },
+      "byte_size": 27524,
+      "checksum": "o1p2q3r4s5t6u7v8w9x0",
+      "created_at": "2024-10-11T11:00:00Z"
+    }
+  ]
+}

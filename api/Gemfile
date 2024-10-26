@@ -1,0 +1,26 @@
+source "https://rubygems.org"
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
+ruby "3.3.4"
+
+# 基本的なgems
+gem "rails", "~> 7.0.8", ">= 7.0.8.4"
+gem "pg", "~> 1.1"
+gem "puma", "~> 5.0"
+gem "rack-cors"
+gem "bootsnap", require: false
+
+# 必要なシステムgems
+gem 'base64'
+gem 'bigdecimal'
+gem 'mutex_m'
+
+# Active Storage関連
+gem 'active_storage_validations'
+
+# Windows対応
+gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
+
+group :development, :test do
+  gem "debug", platforms: %i[ mri mingw x64_mingw ]
+end

@@ -1,0 +1,43 @@
+# バージョン管理システム
+.git
+.gitignore
+
+# ログファイル
+log/*
+
+# 一時ファイル
+tmp/*
+
+# キャッシュ
+*.log
+*.cache
+
+# 開発環境固有のファイル
+.env*
+!.env.example
+
+# テストファイル
+spec/*
+test/*
+
+# ドキュメント
+README.md
+CHANGELOG.md
+
+# Ruby/Rails特有
+.bundle
+.ruby-version
+.rspec
+coverage/
+
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# エディタ設定ファイル
+.vscode
+.idea
+
+# その他の不要なファイル
+*.swp
+*.swo

@@ -1,0 +1,30 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  host: <%= ENV.fetch("DB_HOST", "db") %>
+  username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
+  password: <%= ENV.fetch("DB_PASSWORD") { ENV['POSTGRES_PASSWORD'] } %>
+  database: <%= ENV.fetch("POSTGRES_DB", "osakana_calendar_db") %>
+
+test:
+  <<: *default
+  database: osakana_calendar_test
+
+production:
+  <<: *default
+  # HerokuのPOSTGRES_URLを使用
+  url: <%= ENV['DATABASE_URL'] %>
+  # バックアップ設定（DATABASE_URLが存在しない場合用）
+  host: <%= ENV['DB_HOST'] %>
+  database: <%= ENV['POSTGRES_DB'] %>
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  connect_timeout: 2
+  checkout_timeout: 5
+  variables:
+    statement_timeout: 5000

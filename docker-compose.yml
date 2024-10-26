@@ -4,58 +4,48 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    env_file:
-      - .env.development
+      POSTGRES_DB: osakana_calendar_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_secure_password
+    ports:
+      - "5432:5432"
 
   api:
     build:
-      context: ./api
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: docker/api/Dockerfile.dev
     volumes:
-      - ./api:${API_WORKDIR:-/app}
-      - rails_cache:${API_WORKDIR:-/app}/tmp/cache
-      - rails_bootsnap:${API_WORKDIR:-/app}/tmp/bootsnap
-      - storage:${API_WORKDIR:-/app}/storage
+      - ./api:/app
     ports:
-      - "${API_PORT:-3000}:3000"
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:your_secure_password@db:5432/osakana_calendar_db
+      RAILS_ENV: development
+      CORS_ORIGINS: http://localhost:5173
     depends_on:
       - db
-    environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${DB_PASSWORD}@db:5432/${POSTGRES_DB}
-      RAILS_ENV: ${RAILS_ENV:-development}
-      RAILS_DEVELOPMENT_HOSTS: api,localhost,0.0.0.0
-    env_file:
-      - .env.development
     command: >
       bash -c "
-        bundle install &&
-        rm -f tmp/pids/server.pid &&
-        bundle exec rails db:create db:migrate &&
-        bundle exec rails server -b 0.0.0.0
+      rm -f tmp/pids/server.pid &&
+      bundle exec rails db:migrate &&
+      bundle exec rails db:seed &&
+      bundle exec rails server -b 0.0.0.0
       "
 
   frontend:
     build:
-      context: ./front
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: docker/front/Dockerfile.dev
     volumes:
-      - ./front/app:${FRONT_WORKDIR:-/app}
+      - ./front/app:/app
       - /app/node_modules
     ports:
-      - "${FRONT_PORT:-5173}:5173"
+      - "5173:5173"
     environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
-    env_file:
-      - .env.development
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:3000
     depends_on:
       - api
 
 volumes:
   postgres_data:
-  rails_cache:
-  rails_bootsnap:
-  storage:

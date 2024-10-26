@@ -1,4 +1,5 @@
 require "active_support/core_ext/integer/time"
+require "rack/cors"
 
 Rails.application.configure do
   # 基本設定
@@ -21,10 +22,6 @@ Rails.application.configure do
   # Active Storage設定
   config.active_storage.service = :local
   config.active_storage.routes_prefix = '/images'
-
-  # メーラー設定
-  config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.perform_caching = false
 
   # ロギング設定
   config.active_support.deprecation = :log
@@ -50,10 +47,7 @@ Rails.application.configure do
   }
 
   # ホスト許可設定
-  config.hosts << "localhost"
-  config.hosts << "0.0.0.0"
-  config.hosts << "api"
-  config.hosts.clear if ENV["DISABLE_HOST_CHECK"] == "true"
+  config.hosts = ENV["DISABLE_HOST_CHECK"] == "true" ? nil : %w[localhost 0.0.0.0 api]
 
   # Active Storageのホスト設定
   config.active_storage.service_urls_expire_in = 1.hour

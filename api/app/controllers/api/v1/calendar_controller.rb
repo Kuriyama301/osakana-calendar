@@ -1,12 +1,14 @@
 class Api::V1::CalendarController < ApplicationController
   def fish_by_date
     date = Date.parse(params[:date])
-    @fish = Fish.in_season_on(date).includes(:fish_seasons, :image_attachment)
+    @fish = Fish.in_season_on(date)
+      .includes(:fish_seasons)
+      .select(:id, :name, :features, :nutrition, :origin)
 
-    if @fish.empty?
-      render json: { message: "No fish available for the specified date" }, status: :not_found
+    if @fish.exists?
+      render json: @fish, include: :fish_seasons
     else
-      render json: @fish.as_json(include: :fish_seasons, methods: :image_url)
+      render json: { message: "No fish found for this date" }, status: :not_found
     end
   rescue ArgumentError
     render json: { error: "Invalid date format" }, status: :bad_request

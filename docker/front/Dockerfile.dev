@@ -1,0 +1,13 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY front/app/package*.json ./
+RUN npm install
+
+# 開発サーバー用の設定
+ENV NODE_ENV=development
+EXPOSE 5173
+
+# Vite開発サーバーを直接起動
+CMD ["npm", "run", "dev", "--", "--host"]

@@ -1,3 +1,10 @@
+require 'rails'
+require 'active_model/railtie'
+require 'active_record/railtie'
+require 'active_storage/engine'
+require 'action_controller/railtie'
+require 'action_view/railtie'
+
 module App
   class Application < Rails::Application
     config.load_defaults 7.0
@@ -14,11 +21,11 @@ module App
       end
     end
 
-    # すべてのHerokuドメインを許可
+    # プロダクション環境でのみホスト制限を解除
+    config.hosts = [] unless Rails.env.production?
     config.hosts = nil if Rails.env.production?
 
-    # プロダクション環境でのホスト制限を解除
-    config.hosts = nil
-    end
+    # アクティブストレージの設定
+    config.active_storage.service = :local
   end
 end

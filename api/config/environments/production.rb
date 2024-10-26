@@ -1,4 +1,5 @@
 require "active_support/core_ext/integer/time"
+require "rack/cors"
 
 Rails.application.configure do
   # 既存の基本設定
@@ -57,8 +58,8 @@ Rails.application.configure do
       origins 'https://osakana-calendar-frontend-1a15062980c2.herokuapp.com'
 
       resource '*',
-        methods: [:get, :post, :put, :patch, :delete, :options, :head],
         headers: :any,
+        methods: [:get, :post, :put, :patch, :delete, :options, :head],
         credentials: false,
         max_age: 86400,
         expose: %w[

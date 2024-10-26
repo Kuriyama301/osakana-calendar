@@ -1,4 +1,3 @@
-# app/models/fish.rb
 class Fish < ApplicationRecord
   has_many :fish_seasons
   has_one_attached :image
@@ -13,17 +12,23 @@ class Fish < ApplicationRecord
     ).distinct
   }
 
+  def as_json(options = {})
+    super(options.merge(
+      methods: [:image_url],
+      include: :fish_seasons
+    ))
+  end
+
   def image_url
+    return nil unless image.attached?
+
     if Rails.env.production?
-      # 本番環境用のURL生成
-      rails_blob_url(image) if image.attached?
+      image.url
     else
-      # 開発環境用のURL生成
-      if image.attached?
-        host = ENV.fetch('API_HOST', 'localhost:3000')
-        protocol = ENV.fetch('API_PROTOCOL', 'http')
-        "#{protocol}://#{host}/images/#{image.filename}"
-      end
+      Rails.application.routes.url_helpers.url_for(image)
     end
+  rescue StandardError => e
+    Rails.logger.error "Error generating image URL: #{e.message}"
+    nil
   end
 end

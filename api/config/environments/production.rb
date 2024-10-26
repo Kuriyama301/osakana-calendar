@@ -2,7 +2,7 @@ require "active_support/core_ext/integer/time"
 require "rack/cors"
 
 Rails.application.configure do
-  # 既存の基本設定
+  # 基本設定
   config.cache_classes = true
   config.eager_load = true
   config.consider_all_requests_local = false
@@ -21,7 +21,7 @@ Rails.application.configure do
   # データベース設定
   config.active_record.dump_schema_after_migration = false
 
-  # セキュリティ設定（更新）
+  # セキュリティ設定
   config.force_ssl = true
   config.action_dispatch.default_headers = {
     'X-Frame-Options' => 'SAMEORIGIN',
@@ -33,12 +33,12 @@ Rails.application.configure do
   }
 
   # Active Storage設定
-  config.active_storage.service = :local
-  config.active_storage.service_urls_expire_in = 1.hour
+  config.active_storage.service = :amazon
+  config.active_storage.service_urls_expire_in = 1.week
   config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
   # URLオプション
-  host = ENV.fetch('RAILS_HOST', 'osakana-calendar-api.herokuapp.com')
+  host = ENV.fetch('RAILS_HOST', 'api.your-domain.com')
 
   # デフォルトURLオプション
   Rails.application.routes.default_url_options = {
@@ -52,10 +52,10 @@ Rails.application.configure do
     protocol: 'https'
   }
 
-  # CORS設定（更新）
+  # CORS設定
   config.middleware.insert_before 0, Rack::Cors do
     allow do
-      origins 'https://osakana-calendar-frontend-1a15062980c2.herokuapp.com'
+      origins ENV.fetch('FRONTEND_URL', 'https://your-domain.com')
 
       resource '*',
         headers: :any,
@@ -70,10 +70,17 @@ Rails.application.configure do
     end
   end
 
-  # ホスト設定（更新）
-  config.hosts.clear # 既存のホスト制限をクリア
-  config.hosts << '.herokuapp.com' # すべてのherokuappドメインを許可
+  # ホスト設定
+  config.hosts.clear
+  config.hosts << '.herokuapp.com'
+  config.hosts << ENV['RAILS_HOST'] if ENV['RAILS_HOST'].present?
 
-  # PIDファイルの設定
-  config.running_pid_file = "tmp/pids/server.pid"
+  # キャッシュとセッション設定
+  config.cache_store = :memory_store, { size: 64.megabytes }
+  config.public_file_server.headers = {
+    'Cache-Control' => 'public, max-age=31536000'
+  }
+
+  # エラーページ設定
+  config.exceptions_app = self.routes
 end

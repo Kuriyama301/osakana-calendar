@@ -18,6 +18,9 @@ gem 'mutex_m'
 # Active Storage関連
 gem 'active_storage_validations'
 
+# AWS S3
+gem 'aws-sdk-s3', require: false
+
 # Windows対応
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 

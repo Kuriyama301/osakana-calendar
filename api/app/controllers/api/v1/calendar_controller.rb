@@ -3,10 +3,11 @@ class Api::V1::CalendarController < ApplicationController
     date = Date.parse(params[:date])
     @fish = Fish.in_season_on(date)
       .includes(:fish_seasons)
+      .with_attached_image
       .select(:id, :name, :features, :nutrition, :origin)
 
     if @fish.exists?
-      render json: @fish, include: :fish_seasons
+      render json: @fish
     else
       render json: { message: "No fish found for this date" }, status: :not_found
     end

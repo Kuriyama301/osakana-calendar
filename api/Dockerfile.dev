@@ -9,7 +9,7 @@ RUN apt-get update -qq && \
 WORKDIR /app
 
 # 開発用のGem インストール
-COPY api/Gemfile* ./
+COPY Gemfile* ./
 RUN bundle install
 
 # アプリケーションコードは volumeでマウント

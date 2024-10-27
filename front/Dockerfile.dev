@@ -2,7 +2,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY front/app/package*.json ./
+# package.jsonのパス
+COPY app/package*.json ./
 RUN npm install
 
 # 開発サーバー用の設定

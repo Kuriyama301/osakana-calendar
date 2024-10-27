@@ -12,8 +12,8 @@ services:
 
   api:
     build:
-      context: .
-      dockerfile: docker/api/Dockerfile.dev
+      context: ./api
+      dockerfile: Dockerfile.dev
     volumes:
       - ./api:/app
     ports:
@@ -34,8 +34,8 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: docker/front/Dockerfile.dev
+      context: ./front
+      dockerfile: Dockerfile.dev
     volumes:
       - ./front/app:/app
       - /app/node_modules

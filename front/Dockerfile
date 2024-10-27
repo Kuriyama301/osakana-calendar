@@ -1,12 +1,11 @@
-# ベースイメージ
 FROM node:20-alpine as base
 WORKDIR /app
-COPY front/app/package*.json ./
+COPY app/package*.json ./
 
 # ビルドステージ
 FROM base as build
 RUN npm ci
-COPY front/app ./
+COPY app ./
 ENV NODE_ENV=production
 RUN npm run build
 
@@ -15,7 +14,7 @@ FROM node:20-alpine as production
 WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package*.json ./
-COPY front/app/server.js ./
+COPY app/server.js ./
 RUN npm ci --only=production
 ENV NODE_ENV=production
 ENV PORT=3000

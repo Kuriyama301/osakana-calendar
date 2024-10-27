@@ -9,12 +9,12 @@ RUN apt-get update -qq && \
 WORKDIR /app
 
 # Gemファイルのコピーと依存関係のインストール
-COPY api/Gemfile* ./
+COPY Gemfile* ./
 RUN bundle config set --local without 'development test' && \
     bundle install --jobs 4 --retry 3
 
 # アプリケーションコードのコピー
-COPY api .
+COPY . .
 
 # 本番環境用の最適化
 FROM ruby:3.3.4-slim
@@ -30,12 +30,10 @@ WORKDIR /app
 COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY --from=builder /app .
 
-# 実行時の環境変数設定
 ENV RAILS_ENV=production \
     RAILS_SERVE_STATIC_FILES=true \
     RAILS_LOG_TO_STDOUT=true
 
-# セキュリティ強化のため非root ユーザーを使用
 RUN useradd -m app && \
     chown -R app:app /app
 USER app

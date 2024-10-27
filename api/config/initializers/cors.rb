@@ -1,7 +1,12 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    # 開発環境用のオリジン設定
-    origins ENV.fetch('ALLOWED_ORIGINS', 'http://localhost:5173').split(',').map(&:strip)
+    origins ENV.fetch('ALLOWED_ORIGINS') do
+      if Rails.env.production?
+        'https://osakana-calendar-front-4e0125f54113.herokuapp.com'
+      else
+        'http://localhost:5173'
+      end
+    end
 
     resource '*',
       headers: :any,

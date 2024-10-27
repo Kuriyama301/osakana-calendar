@@ -12,8 +12,6 @@ rescue Errno::ENOENT
 end
 
 def process_fish_data(data)
-  blobs = data['active_storage_blobs']
-
   data['fish'].each do |fish_data|
     # 魚のデータを作成
     fish = Fish.find_or_create_by!(name: fish_data['name']) do |f|
@@ -21,6 +19,8 @@ def process_fish_data(data)
       f.nutrition = fish_data['nutrition']
       f.origin = fish_data['origin']
     end
+
+    puts "Processing fish: #{fish.name}"
 
     # シーズン情報の作成
     fish_data['fish_seasons'].each do |season_data|
@@ -33,28 +33,25 @@ def process_fish_data(data)
       )
     end
 
-    # 画像の添付
+    # 画像の添付（シンプル化）
     unless fish.image.attached?
-      # blobを検索
-      attachment = fish_data['active_storage_attachments'].first
-      blob = blobs.find { |b| b['id'] == attachment['blob_id'] }
+      # 画像ファイル名を魚の名前から生成
+      filename = "#{fish.name.downcase}.jpg"
+      image_path = Rails.root.join('db', 'seeds', 'images', filename)
 
-      if blob
-        filename = blob['filename']
-        image_path = Rails.root.join('db', 'seeds', 'images', filename)
-
-        if File.exist?(image_path)
+      if File.exist?(image_path)
+        begin
           fish.image.attach(
             io: File.open(image_path),
             filename: filename,
             content_type: 'image/jpeg'
           )
-          puts "Attached image for #{fish.name}: #{filename}"
-        else
-          puts "Warning: Image file not found for #{fish.name}: #{image_path}"
+          puts "✓ Attached image for #{fish.name}"
+        rescue => e
+          puts "× Error attaching image for #{fish.name}: #{e.message}"
         end
       else
-        puts "Warning: No blob found for #{fish.name}"
+        puts "× Image file not found: #{filename}"
       end
     end
   end
@@ -62,15 +59,15 @@ end
 
 # メイン処理
 ActiveRecord::Base.transaction do
-  json_files = Dir[Rails.root.join('db', 'seeds', 'json', 'fish_data*.json')].sort_by do |filename|
-    filename.scan(/\d+/).first.to_i
-  end
+  puts "Starting seed process..."
+
+  json_files = Dir[Rails.root.join('db', 'seeds', 'json', 'fish_data*.json')].sort
 
   json_files.each do |file_path|
-    puts "Processing #{file_path}"
+    puts "\nProcessing #{File.basename(file_path)}"
     data = load_json_file(file_path)
     process_fish_data(data) if data.any?
   end
 end
 
-puts "Seed data has been successfully loaded!"
+puts "\nSeed data has been successfully loaded!"

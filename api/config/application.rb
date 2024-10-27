@@ -4,6 +4,7 @@ require 'active_record/railtie'
 require 'active_storage/engine'
 require 'action_controller/railtie'
 require 'action_view/railtie'
+require 'rack/cors'
 
 module App
   class Application < Rails::Application

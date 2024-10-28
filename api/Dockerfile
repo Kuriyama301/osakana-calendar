@@ -16,6 +16,10 @@ RUN bundle config set --local without 'development test' && \
 # アプリケーションコードのコピー
 COPY . .
 
+# 不要なディレクトリを削除
+RUN rm -rf /app/channels && \
+    rm -rf /app/tmp/cache /app/tmp/pids /app/tmp/sockets
+
 # 本番環境用の最適化
 FROM ruby:3.3.4-slim
 
@@ -34,8 +38,11 @@ ENV RAILS_ENV=production \
     RAILS_SERVE_STATIC_FILES=true \
     RAILS_LOG_TO_STDOUT=true
 
+# 必要なディレクトリを作成し、権限を設定
 RUN useradd -m app && \
+    mkdir -p tmp/pids tmp/sockets && \
     chown -R app:app /app
 USER app
 
-CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
+# Pumaを使用してサーバーを起動
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

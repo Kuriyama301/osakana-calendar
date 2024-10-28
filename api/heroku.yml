@@ -7,7 +7,6 @@ build:
   config:
     RAILS_ENV: production
     RAILS_SERVE_STATIC_FILES: enabled
-    RACK_ENV: production
     RAILS_LOG_TO_STDOUT: enabled
 run:
-  web: bundle exec rails server -p ${PORT:-3000} -b 0.0.0.0
+  web: bundle exec rails server -b 0.0.0.0 -p $PORT

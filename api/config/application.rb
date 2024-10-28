@@ -13,6 +13,10 @@ module App
     config.time_zone = "Tokyo"
     config.active_record.default_timezone = :local
 
+    # Zeitwerkの設定で特定のディレクトリを無視
+    config.autoload_paths.delete("#{config.root}/app/channels")
+    config.eager_load_paths.delete("#{config.root}/app/channels")
+
     # 開発環境用のホスト設定
     config.hosts = [] unless Rails.env.production?
   end

@@ -6,11 +6,10 @@ COPY app/package*.json ./
 FROM base as build
 RUN npm ci
 COPY app ./
-ENV NODE_ENV=production
-
-# ビルド時に環境変数を受け取る
+# ビルド時の環境変数を設定
 ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_API_URL=$VITE_API_URL
+ENV NODE_ENV=production
 RUN npm run build
 
 # 本番環境
@@ -22,8 +21,5 @@ COPY app/server.js ./
 RUN npm ci --only=production
 ENV NODE_ENV=production
 ENV PORT=3000
-
-# 実行時の環境変数
-ENV VITE_API_URL=${VITE_API_URL}
 USER node
 CMD ["node", "server.js"]

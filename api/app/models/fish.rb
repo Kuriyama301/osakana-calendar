@@ -41,10 +41,8 @@ class Fish < ApplicationRecord
 
     begin
       if Rails.env.production?
-        # S3の直接URLを返す
-        "https://#{ENV['AWS_BUCKET']}.s3.#{ENV['AWS_REGION']}.amazonaws.com/#{image.key}"
+        image.blob.service_url(expires_in: 1.hour)
       else
-        # 開発環境用のURL
         Rails.application.routes.url_helpers.rails_blob_url(image)
       end
     rescue StandardError => e

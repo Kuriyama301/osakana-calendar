@@ -7,7 +7,11 @@ class Api::V1::CalendarController < ApplicationController
       .select(:id, :name, :features, :nutrition, :origin)
 
     if @fish.exists?
-      render json: @fish
+      # as_jsonメソッドを使用して画像URLを含める
+      render json: @fish.as_json(
+        include: :fish_seasons,
+        methods: [:image_url]
+      )
     else
       render json: { message: "No fish found for this date" }, status: :not_found
     end

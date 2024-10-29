@@ -13,7 +13,3 @@ amazon:
   region: <%= ENV['AWS_REGION'] %>
   bucket: <%= ENV['AWS_BUCKET'] %>
   public: true
-  force_path_style: false
-  upload:
-    cache_control: 'public, max-age=3600'
-    server_side_encryption: AES256

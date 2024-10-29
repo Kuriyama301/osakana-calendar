@@ -2,9 +2,16 @@ import axios from 'axios';
 
 const getApiUrl = () => {
   const envUrl = import.meta.env.VITE_API_URL;
+  const isDevelopment = import.meta.env.DEV;
+  
+  // 開発環境のフォールバック
+  if (!envUrl && isDevelopment) {
+    return 'http://localhost:3000';
+  }
   
   if (!envUrl) {
-    throw new Error('API URL is not configured');
+    console.warn('API URL not configured, using production URL');
+    return 'https://osakana-calendar-api-7fca63533648.herokuapp.com';
   }
   
   return envUrl;
@@ -16,7 +23,7 @@ const client = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
-  timeout: 10000,
+  timeout: 15000,
   withCredentials: false
 });
 

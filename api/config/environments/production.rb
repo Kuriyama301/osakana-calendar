@@ -17,10 +17,8 @@ Rails.application.configure do
 
   # Active Storage設定
   config.active_storage.service = :amazon
-  config.active_storage.replace_on_assign_to_many = true
-  config.active_storage.track_variants = true
 
-  # URLとホスト設定
+  # ホスト設定
   host = ENV.fetch('RAILS_HOST', 'osakana-calendar-api-7fca63533648.herokuapp.com')
   config.hosts = [host, '.herokuapp.com']
 

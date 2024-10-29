@@ -4,14 +4,14 @@ import HomePage from './pages/HomePage';
 import { Header } from './components';
 import { CalendarProvider } from './CalendarContext.jsx';
 
-// ローディングコンポーネント
 const Loading = () => (
-  <div className="flex items-center justify-center h-screen">
-    <p>Loading...</p>
+  <div className="flex items-center justify-center h-screen bg-gray-50">
+    <div className="text-center">
+      <p className="text-lg text-gray-600">Loading...</p>
+    </div>
   </div>
 );
 
-// エラーバウンダリーコンポーネント
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -23,14 +23,24 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Application error:', error);
+    if (import.meta.env.DEV) {
+      console.error('Application error:', error);
+    }
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex items-center justify-center h-screen">
-          <p>Something went wrong. Please try refreshing the page.</p>
+        <div className="flex items-center justify-center h-screen bg-gray-50">
+          <div className="text-center p-4">
+            <p className="text-lg text-gray-700">予期せぬエラーが発生しました</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              ページを再読み込み
+            </button>
+          </div>
         </div>
       );
     }

@@ -36,14 +36,20 @@ class Fish < ApplicationRecord
     ))
   end
 
+  # 画像URLを生成するメソッド
   def image_url
     return nil unless image.attached?
 
     begin
       if Rails.env.production?
-        image.blob.service_url(expires_in: 1.hour)
+        # S3の直接URLを生成
+        "https://#{ENV['AWS_BUCKET']}.s3.#{ENV['AWS_REGION']}.amazonaws.com/#{image.key}"
       else
-        Rails.application.routes.url_helpers.rails_blob_url(image)
+        # 開発環境用のURL
+        Rails.application.routes.url_helpers.rails_blob_url(
+          image,
+          host: 'localhost:3000'
+        )
       end
     rescue StandardError => e
       Rails.logger.error "Error generating image URL: #{e.message}"

@@ -40,17 +40,26 @@ class Fish < ApplicationRecord
   def image_url
     return nil unless image.attached?
 
-    begin
-      bucket = ENV['AWS_BUCKET']
-      region = ENV['AWS_REGION']
-      key = image.key
+    if Rails.env.production?
+      begin
+        bucket = ENV['AWS_BUCKET']
+        region = ENV['AWS_REGION']
+        key = image.key
 
-      return nil if key.nil? || bucket.nil? || region.nil?
-
-      "https://#{bucket}.s3.#{region}.amazonaws.com/#{key}"
-    rescue StandardError => e
-      Rails.logger.error "Error generating image URL: #{e.message}"
-      nil
+        return nil if key.nil? || bucket.nil? || region.nil?
+        "https://#{bucket}.s3.#{region}.amazonaws.com/#{key}"
+      rescue StandardError => e
+        Rails.logger.error "Error generating S3 URL: #{e.message}"
+        nil
+      end
+    else
+      begin
+        # 開発環境では Active StorageのURLを使用
+        image.url
+      rescue StandardError => e
+        Rails.logger.error "Error generating local URL: #{e.message}"
+        nil
+      end
     end
   end
 end

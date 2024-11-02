@@ -1,13 +1,5 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  name: MyString
-  features: MyText
-  nutrition: MyText
-  origin: MyString
-
-two:
-  name: MyString
-  features: MyText
-  nutrition: MyText
-  origin: MyString
+fish_one:
+  name: 'マグロ'
+  features: 'マグロの特徴です'
+  nutrition: 'マグロの栄養です'
+  origin: '太平洋'

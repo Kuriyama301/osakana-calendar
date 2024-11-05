@@ -32,6 +32,27 @@ services:
       bundle exec rails server -b 0.0.0.0
       "
 
+  api-test:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api:/app
+    environment:
+      DATABASE_URL: postgresql://postgres:your_secure_password@db:5432/osakana_calendar_test
+      RAILS_ENV: test
+      CORS_ORIGINS: http://localhost:5173
+    depends_on:
+      - db
+    command: >
+      bash -c "
+      rm -f tmp/pids/server.pid &&
+      bundle exec rails db:migrate RAILS_ENV=test &&
+      bundle exec rails db:seed RAILS_ENV=test &&
+      bundle exec rails test &&
+      bundle exec rails server -b 0.0.0.0
+      "
+
   frontend:
     build:
       context: ./front
@@ -59,7 +80,7 @@ services:
       - VITE_API_URL=http://api:3000
     command: npm test
     depends_on:
-      - api
+      - api-test
 
 volumes:
   postgres_data:

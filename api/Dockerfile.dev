@@ -14,5 +14,5 @@ RUN bundle install
 
 # アプリケーションコードは volumeでマウント
 
-# 開発サーバー起動
+# 開発サーバー起動のデフォルトコマンド
 CMD ["rails", "server", "-b", "0.0.0.0"]

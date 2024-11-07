@@ -1,0 +1,19 @@
+echo "Starting tests..."
+
+# 全てのコンテナとネットワークを削除
+docker-compose down --volumes --remove-orphans
+docker-compose -f docker-compose.test.yml down --volumes --remove-orphans
+
+# テストを実行
+docker-compose -f docker-compose.test.yml up --abort-on-container-exit --remove-orphans
+
+# 終了コードを保存
+TEST_EXIT_CODE=$?
+
+# クリーンアップ
+docker-compose -f docker-compose.test.yml down --volumes --remove-orphans
+
+echo "Tests completed."
+
+# テストの終了コードを返す
+exit $TEST_EXIT_CODE

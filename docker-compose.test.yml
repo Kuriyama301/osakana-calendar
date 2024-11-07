@@ -1,0 +1,39 @@
+services:
+  db-test:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: osakana_calendar_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_secure_password
+
+  api-test:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api:/app
+    environment:
+      DATABASE_URL: postgresql://postgres:your_secure_password@db-test:5432/osakana_calendar_test
+      RAILS_ENV: test
+      ALLOWED_ORIGINS: http://localhost:5173
+    depends_on:
+      - db-test
+    command: >
+      bash -c "
+        bundle install &&
+        bundle exec rails db:create db:migrate RAILS_ENV=test &&
+        bundle exec rails test
+      "
+
+  frontend-test:
+    build:
+      context: ./front
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./front/app:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: test
+    command: npm test
+    depends_on:
+      - api-test

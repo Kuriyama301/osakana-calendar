@@ -1,8 +1,9 @@
-import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import { Header } from './components';
-import { CalendarProvider } from './CalendarContext.jsx';
+import { Component, Suspense } from "react";
+import PropTypes from "prop-types";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import { Header } from "./components";
+import { CalendarProvider } from "./CalendarContext.jsx";
 
 const Loading = () => (
   <div className="flex items-center justify-center h-screen bg-gray-50">
@@ -12,19 +13,19 @@ const Loading = () => (
   </div>
 );
 
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(_error) {
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(_error, _errorInfo) {
     if (import.meta.env.DEV) {
-      console.error('Application error:', error);
+      console.error("Application error:", _error);
     }
   }
 
@@ -33,7 +34,9 @@ class ErrorBoundary extends React.Component {
       return (
         <div className="flex items-center justify-center h-screen bg-gray-50">
           <div className="text-center p-4">
-            <p className="text-lg text-gray-700">予期せぬエラーが発生しました</p>
+            <p className="text-lg text-gray-700">
+              予期せぬエラーが発生しました
+            </p>
             <button
               onClick={() => window.location.reload()}
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -48,6 +51,10 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 function App() {
   return (

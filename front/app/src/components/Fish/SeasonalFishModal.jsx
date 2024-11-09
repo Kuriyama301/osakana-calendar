@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import { X } from "lucide-react";
 import SeasonTerm from './SeasonTerm';
 import FishDetails from './FishDetails';
@@ -124,6 +125,29 @@ const SeasonalFishModal = ({
       />
     </div>
   );
+};
+
+SeasonalFishModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  currentDate: PropTypes.string.isRequired,
+  seasonalFish: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      image_url: PropTypes.string.isRequired,
+      fish_seasons: PropTypes.arrayOf(
+        PropTypes.shape({
+          start_month: PropTypes.number.isRequired,
+          start_day: PropTypes.number.isRequired,
+          end_month: PropTypes.number.isRequired,
+          end_day: PropTypes.number.isRequired
+        })
+      ).isRequired
+    })
+  ).isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.string
 };
 
 export default SeasonalFishModal;

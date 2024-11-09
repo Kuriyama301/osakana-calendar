@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext, useRef, useCallback } from 'react';
+import { createContext, useState, useContext, useRef, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 const CalendarContext = createContext();
 
@@ -14,7 +15,7 @@ export const CalendarProvider = ({ children }) => {
     setIsExternalSelection(true);
     setSelectedDate(date);
     setDisplayedMonth(date);
-    if (mainCalendarRef.current && mainCalendarRef.current.scrollToDate) {
+    if (mainCalendarRef.current?.scrollToDate) {
       mainCalendarRef.current.scrollToDate(date);
     }
   }, []);
@@ -36,6 +37,10 @@ export const CalendarProvider = ({ children }) => {
       {children}
     </CalendarContext.Provider>
   );
+};
+
+CalendarProvider.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 export default CalendarProvider;

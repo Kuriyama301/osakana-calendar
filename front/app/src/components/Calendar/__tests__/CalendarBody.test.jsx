@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, test, expect, vi, afterEach } from 'vitest';
 import CalendarBody from "../CalendarBody";
 
 describe("CalendarBody", () => {

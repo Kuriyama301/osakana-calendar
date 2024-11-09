@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { X } from 'lucide-react';
 import SeasonTerm from './SeasonTerm';
 
@@ -9,7 +10,6 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
-      // モーダルが開かれるたびに画像エラー状態をリセット
       setImageError(false);
     } else {
       const timer = setTimeout(() => setIsAnimating(false), 300);
@@ -99,6 +99,22 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
       </div>
     </div>
   );
+};
+
+FishDetails.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  fish: PropTypes.shape({
+    name: PropTypes.string,
+    image_url: PropTypes.string,
+    fish_seasons: PropTypes.arrayOf(PropTypes.shape({
+      start_date: PropTypes.string,
+      end_date: PropTypes.string
+    })),
+    origin: PropTypes.string,
+    nutrition: PropTypes.string,
+    features: PropTypes.string
+  })
 };
 
 export default FishDetails;

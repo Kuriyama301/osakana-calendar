@@ -1,4 +1,4 @@
-import React from "react";
+import PropTypes from "prop-types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const CalendarHeader = ({ displayedMonth, prevMonth, nextMonth }) => (
@@ -24,5 +24,11 @@ const CalendarHeader = ({ displayedMonth, prevMonth, nextMonth }) => (
     </div>
   </div>
 );
+
+CalendarHeader.propTypes = {
+  displayedMonth: PropTypes.instanceOf(Date).isRequired,
+  prevMonth: PropTypes.func.isRequired,
+  nextMonth: PropTypes.func.isRequired,
+};
 
 export default CalendarHeader;

@@ -1,9 +1,17 @@
 import React from "react";
 import { X } from "lucide-react";
 import { useModal } from '../../hooks/useModal';
+import PropTypes from 'prop-types';
 
 const Modal = ({ isOpen, onClose, title, children }) => {
   const { isAnimating, shouldRender } = useModal(isOpen);
+
+  Modal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired
+  };
 
   if (!shouldRender) return null;
 

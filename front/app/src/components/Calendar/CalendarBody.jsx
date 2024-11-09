@@ -1,4 +1,4 @@
-import React from "react";
+import PropTypes from 'prop-types';
 import CalendarDay from "./CalendarDay";
 
 const CalendarBody = ({
@@ -48,6 +48,12 @@ const CalendarBody = ({
       {renderCalendar()}
     </div>
   );
+};
+
+CalendarBody.propTypes = {
+  displayedMonth: PropTypes.instanceOf(Date).isRequired,
+  selectedDate: PropTypes.instanceOf(Date).isRequired,
+  setSelectedDateExternal: PropTypes.func.isRequired
 };
 
 export default CalendarBody;

@@ -1,70 +1,100 @@
-import { describe, beforeEach, afterEach, test, expect, vi } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import { describe, beforeEach, afterEach, test, expect, vi } from "vitest";
+import { render, screen, act } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import "@testing-library/jest-dom";
 import HomePage from "../../pages/HomePage";
 import { CalendarProvider } from "../../CalendarContext";
-import client from '../../api/client';
+import client from "../../api/client";
 
-// clientのモック
-vi.mock('../../api/client', () => ({
+vi.mock("../../api/client", () => ({
   default: {
-    get: vi.fn()
-  }
+    get: vi.fn(),
+  },
 }));
 
-describe('カレンダーと魚情報の統合テスト', () => {
+describe("カレンダーと魚情報の統合テスト", () => {
   let user;
-  const testDate = new Date(2024, 0, 15);
+  const mockDate = new Date("2024-01-15T00:00:00.000Z");
 
-  beforeEach(() => {
-    // ResizeObserverのモック
+  beforeEach(async () => {
+    vi.setSystemTime(mockDate);
+
     window.ResizeObserver = vi.fn(() => ({
       observe: vi.fn(),
       unobserve: vi.fn(),
       disconnect: vi.fn(),
     }));
 
-    // スクロール関数のモック
     Element.prototype.scrollIntoView = vi.fn();
-
     user = userEvent.setup();
 
-    // 日付を固定
-    vi.setSystemTime(testDate);
+    client.get.mockResolvedValue({
+      data: [
+        {
+          id: 1,
+          name: "テスト用の魚",
+          image_url: "/test-image.jpg",
+          fish_seasons: [
+            {
+              start_month: 1,
+              start_day: 1,
+              end_month: 12,
+              end_day: 31,
+            },
+          ],
+        },
+      ],
+    });
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
-  test('基本的なユーザーフロー：日付選択→魚の情報表示→詳細確認', async () => {
-    // 正常系のレスポンスをモック
-    client.get.mockResolvedValueOnce({
-      data: [{
-        id: 1,
-        name: "テスト用の魚",
-        features: "テスト用の特徴",
-        nutrition: "テスト用の栄養",
-        origin: "テスト用の産地"
-      }]
-    });
-
+  test("日付選択時にAPIが呼び出される", async () => {
     await act(async () => {
       render(
-        <CalendarProvider>
+        <CalendarProvider initialDate={mockDate}>
           <HomePage />
         </CalendarProvider>
       );
     });
 
-    // 日付要素をクリック
-    const dateId = `date-${testDate.toISOString()}`;
-    const dateElement = document.getElementById(dateId);
-    await user.click(dateElement);
+    const date15Elements = screen.getAllByTestId("calendar-day-15");
+    const targetElement = date15Elements.find(
+      (element) => element.id === `date-${mockDate.toISOString()}`
+    );
 
-    // 魚の情報が表示されることを確認
-    const fishElement = await screen.findByText('テスト用の魚');
-    expect(fishElement).toBeInTheDocument();
+    await act(async () => {
+      await user.click(targetElement);
+    });
+
+    expect(client.get).toHaveBeenCalledWith("api/v1/calendar/fish", {
+      params: { date: "2024-01-15" },
+    });
+  });
+
+  test("魚情報モーダルが表示される", async () => {
+    await act(async () => {
+      render(
+        <CalendarProvider initialDate={mockDate}>
+          <HomePage />
+        </CalendarProvider>
+      );
+    });
+
+    const date15Elements = screen.getAllByTestId("calendar-day-15");
+    const targetElement = date15Elements.find(
+      (element) => element.id === `date-${mockDate.toISOString()}`
+    );
+
+    await act(async () => {
+      await user.click(targetElement);
+      // モーダルの表示を待機
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(screen.getByText("テスト用の魚")).toBeInTheDocument();
   });
 });

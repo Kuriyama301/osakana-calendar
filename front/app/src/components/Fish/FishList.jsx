@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import SeasonTerm from './SeasonTerm';
 
 const FishList = ({ fishes }) => {
@@ -13,6 +13,22 @@ const FishList = ({ fishes }) => {
       ))}
     </div>
   );
+};
+
+FishList.propTypes = {
+  fishes: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      image_url: PropTypes.string.isRequired,
+      fish_seasons: PropTypes.arrayOf(
+        PropTypes.shape({
+          start_date: PropTypes.string.isRequired,
+          end_date: PropTypes.string.isRequired
+        })
+      ).isRequired
+    })
+  ).isRequired
 };
 
 export default FishList;

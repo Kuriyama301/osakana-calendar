@@ -1,0 +1,100 @@
+name: PR Test
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'api/**'
+      - 'front/**'
+      - '.github/workflows/**'
+      - 'docker-compose*.yml'
+    types: [opened, synchronize, reopened]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: osakana_calendar_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      POSTGRES_DB: osakana_calendar_test
+      POSTGRES_USER: postgres
+      DATABASE_URL: postgresql://postgres:${{ secrets.POSTGRES_TEST_PASSWORD }}@localhost:5432/osakana_calendar_test
+      ALLOWED_ORIGINS: http://localhost:5173
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.4'
+          bundler-cache: true
+          working-directory: api
+
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Setup test database
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+          bundle exec rails db:seed RAILS_ENV=test
+
+      - name: Run tests
+        run: bundle exec rails test
+
+  frontend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front/app
+
+    env:
+      NODE_ENV: test
+      VITE_API_URL: http://localhost:3000
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: front/app/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-coverage
+          path: front/app/coverage
+          retention-days: 7

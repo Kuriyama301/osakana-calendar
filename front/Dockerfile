@@ -4,7 +4,7 @@ COPY app/package*.json ./
 
 # ビルドステージ
 FROM base as build
-RUN npm ci
+RUN npm install
 COPY app ./
 # ビルド時の環境変数を設定
 ARG VITE_API_URL
@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package*.json ./
 COPY app/server.js ./
-RUN npm ci --only=production
+RUN npm install --production
 ENV NODE_ENV=production
 ENV PORT=3000
 USER node

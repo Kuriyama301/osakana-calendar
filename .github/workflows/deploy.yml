@@ -19,9 +19,6 @@ jobs:
   deploy-backend:
     needs: test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: api
     
     steps:
       - uses: actions/checkout@v3
@@ -33,12 +30,11 @@ jobs:
           heroku_app_name: ${{ secrets.HEROKU_BACKEND_APP }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           usedocker: true
-          docker_build_args: |
-            NODE_ENV
-            RAILS_ENV
+          appdir: "api"
         env:
-          NODE_ENV: production
-          RAILS_ENV: production
+          HD_RAILS_ENV: production
+          HD_RAILS_SERVE_STATIC_FILES: enabled
+          HD_RAILS_LOG_TO_STDOUT: enabled
 
       - name: Database migration
         if: success()
@@ -48,9 +44,6 @@ jobs:
   deploy-frontend:
     needs: deploy-backend
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: front
     
     steps:
       - uses: actions/checkout@v3
@@ -62,9 +55,7 @@ jobs:
           heroku_app_name: ${{ secrets.HEROKU_FRONTEND_APP }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           usedocker: true
-          docker_build_args: |
-            NODE_ENV
-            VITE_API_URL
+          appdir: "front"
         env:
-          NODE_ENV: production
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          HD_NODE_ENV: production
+          HD_VITE_API_URL: ${{ secrets.VITE_API_URL }}

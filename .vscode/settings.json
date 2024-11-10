@@ -9,6 +9,35 @@
     "strings": true
   },
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json": "docker-compose*.yml"
+    "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json": "docker-compose*.yml",
+    "https://json.schemastore.org/github-workflow.json": [
+      "/.github/workflows/*.yml",
+      "/.github/workflows/*.yaml"
+    ]
+  },
+  "yaml.customTags": ["!reference sequence", "!reference scalar"],
+  // GitHubActionsの文脈アクセスの検証を制御
+  "yaml.validate": true,
+  "yaml.format.enable": true,
+  "yaml.format.singleQuote": true,
+  "yaml.disableAdditionalProperties": false,
+  // contextsの検証を緩和
+  "yaml.validateSchema": {
+    "githubWorkflow": {
+      "contexts": "ignore"
+    }
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true
+  },
+  // カスタム検証ルールの追加
+  "yaml.customValidation": {
+    "contexts": {
+      "env": true,
+      "secrets": true
+    }
   }
 }

@@ -8,7 +8,12 @@ on:
       - 'front/**'
       - '.github/workflows/**'
       - 'docker-compose*.yml'
-    types: [opened, synchronize, reopened]
+  workflow_call:
+    secrets:
+      HEROKU_API_KEY:
+        required: true
+      POSTGRES_TEST_PASSWORD:
+        required: true
 
 jobs:
   backend-test:
@@ -16,6 +21,13 @@ jobs:
     defaults:
       run:
         working-directory: api
+    
+    env:
+      DB_HOST: localhost
+      POSTGRES_DB: osakana_calendar_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
+      RAILS_ENV: test
 
     services:
       postgres:
@@ -32,13 +44,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    env:
-      RAILS_ENV: test
-      POSTGRES_DB: osakana_calendar_test
-      POSTGRES_USER: postgres
-      DATABASE_URL: postgresql://postgres:${{ secrets.POSTGRES_TEST_PASSWORD }}@localhost:5432/osakana_calendar_test
-      ALLOWED_ORIGINS: http://localhost:5173
-
     steps:
       - uses: actions/checkout@v3
 
@@ -47,7 +52,6 @@ jobs:
         with:
           ruby-version: '3.3.4'
           bundler-cache: true
-          working-directory: api
 
       - name: Install dependencies
         run: |
@@ -69,10 +73,6 @@ jobs:
       run:
         working-directory: front/app
 
-    env:
-      NODE_ENV: test
-      VITE_API_URL: http://localhost:3000
-
     steps:
       - uses: actions/checkout@v3
 
@@ -89,12 +89,5 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Run tests with coverage
-        run: npm run test:coverage
-
-      - name: Upload coverage reports
-        uses: actions/upload-artifact@v3
-        with:
-          name: frontend-coverage
-          path: front/app/coverage
-          retention-days: 7
+      - name: Run tests
+        run: npm test

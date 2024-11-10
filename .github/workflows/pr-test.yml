@@ -21,6 +21,13 @@ jobs:
     defaults:
       run:
         working-directory: api
+    
+    env:
+      DB_HOST: localhost
+      POSTGRES_DB: osakana_calendar_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
+      RAILS_ENV: test
 
     services:
       postgres:

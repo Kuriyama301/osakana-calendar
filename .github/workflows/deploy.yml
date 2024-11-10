@@ -1,0 +1,70 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'api/**'
+      - 'front/**'
+      - '.github/workflows/**'
+      - 'docker-compose*.yml'
+
+jobs:
+  test:
+    uses: ./.github/workflows/pr-test.yml
+    secrets:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      POSTGRES_TEST_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
+
+  deploy-backend:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_BACKEND_APP }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          docker_build_args: |
+            NODE_ENV
+            RAILS_ENV
+        env:
+          NODE_ENV: production
+          RAILS_ENV: production
+
+      - name: Database migration
+        if: success()
+        run: |
+          heroku run --app ${{ secrets.HEROKU_BACKEND_APP }} 'rails db:migrate'
+
+  deploy-frontend:
+    needs: deploy-backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_FRONTEND_APP }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          docker_build_args: |
+            NODE_ENV
+            VITE_API_URL
+        env:
+          NODE_ENV: production
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}

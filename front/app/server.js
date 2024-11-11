@@ -7,9 +7,10 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5173;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // 本番環境の場合のみ静的ファイル配信を設定
-if (process.env.NODE_ENV === 'production') {
+if (NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
   
   app.get('*', (req, res) => {

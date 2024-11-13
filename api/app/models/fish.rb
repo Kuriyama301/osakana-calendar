@@ -62,4 +62,9 @@ class Fish < ApplicationRecord
       end
     end
   end
+
+  def self.search_by_name_and_features(query)
+    where('name LIKE :query OR features LIKE :query',
+          query: "%#{sanitize_sql_like(query)}%")
+  end
 end

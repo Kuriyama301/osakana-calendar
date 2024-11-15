@@ -28,3 +28,19 @@ export const getFishByDate = async (date) => {
     );
   }
 };
+
+export const searchFish = async (searchTerm) => {
+  try {
+    const response = await client.get('api/v1/fish/search', {
+      params: { query: searchTerm }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to search fish:', error);
+    throw new Error(
+      error.response?.data?.message || 
+      error.message || 
+      'Failed to search fish'
+    );
+  }
+};

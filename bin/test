@@ -1,3 +1,5 @@
+# 実行コマンド ./bin/test
+
 echo "Starting tests..."
 
 # 全てのコンテナとネットワークを削除

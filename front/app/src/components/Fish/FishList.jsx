@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import SeasonTerm from "./SeasonTerm";
 import React from "react";
 import SearchForm from "./SearchForm";
+import PropTypes from 'prop-types';
 
 const FishList = ({ fishes, onSearch, isLoading }) => {
   return (
@@ -47,6 +48,11 @@ FishList.propTypes = {
       ).isRequired,
     })
   ).isRequired,
+};
+
+ComponentName.propTypes = {
+  onSearch: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired
 };
 
 export default FishList;

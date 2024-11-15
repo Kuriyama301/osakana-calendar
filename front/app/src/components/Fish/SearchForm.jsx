@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 const SearchForm = ({ onSearch, isLoading }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,6 +31,11 @@ const SearchForm = ({ onSearch, isLoading }) => {
       </form>
     </div>
   );
+};
+
+ComponentName.propTypes = {
+  onSearch: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired
 };
 
 export default SearchForm;

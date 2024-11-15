@@ -47,6 +47,8 @@ FishList.propTypes = {
       ).isRequired,
     })
   ).isRequired,
+  onSearch: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired
 };
 
 export default FishList;

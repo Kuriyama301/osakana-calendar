@@ -50,9 +50,4 @@ FishList.propTypes = {
   ).isRequired,
 };
 
-ComponentName.propTypes = {
-  onSearch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired
-};
-
 export default FishList;

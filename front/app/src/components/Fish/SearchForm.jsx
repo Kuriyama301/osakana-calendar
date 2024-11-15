@@ -33,9 +33,15 @@ const SearchForm = ({ onSearch, isLoading }) => {
   );
 };
 
-ComponentName.propTypes = {
+SearchForm.propTypes = {
   onSearch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired
+  isLoading: PropTypes.bool,
+  className: PropTypes.string
+};
+
+SearchForm.defaultProps = {
+  isLoading: false,
+  className: ''
 };
 
 export default SearchForm;

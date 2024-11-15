@@ -9,6 +9,7 @@ function Header() {
 
   const handleSearch = async (searchTerm) => {
     try {
+      // eslint-disable-next-line no-unused-vars
       const results = await searchFish(searchTerm);
       // 検索結果を使用して必要な処理を行う
       // 例: モーダルで表示、特定の要素にスクロールなど

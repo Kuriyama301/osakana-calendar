@@ -39,9 +39,4 @@ SearchForm.propTypes = {
   className: PropTypes.string
 };
 
-SearchForm.defaultProps = {
-  isLoading: false,
-  className: ''
-};
-
 export default SearchForm;

@@ -31,8 +31,12 @@ function Header() {
       <header className="bg-white bg-opacity-85 backdrop-blur-md fixed top-0 left-0 right-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex justify-between items-center h-16">
-            <Link to="/" className="text-blue-500 text-2xl font-bold flex-shrink-0">
-              オサカナカレンダー
+            <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
+              <img
+                src="/logo.jpg"
+                alt=""
+                className="h-24 w-24 object-contain ml-10"
+              />
             </Link>
             
             <div className="flex items-center gap-4 flex-grow justify-end max-w-lg">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { MainCalendar, SubCalendar } from '../components';
+import { MainCalendar, SubCalendar } from "../components";
 
 const HomePage = () => {
   const [showSubCalendar, setShowSubCalendar] = useState(true);
@@ -30,7 +30,18 @@ const HomePage = () => {
   }, [checkSize]);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen bg-gray-100">
+    <div
+      ref={containerRef}
+      className="relativemin-h-screen"
+      style={{
+        backgroundImage: "url('/bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        // backgroundColor: "rgba(255, 255, 255, 0.8)",
+        backgroundBlendMode: 'overlay'
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex justify-center items-start h-full">
           <div

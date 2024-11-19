@@ -1,17 +1,10 @@
-import { Component, Suspense } from "react";
+import { Component, Suspense, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import { Header } from "./components";
 import { CalendarProvider } from "./CalendarContext.jsx";
-
-const Loading = () => (
-  <div className="flex items-center justify-center h-screen bg-gray-50">
-    <div className="text-center">
-      <p className="text-lg text-gray-600">Loading...</p>
-    </div>
-  </div>
-);
+import LoadingScreen from "./components/Common/LoadingScreen.jsx";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -57,13 +50,34 @@ ErrorBoundary.propTypes = {
 };
 
 function App() {
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        const hasVisited = localStorage.getItem("hasVisitedApp");
+        const loadingDuration = hasVisited ? 300 : 1500;
+
+        await new Promise((resolve) => setTimeout(resolve, loadingDuration));
+        setIsInitialLoading(false);
+        localStorage.setItem("hasVisitedApp", "true");
+      } catch (error) {
+        console.error("Initialization error:", error);
+        setIsInitialLoading(false);
+      }
+    };
+
+    initialize();
+  }, []);
+
   return (
     <ErrorBoundary>
       <CalendarProvider>
         <Router>
           <div className="flex flex-col h-screen overflow-hidden bg-gray-100">
+            <LoadingScreen isOpen={isInitialLoading} />
             <Header className="flex-shrink-0" />
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingScreen isOpen={true} />}>
               <main className="flex-grow overflow-hidden">
                 <Routes>
                   <Route path="/" element={<HomePage />} />

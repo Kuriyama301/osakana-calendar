@@ -33,7 +33,7 @@ function Header() {
           <nav className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
               <img
-                src="/logo.jpg"
+                src="/titlelogo.png"
                 alt=""
                 className="h-24 w-24 object-contain ml-10"
               />

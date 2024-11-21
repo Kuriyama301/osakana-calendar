@@ -1,9 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { MainCalendar, SubCalendar } from "../components";
+import SeasonalFishModal from "../components/Fish/SeasonalFishModal";
+import { useDailyFishModal } from "../hooks/useDailyFishModal";
+import LoadingScreen from "../components/Common/LoadingScreen";
 
 const HomePage = () => {
   const [showSubCalendar, setShowSubCalendar] = useState(true);
   const containerRef = useRef(null);
+  const {
+    isModalOpen,
+    selectedModalDate,
+    isLoading,
+    seasonalFish,
+    error,
+    closeModal,
+  } = useDailyFishModal();
 
   const checkSize = useCallback(() => {
     if (containerRef.current) {
@@ -32,16 +43,16 @@ const HomePage = () => {
   return (
     <div
       ref={containerRef}
-      className="relativemin-h-screen"
+      className="relative min-h-screen"
       style={{
         backgroundImage: "url('/bg.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        // backgroundColor: "rgba(255, 255, 255, 0.8)",
-        backgroundBlendMode: 'overlay'
+        backgroundBlendMode: "overlay",
       }}
     >
+      <LoadingScreen isOpen={isLoading} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex justify-center items-start h-full">
           <div
@@ -56,6 +67,15 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+
+      <SeasonalFishModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        currentDate={selectedModalDate}
+        seasonalFish={seasonalFish}
+        isLoading={isLoading}
+        error={error}
+      />
     </div>
   );
 };

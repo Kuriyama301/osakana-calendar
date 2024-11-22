@@ -83,7 +83,7 @@ const MainCalendar = React.forwardRef((props, ref) => {
   }, [handleScroll]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 pt-16">
+    <div className="flex flex-col h-screen bg-transparent pt-16">
       <div
         ref={calendarRef}
         className="flex-grow overflow-y-auto scrollbar-hide"

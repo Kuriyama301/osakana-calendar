@@ -4,9 +4,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: osakana_calendar_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: your_secure_password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
 
@@ -17,12 +17,15 @@ services:
     volumes:
       - ./api:/app
     ports:
-      - "3000:3000"
+      - "${API_PORT}:${API_PORT}"
     environment:
-      DATABASE_URL: postgresql://postgres:your_secure_password@db:5432/osakana_calendar_db
-      RAILS_ENV: development
-      CORS_ORIGINS: http://localhost:5173
-      RAILS_DEVELOPMENT_HOSTS: api,localhost,0.0.0.0
+      DATABASE_URL: ${DATABASE_URL}
+      RAILS_ENV: ${RAILS_ENV}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      RAILS_DEVELOPMENT_HOSTS: ${RAILS_DEVELOPMENT_HOSTS}
+      VITE_YOUTUBE_API_KEY: ${VITE_YOUTUBE_API_KEY}
+    env_file:
+      - .env.development
     depends_on:
       - db
     command: >
@@ -41,12 +44,17 @@ services:
       - ./front/app:/app
       - /app/node_modules
     ports:
-      - "5173:5173"
+      - "${FRONT_PORT}:${FRONT_PORT}"
     environment:
-      NODE_ENV: development
-      VITE_API_URL: http://localhost:3000
+      NODE_ENV: ${NODE_ENV}
+      VITE_API_URL: ${VITE_API_URL}
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+    env_file:
+      - .env.development
     depends_on:
       - api
 
 volumes:
   postgres_data:
+
+# docker-compose --env-file .env.development up --build

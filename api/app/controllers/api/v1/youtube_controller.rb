@@ -2,19 +2,20 @@ module Api
   module V1
     class YoutubeController < ApplicationController
       def search
-        fish_name = params[:q]&.strip
-        if fish_name.blank?
-          render json: { error: '魚の名前を指定してください' }, status: :bad_request
-          return
-        end
+        return render_error('検索キーワードを入力してください') if params[:q].blank?
 
-        result = YoutubeService.search(fish_name)
-
+        result = YoutubeService.search(params[:q])
         if result[:success]
-          render json: { success: true, videos: result[:data] }
+          render json: { videos: result[:data] }
         else
-          render json: { success: false, error: result[:error] }, status: :internal_server_error
+          render_error(result[:error])
         end
+      end
+
+      private
+
+      def render_error(message)
+        render json: { error: message }, status: :bad_request
       end
     end
   end

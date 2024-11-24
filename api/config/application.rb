@@ -13,6 +13,9 @@ module App
     config.time_zone = "Tokyo"
     config.active_record.default_timezone = :local
 
+    # サービスディレクトリのオートロード設定を追加
+    config.autoload_paths += %W[#{config.root}/app/services]
+
     # Zeitwerkの設定で特定のディレクトリを無視
     config.autoload_paths.delete("#{config.root}/app/channels")
     config.eager_load_paths.delete("#{config.root}/app/channels")

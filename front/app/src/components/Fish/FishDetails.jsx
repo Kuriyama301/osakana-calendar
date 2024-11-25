@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { X } from 'lucide-react';
-import SeasonTerm from './SeasonTerm';
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { X } from "lucide-react";
+import SeasonTerm from "./SeasonTerm";
+import FishVideo from "./FishVideo";  // FishVideoコンポーネントをインポート
 
 const FishDetails = ({ isOpen, onClose, fish }) => {
   const [isAnimating, setIsAnimating] = useState(false);
@@ -30,15 +31,15 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
   if (!isAnimating && !isOpen) return null;
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out ${
-        isAnimating && isOpen ? 'bg-opacity-50' : 'bg-opacity-0'
+        isAnimating && isOpen ? "bg-opacity-50" : "bg-opacity-0"
       } flex items-center justify-center z-50`}
       onClick={handleClose}
     >
-      <div 
+      <div
         className={`bg-white rounded-lg text-gray-800 relative w-full mx-4 sm:mx-8 md:mx-auto md:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all duration-300 ease-in-out ${
-          isAnimating && isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          isAnimating && isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -59,9 +60,9 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
           <div className="flex flex-col items-center">
             <div className="w-full max-w-md mb-6">
               {fish?.image_url && !imageError ? (
-                <img 
+                <img
                   src={fish.image_url}
-                  alt={fish.name} 
+                  alt={fish.name}
                   className="w-full h-auto object-contain rounded-lg"
                   onError={handleImageError}
                 />
@@ -69,12 +70,14 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
                 <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg">
                   <div className="text-center">
                     <span className="text-gray-600 block">{fish?.name}</span>
-                    <span className="text-gray-500 text-sm block mt-2">画像を読み込めませんでした</span>
+                    <span className="text-gray-500 text-sm block mt-2">
+                      画像を読み込めませんでした
+                    </span>
                   </div>
                 </div>
               )}
             </div>
-            
+
             <div className="w-full">
               <h3 className="text-xl font-semibold mb-2">旬の季節</h3>
               {fish?.fish_seasons && fish.fish_seasons.length > 0 ? (
@@ -84,15 +87,20 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
               ) : (
                 <p className="text-lg text-gray-700 mb-4">シーズン情報なし</p>
               )}
-              
+
               <h3 className="text-xl font-semibold mb-2 mt-6">原産地</h3>
               <p className="text-lg text-gray-700 mb-4">{fish?.origin}</p>
-              
+
               <h3 className="text-xl font-semibold mb-2">栄養</h3>
               <p className="text-lg text-gray-700 mb-4">{fish?.nutrition}</p>
-              
+
               <h3 className="text-xl font-semibold mb-2">特徴</h3>
-              <p className="text-lg text-gray-700">{fish?.features}</p>
+              <p className="text-lg text-gray-700 mb-4">{fish?.features}</p>
+
+              {/* YouTube動画セクション */}
+              <div className="mt-6">
+                <FishVideo fishName={fish?.name} />
+              </div>
             </div>
           </div>
         </div>
@@ -107,14 +115,16 @@ FishDetails.propTypes = {
   fish: PropTypes.shape({
     name: PropTypes.string,
     image_url: PropTypes.string,
-    fish_seasons: PropTypes.arrayOf(PropTypes.shape({
-      start_date: PropTypes.string,
-      end_date: PropTypes.string
-    })),
+    fish_seasons: PropTypes.arrayOf(
+      PropTypes.shape({
+        start_date: PropTypes.string,
+        end_date: PropTypes.string,
+      })
+    ),
     origin: PropTypes.string,
     nutrition: PropTypes.string,
-    features: PropTypes.string
-  })
+    features: PropTypes.string,
+  }),
 };
 
 export default FishDetails;

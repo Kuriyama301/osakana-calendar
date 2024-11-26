@@ -55,6 +55,7 @@ const HomePage = () => {
       <LoadingScreen isOpen={isLoading} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex justify-center items-start h-full">
+          {/* サブカレンダー */}
           <div
             className={`sub-calendar-container ${
               showSubCalendar ? "block" : "hidden"
@@ -62,8 +63,15 @@ const HomePage = () => {
           >
             <SubCalendar />
           </div>
-          <div className="main-calendar-container w-full max-w-3xl lg:ml-8">
+
+          {/* 縦線 */}
+          <div className="hidden lg:block w-px bg-gray-300/30 mx-8 h-screen sticky top-0" />
+
+          {/* メインカレンダー */}
+          <div className="main-calendar-container w-full max-w-3xl relative">
             <MainCalendar />
+            {/* 縦線 */}
+            <div className="hidden lg:block w-px bg-gray-300/30 absolute right-[-2rem] top-0 h-screen" />
           </div>
         </div>
       </div>

@@ -2,23 +2,39 @@
 
 echo "Starting tests..."
 
-# 全てのコンテナとネットワークを削除
+# 環境変数ファイルを読み込む
+set -a
+source .env.test
+set +a
+
+# クリーンアップ
 docker-compose down --volumes --remove-orphans
 docker-compose -f docker-compose.test.yml down --volumes --remove-orphans
 
-# イメージを再ビルド
-docker-compose -f docker-compose.test.yml build
+# APIテストの実行
+echo "Running API tests..."
+docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from api-test db-test api-test
 
-# テストを実行
-docker-compose -f docker-compose.test.yml up --abort-on-container-exit --remove-orphans
+# APIテストの終了コードを保存
+API_TEST_EXIT_CODE=$?
 
-# 終了コードを保存
-TEST_EXIT_CODE=$?
+if [ $API_TEST_EXIT_CODE -ne 0 ]; then
+    echo "API tests failed"
+    docker-compose -f docker-compose.test.yml down --volumes
+    exit $API_TEST_EXIT_CODE
+fi
+
+# フロントエンドテストの実行
+echo "Running Frontend tests..."
+docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from frontend-test frontend-test
+
+# フロントエンドテストの終了コードを保存
+FRONTEND_TEST_EXIT_CODE=$?
 
 # クリーンアップ
-docker-compose -f docker-compose.test.yml down --volumes --remove-orphans
+docker-compose -f docker-compose.test.yml down --volumes
 
 echo "Tests completed."
 
-# テストの終了コードを返す
-exit $TEST_EXIT_CODE
+# エラーがあれば終了コード1
+[ $API_TEST_EXIT_CODE -eq 0 ] && [ $FRONTEND_TEST_EXIT_CODE -eq 0 ]

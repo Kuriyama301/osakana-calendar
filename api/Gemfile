@@ -10,6 +10,13 @@ gem "puma", "~> 5.0"
 gem "rack-cors"
 gem "bootsnap", require: false
 
+# 認証関連のgems
+gem 'devise'                           # 基本的な認証機能
+gem 'devise-jwt', '~> 0.11.0'          # JWT認証サポート
+gem 'omniauth'                         # OAuth認証の基本機能
+gem 'omniauth-google-oauth2'           # Google認証
+gem 'omniauth-rails_csrf_protection'   # CSRF保護
+
 # 必要なシステムgems
 gem 'base64'
 gem 'bigdecimal'
@@ -22,8 +29,13 @@ gem 'active_storage_validations'
 gem 'aws-sdk-s3', require: true
 
 # Windows対応
-gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
+gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw ]
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+
+  # テスト関連のgems
+  gem 'rspec-rails'                    # RSpecテストフレームワーク
+  gem 'factory_bot_rails'              # テストデータ作成
+  gem 'faker'                          # テストデータ生成
 end

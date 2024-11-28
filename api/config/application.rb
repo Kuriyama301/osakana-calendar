@@ -5,6 +5,7 @@ require 'active_storage/engine'
 require 'action_controller/railtie'
 require 'action_view/railtie'
 require 'rack/cors'
+require 'devise'
 
 module App
   class Application < Rails::Application
@@ -13,7 +14,12 @@ module App
     config.time_zone = "Tokyo"
     config.active_record.default_timezone = :local
 
-    # サービスディレクトリのオートロード設定を追加
+    # APIモードでDeviseを使用するための設定
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+    config.middleware.use ActionDispatch::Flash
+
+    # サービスディレクトリのオートロード設定
     config.autoload_paths += %W[#{config.root}/app/services]
 
     # Zeitwerkの設定で特定のディレクトリを無視
@@ -22,5 +28,8 @@ module App
 
     # 開発環境用のホスト設定
     config.hosts = [] unless Rails.env.production?
+
+    # セッションストアの設定
+    config.session_store :cookie_store, key: '_osakana_calendar_session'
   end
 end

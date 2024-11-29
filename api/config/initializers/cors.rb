@@ -5,7 +5,11 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     resource '*',
       headers: :any,
       methods: [:get, :post, :put, :patch, :delete, :options, :head],
-      credentials: false,
-      expose: ['Access-Control-Allow-Origin']
+      credentials: ENV.fetch('CORS_CREDENTIALS', 'false') == 'true',
+      expose: [
+        'Access-Control-Allow-Origin',
+        'Authorization', # JWTトークンのための認証ヘッダー
+        'X-CSRF-Token' # CSRFトークン
+      ]
   end
 end

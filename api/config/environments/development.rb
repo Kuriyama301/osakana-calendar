@@ -64,4 +64,15 @@ Rails.application.configure do
         expose: ['Access-Control-Allow-Origin']
     end
   end
+
+  # メール設定
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch('MAILER_HOST', 'localhost'),
+    port: ENV.fetch('MAILER_PORT', 3000)
+  }
+
+  # 開発環境ではメールをletterオープナーで確認
+  config.action_mailer.delivery_method = :letter_opener_web
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
 end

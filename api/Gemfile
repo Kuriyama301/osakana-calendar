@@ -38,4 +38,7 @@ group :development, :test do
   gem 'rspec-rails'                    # RSpecテストフレームワーク
   gem 'factory_bot_rails'              # テストデータ作成
   gem 'faker'                          # テストデータ生成
+
+  # 開発環境でのメール確認用
+  gem 'letter_opener_web'
 end

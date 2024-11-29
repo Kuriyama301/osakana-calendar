@@ -6,6 +6,7 @@ require 'action_controller/railtie'
 require 'action_view/railtie'
 require 'rack/cors'
 require 'devise'
+require 'action_mailer/railtie'
 
 module App
   class Application < Rails::Application
@@ -18,6 +19,12 @@ module App
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
     config.middleware.use ActionDispatch::Flash
+
+    # メール送信の基本設定
+    config.action_mailer.default_url_options = {
+      host: ENV.fetch('MAILER_HOST', 'localhost'),
+      port: ENV.fetch('MAILER_PORT', 3000)
+    }
 
     # サービスディレクトリのオートロード設定
     config.autoload_paths += %W[#{config.root}/app/services]

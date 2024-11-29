@@ -27,4 +27,14 @@ Devise.setup do |config|
 
   # セッション設定
   config.skip_session_storage = [:http_auth, :params_auth]
+
+  # メール送信者の設定
+  config.mailer_sender = ENV.fetch('MAILER_FROM', 'no-reply@example.com')
+
+  # メール確認の設定
+  config.reconfirmable = true  # メールアドレス変更時の再確認
+  config.confirm_within = 3.days  # メール確認の期限
+
+  # パスワードリセットの設定
+  config.reset_password_within = 6.hours  # パスワードリセットの期限
 end

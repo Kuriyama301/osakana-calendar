@@ -1,5 +1,5 @@
 require "active_support/core_ext/integer/time"
-require "rack/cors"
+require 'letter_opener_web'
 
 Rails.application.configure do
   # 基本設定
@@ -52,18 +52,6 @@ Rails.application.configure do
   # Active Storageのホスト設定
   config.active_storage.service_urls_expire_in = 1.hour
   config.active_storage.resolve_model_to_route = :rails_storage_proxy
-
-  # CORS設定
-  config.middleware.insert_before 0, Rack::Cors do
-    allow do
-      origins ENV.fetch('ALLOWED_ORIGINS', 'http://localhost:5173').split(',').map(&:strip)
-      resource '*',
-        headers: :any,
-        methods: [:get, :post, :put, :patch, :delete, :options, :head],
-        credentials: false,
-        expose: ['Access-Control-Allow-Origin']
-    end
-  end
 
   # メール設定
   config.action_mailer.default_url_options = {

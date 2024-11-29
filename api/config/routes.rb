@@ -1,3 +1,5 @@
+require 'letter_opener_web'
+
 Rails.application.routes.draw do
   # API用の認証ルーティング設定
   devise_for :users,
@@ -29,4 +31,7 @@ Rails.application.routes.draw do
       get '/calendar/fish', to: 'calendar#fish_by_date'
     end
   end
+
+  # 開発環境でのメールプレビュー用
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 end

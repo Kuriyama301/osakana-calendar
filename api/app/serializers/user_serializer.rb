@@ -1,3 +1,5 @@
+require 'jsonapi/serializer'
+
 class UserSerializer
   include JSONAPI::Serializer
 

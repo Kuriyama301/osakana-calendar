@@ -28,4 +28,22 @@ Devise.setup do |config|
 
   # セッション設定
   config.skip_session_storage = [:http_auth, :params_auth]
+
+  config.jwt do |jwt|
+    # JWT秘密鍵の設定
+    jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY', nil)
+
+    # JWTの有効期限（24時間）
+    jwt.expiration_time = 24.hours.to_i
+
+    # トークンを発行するリクエスト
+    jwt.dispatch_requests = [
+      ['POST', %r{^/api/v1/auth/sign_in$}]  # ログイン時
+    ]
+
+    # トークンを無効化するリクエスト
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/api/v1/auth/sign_out$}]  # ログアウト時
+    ]
+  end
 end

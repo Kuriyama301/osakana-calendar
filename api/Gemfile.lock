@@ -148,6 +148,8 @@ GEM
       reline (>= 0.4.2)
     jmespath (1.6.2)
     json (2.8.2)
+    jsonapi-serializer (2.2.0)
+      activesupport (>= 4.2)
     jwt (2.9.3)
       base64
     launchy (3.0.1)
@@ -319,6 +321,7 @@ DEPENDENCIES
   devise-jwt (~> 0.11.0)
   factory_bot_rails
   faker
+  jsonapi-serializer
   letter_opener_web
   mutex_m
   omniauth

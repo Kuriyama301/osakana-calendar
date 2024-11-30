@@ -9,6 +9,7 @@ gem "pg", "~> 1.1"
 gem "puma", "~> 5.0"
 gem "rack-cors"
 gem "bootsnap", require: false
+gem 'jsonapi-serializer'
 
 # 認証関連のgems
 gem 'devise'                           # 基本的な認証機能

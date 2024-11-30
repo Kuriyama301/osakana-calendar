@@ -33,4 +33,6 @@ class ActiveSupport::TestCase
       error: "動画の検索に失敗しました"
     }
   end
+
+  include Devise::Test::IntegrationHelpers
 end

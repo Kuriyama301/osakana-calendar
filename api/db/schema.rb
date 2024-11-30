@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_28_110610) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_30_093032) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -62,6 +62,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_28_110610) do
     t.datetime "updated_at", null: false
     t.index ["fish_id", "start_month", "start_day", "end_month", "end_day"], name: "index_fish_seasons_on_fish_id_and_dates", unique: true
     t.index ["fish_id"], name: "index_fish_seasons_on_fish_id"
+  end
+
+  create_table "jwt_denylists", force: :cascade do |t|
+    t.string "jti", null: false
+    t.datetime "exp", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
   end
 
   create_table "users", force: :cascade do |t|

@@ -2,3 +2,10 @@ user:
   email: user@example.com
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
   name: Test User
+  confirmed_at: <%= Time.current %>
+
+unconfirmed_user:
+  email: unconfirmed@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  name: Unconfirmed User
+  confirmation_token: <%= Devise.token_generator.generate(User, :confirmation_token) %>

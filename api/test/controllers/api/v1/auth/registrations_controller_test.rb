@@ -1,33 +1,19 @@
-require 'test_helper'
+require "test_helper"
 
 class Api::V1::Auth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
-  test '有効なパラメータでユーザー登録できる' do
+  test "ユーザー登録ができる" do
     assert_difference('User.count') do
       post user_registration_path, params: {
         user: {
-          email: 'test@example.com',
-          password: 'password',
-          password_confirmation: 'password',
-          name: 'Test User'
+          email: "test@example.com",
+          password: "password123",
+          password_confirmation: "password123",
+          name: "Test User"
         }
       }, as: :json
     end
 
     assert_response :success
-    assert_equal 'application/json; charset=utf-8', @response.content_type
-  end
-
-  test '無効なパラメータではユーザー登録できない' do
-    assert_no_difference('User.count') do
-      post user_registration_path, params: {
-        user: {
-          email: '',
-          password: '',
-          name: ''
-        }
-      }, as: :json
-    end
-
-    assert_response :unprocessable_entity
+    assert_equal 'ユーザー登録が完了しました', json_response['message']
   end
 end

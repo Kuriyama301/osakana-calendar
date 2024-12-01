@@ -7,7 +7,9 @@ Rails.application.routes.draw do
     defaults: { format: :json },  # JSONレスポンスに設定
     controllers: {
       sessions: 'api/v1/auth/sessions',
-      registrations: 'api/v1/auth/registrations'
+      registrations: 'api/v1/auth/registrations',
+      passwords: 'api/v1/auth/passwords',
+      confirmations: 'api/v1/auth/confirmations'
     }
 
   # API関連ルーティング

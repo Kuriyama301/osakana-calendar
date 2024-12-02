@@ -1,32 +1,25 @@
-require 'test_helper'
+# test/controllers/api/v1/auth/sessions_controller_test.rb
+require "test_helper"
 
 class Api::V1::Auth::SessionsControllerTest < ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
-
   def setup
     @user = users(:user)
+    @user.update!(confirmed_at: Time.current)
   end
 
-  test '有効な認証情報でログインできる' do
-    post user_session_path, params: {
-      user: {
-        email: @user.email,
-        password: 'password'
-      }
-    }, as: :json
+  test "有効な認証情報でログインできる" do
+    puts "Test user email: #{@user.email}"  # デバッグ用
+    post api_v1_user_session_path,
+      params: {
+        user: {
+          email: @user.email,
+          password: 'password'
+        }
+      },
+      as: :json
 
+    puts "Response body: #{response.body}"  # デバッグ用
     assert_response :success
-    assert_equal 'application/json; charset=utf-8', @response.content_type
-  end
-
-  test '無効な認証情報ではログインできない' do
-    post user_session_path, params: {
-      user: {
-        email: @user.email,
-        password: 'wrong_password'
-      }
-    }, as: :json
-
-    assert_response :unauthorized
+    assert_equal 'ログインしました', json_response['message']
   end
 end

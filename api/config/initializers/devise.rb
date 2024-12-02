@@ -3,11 +3,10 @@ require 'devise/jwt'
 require 'devise/orm/active_record'
 
 Devise.setup do |config|
-  # APIモードの設定
-  config.navigational_formats = []
+  config.navigational_formats = [] # APIモードの設定
+  config.mailer_sender = 'no-reply@example.com'
 
-  # データベースの認証設定
-  config.authentication_keys = [:email]
+  # 基本設定
   config.case_insensitive_keys = [:email]
   config.strip_whitespace_keys = [:email]
 
@@ -25,25 +24,13 @@ Devise.setup do |config|
   config.confirm_within = 3.days                 # メール確認の期限
   config.expire_all_remember_me_on_sign_out = true
   config.sign_out_via = :delete
+  config.skip_session_storage = [:http_auth]
 
-  # セッション設定
-  config.skip_session_storage = [:http_auth, :params_auth]
-
+  # JWT設定
   config.jwt do |jwt|
-    # JWT秘密鍵の設定
-    jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY', nil)
-
-    # JWTの有効期限（24時間）
+    jwt.secret = Rails.application.credentials.secret_key_base
+    jwt.dispatch_requests = [['POST', %r{^/api/v1/auth/sign_in$}]]
+    jwt.revocation_requests = [['DELETE', %r{^/api/v1/auth/sign_out$}]]
     jwt.expiration_time = 24.hours.to_i
-
-    # トークンを発行するリクエスト
-    jwt.dispatch_requests = [
-      ['POST', %r{^/api/v1/auth/sign_in$}]  # ログイン時
-    ]
-
-    # トークンを無効化するリクエスト
-    jwt.revocation_requests = [
-      ['DELETE', %r{^/api/v1/auth/sign_out$}]  # ログアウト時
-    ]
   end
 end

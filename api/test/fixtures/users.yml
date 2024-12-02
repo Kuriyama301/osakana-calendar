@@ -1,6 +1,6 @@
 user:
   email: user@example.com
-  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  encrypted_password: <%= User.new.send(:password_digest, 'password') %>
   name: Test User
   confirmed_at: <%= Time.current %>
 

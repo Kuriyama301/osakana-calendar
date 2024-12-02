@@ -5,14 +5,21 @@ require "minitest/mock"
 
 class ActiveSupport::TestCase
   include Devise::Test::IntegrationHelpers
+  include Rails.application.routes.url_helpers # 追加
+
   fixtures :all
 
   def json_response
     JSON.parse(@response.body)
   end
 
-  def setup
-    @routes = Rails.application.routes
+  # ユーザーのログインのヘルパー
+  def login_as_user(user = nil)
+    @user = user || users(:user)
+    post api_v1_user_session_path, params: {
+      user: { email: @user.email, password: 'password' }
+    }, as: :json
+    assert_response :success
   end
 
   # YouTubeのモックレスポンスを生成するヘルパー

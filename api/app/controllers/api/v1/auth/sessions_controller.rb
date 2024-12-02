@@ -6,15 +6,17 @@ module Api
 
         private
 
-        def respond_with(resource, _opts = {})
+        def respond_to_on_create
           render json: {
-            status: { code: 200, message: 'ログインに成功しました' },
-            data: { user: resource }
-          }
+            message: 'ログインしました',
+            user: current_user
+          }, status: :ok
         end
 
         def respond_to_on_destroy
-          head :no_content
+          render json: {
+            message: 'ログアウトしました'
+          }, status: :ok
         end
       end
     end

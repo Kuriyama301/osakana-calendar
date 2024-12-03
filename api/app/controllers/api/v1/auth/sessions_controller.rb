@@ -6,15 +6,19 @@ module Api
 
         private
 
-        def respond_with(resource, _opts = {})
+        def respond_to_on_authenticate
+          self.resource = warden.authenticate!(auth_options)
+          sign_in(resource_name, resource)
           render json: {
-            status: { code: 200, message: 'ログインに成功しました' },
-            data: { user: resource }
-          }
+            message: 'ログインしました',
+            user: UserSerializer.new(current_user).serializable_hash
+          }, status: :ok
         end
 
-        def respond_to_on_destroy
-          head :no_content
+        def respond_to_on_authentication_failure
+          render json: {
+            error: 'メールアドレスまたはパスワードが正しくありません'
+          }, status: :unauthorized
         end
       end
     end

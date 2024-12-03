@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "email": "user@example.com",
+      "password": "password",
+      "name": "Test User",
+      "confirmed_at": "2024-01-01T00:00:00Z"
+    },
+    {
+      "email": "admin@example.com",
+      "password": "password",
+      "name": "Admin User",
+      "confirmed_at": "2024-01-01T00:00:00Z"
+    }
+  ]
+}

@@ -7,6 +7,38 @@ rescue JSON::ParserError => e
   {}
 end
 
+# ユーザーデータを処理する関数
+def process_user_data(data)
+  return unless data['users']
+
+  puts "\nProcessing user data..."
+  ActionMailer::Base.perform_deliveries = false  # 開発環境でメール送信を一時的に無効化
+
+  data['users'].each do |user_data|
+    user = User.find_or_initialize_by(email: user_data['email'])
+    user.assign_attributes(
+      password: user_data['password'],
+      name: user_data['name']
+    )
+
+    if user.save
+      if user_data['confirmed_at']
+        # 確認状態を直接設定
+        user.update_columns(
+          confirmed_at: Time.zone.parse(user_data['confirmed_at']),
+          confirmation_sent_at: Time.zone.parse(user_data['confirmed_at'])
+        )
+        puts "✓ Confirmed user: #{user.email}"
+      end
+      puts "✓ Created user: #{user.email}"
+    else
+      puts "× Error creating user #{user.email}: #{user.errors.full_messages.join(', ')}"
+    end
+  end
+ensure
+  ActionMailer::Base.perform_deliveries = true  # メール送信を再度有効化
+end
+
 def process_fish_data(data)
   data['fish'].each do |fish_data|
     # 魚のデータを作成
@@ -62,6 +94,14 @@ end
 # メイン処理
 puts "Starting seed process..."
 
+# ユーザーデータの処理
+user_data_path = Rails.root.join('db', 'seeds', 'json', 'user_data.json')
+if File.exist?(user_data_path)
+  data = load_json_file(user_data_path)
+  process_user_data(data)
+end
+
+# 魚データの処理
 Dir[Rails.root.join('db', 'seeds', 'json', 'fish_data_*.json')].sort.each do |file_path|
   puts "\nProcessing #{File.basename(file_path)}"
   data = load_json_file(file_path)

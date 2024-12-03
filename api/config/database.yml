@@ -14,7 +14,7 @@ test:
   <<: *default
   host: <%= ENV.fetch("DB_HOST", "db-test") %>
   username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
-  password: <%= ENV.fetch("DB_PASSWORD") { ENV['POSTGRES_PASSWORD'] } %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
   database: <%= ENV.fetch("POSTGRES_DB", "osakana_calendar_test") %>
 
 production:

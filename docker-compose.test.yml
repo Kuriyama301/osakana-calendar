@@ -20,13 +20,14 @@ services:
       RAILS_ENV: test
       ALLOWED_ORIGINS: http://localhost:5173
       YOUTUBE_API_KEY: "test_api_key"
+      DEVISE_JWT_SECRET_KEY: "test_secret_key_base"
     depends_on:
       - db-test
     command: >
       bash -c "
         bundle install &&
-        bundle exec rails db:create db:migrate RAILS_ENV=test &&
-        bundle exec rails test
+        bundle exec rails db:test:prepare &&  # db:createとdb:migrateの代わり
+        RAILS_ENV=test bundle exec rails test
       "
 
   frontend-test:

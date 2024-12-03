@@ -1,16 +1,25 @@
-# api/test/test_helper.rb
 ENV['RAILS_ENV'] ||= 'test'
 require_relative "../config/environment"
 require "rails/test_help"
-require "minitest/mock"  # モック機能のために追加
+require "minitest/mock"
 
 class ActiveSupport::TestCase
-  # フィクスチャをセットアップ
+  include Devise::Test::IntegrationHelpers
+  include Rails.application.routes.url_helpers # 追加
+
   fixtures :all
 
-  # 必要に応じて共通のヘルパーメソッドを追加
   def json_response
     JSON.parse(@response.body)
+  end
+
+  # ユーザーのログインのヘルパー
+  def login_as_user(user = nil)
+    @user = user || users(:user)
+    post api_v1_user_session_path, params: {
+      user: { email: @user.email, password: 'password' }
+    }, as: :json
+    assert_response :success
   end
 
   # YouTubeのモックレスポンスを生成するヘルパー
@@ -33,6 +42,4 @@ class ActiveSupport::TestCase
       error: "動画の検索に失敗しました"
     }
   end
-
-  include Devise::Test::IntegrationHelpers
 end

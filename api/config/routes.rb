@@ -1,18 +1,20 @@
 require 'letter_opener_web'
 
 Rails.application.routes.draw do
-  # API用の認証ルーティング設定
-  devise_for :users,
-    path: 'api/v1/auth',  # APIのパス階層に合わせる
-    defaults: { format: :json },  # JSONレスポンスに設定
-    controllers: {
-      sessions: 'api/v1/auth/sessions',
-      registrations: 'api/v1/auth/registrations'
-    }
-
   # API関連ルーティング
   namespace :api do
     namespace :v1 do
+      # Devise認証ルーティング
+      devise_for :users,
+        path: 'auth',
+        defaults: { format: :json },
+        controllers: {
+          sessions: 'api/v1/auth/sessions',
+          registrations: 'api/v1/auth/registrations',
+          passwords: 'api/v1/auth/passwords',
+          confirmations: 'api/v1/auth/confirmations'
+        }
+
       # YouTube
       resources :youtube, only: [] do
         collection do

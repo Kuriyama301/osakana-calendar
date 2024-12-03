@@ -60,7 +60,7 @@ Rails.application.configure do
   }
 
   # 開発環境ではメールをletterオープナーで確認
-  config.action_mailer.delivery_method = :letter_opener_web
-  config.action_mailer.perform_deliveries = true
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = false
   config.action_mailer.raise_delivery_errors = true
 end

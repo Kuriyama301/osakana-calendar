@@ -36,4 +36,14 @@ Rails.application.configure do
 
   # APIモードの設定
   config.api_only = true
+
+  # ログレベルの設定
+  config.log_level = :debug
+
+  # ログ出力先の設定
+  Rails.logger = Logger.new(STDOUT)
+
+  # メール設定
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  config.action_mailer.delivery_method = :test
 end

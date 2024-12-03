@@ -1,5 +1,4 @@
 require "active_support/core_ext/integer/time"
-require 'letter_opener_web'
 
 Rails.application.configure do
   # 基本設定
@@ -31,36 +30,26 @@ Rails.application.configure do
   config.active_record.verbose_query_logs = true
 
   # URL設定
-  host = ENV.fetch('API_HOST', 'localhost:3000')
-  protocol = ENV.fetch('API_PROTOCOL', 'http')
+  host = ENV.fetch('API_HOST', 'localhost')
+  port = ENV.fetch('API_PORT', 3000)
 
   # デフォルトのURLオプション
   config.action_controller.default_url_options = {
     host: host,
-    protocol: protocol
-  }
-
-  # RailsのルートのデフォルトURLオプション
-  Rails.application.routes.default_url_options = {
-    host: host,
-    protocol: protocol
+    port: port,
+    protocol: 'http'
   }
 
   # ホスト許可設定
-  config.hosts = ENV["DISABLE_HOST_CHECK"] == "true" ? nil : %w[localhost 0.0.0.0 api]
-
-  # Active Storageのホスト設定
-  config.active_storage.service_urls_expire_in = 1.hour
-  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+  config.hosts = nil # 開発環境ではホストチェックを無効化
 
   # メール設定
   config.action_mailer.default_url_options = {
-    host: ENV.fetch('MAILER_HOST', 'localhost'),
-    port: ENV.fetch('MAILER_PORT', 3000)
+    host: host,
+    port: port,
+    protocol: 'http'
   }
-
-  # 開発環境ではメールをletterオープナーで確認
-  config.action_mailer.delivery_method = :test
-  config.action_mailer.perform_deliveries = false
-  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.perform_caching = false
+  config.action_mailer.delivery_method = :letter_opener_web
 end

@@ -1,7 +1,4 @@
-require 'letter_opener_web'
-
 Rails.application.routes.draw do
-  # API関連ルーティング
   namespace :api do
     namespace :v1 do
       # Devise認証ルーティング
@@ -15,12 +12,8 @@ Rails.application.routes.draw do
           confirmations: 'api/v1/auth/confirmations'
         }
 
-      # YouTube
-      resources :youtube, only: [] do
-        collection do
-          get 'search'
-        end
-      end
+      # YouTube検索
+      get 'youtube/search', to: 'youtube#search'
 
       # 魚情報関連
       resources :fish, only: [:index, :show] do
@@ -30,10 +23,17 @@ Rails.application.routes.draw do
       end
 
       # カレンダー関連
-      get '/calendar/fish', to: 'calendar#fish_by_date'
+      get 'calendar/fish', to: 'calendar#fish_by_date'
     end
   end
 
-  # 開発環境でのメールプレビュー用
-  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  # 開発環境のみメールプレビューを有効化
+  if Rails.env.development?
+    begin
+      require 'letter_opener_web'
+      mount LetterOpenerWeb::Engine, at: '/letter_opener'
+    rescue LoadError
+      # letter_opener_webが利用できない場合は無視
+    end
+  end
 end

@@ -1,9 +1,9 @@
 class User < ApplicationRecord
   require 'devise'
 
-  # Deviseの機能を追加
+  # Devise機能
   devise :database_authenticatable, :registerable,
-         :recoverable, :validatable, :trackable,
+         :recoverable, :validatable, :trackable, :confirmable,
          :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
 
   # バリデーション

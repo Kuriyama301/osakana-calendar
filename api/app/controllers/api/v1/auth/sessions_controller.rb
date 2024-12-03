@@ -6,17 +6,19 @@ module Api
 
         private
 
-        def respond_to_on_create
+        def respond_to_on_authenticate
+          self.resource = warden.authenticate!(auth_options)
+          sign_in(resource_name, resource)
           render json: {
             message: 'ログインしました',
-            user: current_user
+            user: UserSerializer.new(current_user).serializable_hash
           }, status: :ok
         end
 
-        def respond_to_on_destroy
+        def respond_to_on_authentication_failure
           render json: {
-            message: 'ログアウトしました'
-          }, status: :ok
+            error: 'メールアドレスまたはパスワードが正しくありません'
+          }, status: :unauthorized
         end
       end
     end

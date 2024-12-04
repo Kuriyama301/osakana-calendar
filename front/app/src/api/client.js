@@ -2,18 +2,10 @@ import axios from "axios";
 
 // APIのベースURL取得
 const getApiUrl = () => {
-  const envUrl = import.meta.env.VITE_API_URL;
-  const isDevelopment = import.meta.env.DEV;
-
-  // 開発環境の場合のみwarningを表示
-  if (!envUrl && isDevelopment) {
-    console.warn(
-      "開発環境: API URLが設定されていません。localhost:3000を使用します"
-    );
-    return "http://localhost:3000";
-  }
-
-  return envUrl;
+  return (
+    import.meta.env.VITE_API_URL ||
+    "https://osakana-calendar-api-7fca63533648.herokuapp.com"
+  );
 };
 
 // axiosインスタンスの作成

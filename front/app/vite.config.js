@@ -3,6 +3,12 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+
+  // 環境変数の設定
+  define: {
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL)
+  },
+
   test: {
     globals: true,
     environment: 'jsdom',
@@ -15,4 +21,4 @@ export default defineConfig({
     port: 5173,
     cors: true
   }
-})
+});

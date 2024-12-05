@@ -20,12 +20,6 @@ module App
     config.middleware.use ActionDispatch::Session::CookieStore
     config.middleware.use ActionDispatch::Flash
 
-    # メール送信の基本設定
-    config.action_mailer.default_url_options = {
-      host: ENV.fetch('MAILER_HOST', 'localhost'),
-      port: ENV.fetch('MAILER_PORT', 3000)
-    }
-
     # サービスディレクトリのオートロード設定
     config.autoload_paths += %W[#{config.root}/app/services]
 

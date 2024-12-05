@@ -26,14 +26,4 @@ Rails.application.routes.draw do
       get 'calendar/fish', to: 'calendar#fish_by_date'
     end
   end
-
-  # 開発環境のみメールプレビューを有効化
-  if Rails.env.development?
-    begin
-      require 'letter_opener_web'
-      mount LetterOpenerWeb::Engine, at: '/letter_opener'
-    rescue LoadError
-      # letter_opener_webが利用できない場合は無視
-    end
-  end
 end

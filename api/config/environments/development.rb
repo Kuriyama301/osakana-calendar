@@ -29,9 +29,12 @@ Rails.application.configure do
   config.active_record.migration_error = :page_load
   config.active_record.verbose_query_logs = true
 
-  # URL設定
-  host = ENV.fetch('API_HOST', 'localhost')
-  port = ENV.fetch('API_PORT', 3000)
+  # ホスト許可設定
+  config.hosts = nil # 開発環境ではホストチェックを無効化
+
+  # URL・メール設定
+  host = ENV.fetch('MAILER_HOST', 'localhost')
+  port = ENV.fetch('MAILER_PORT', 3000)
 
   # デフォルトのURLオプション
   config.action_controller.default_url_options = {
@@ -40,16 +43,14 @@ Rails.application.configure do
     protocol: 'http'
   }
 
-  # ホスト許可設定
-  config.hosts = nil # 開発環境ではホストチェックを無効化
-
   # メール設定
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_caching = false
+  config.action_mailer.delivery_method = :test
   config.action_mailer.default_url_options = {
     host: host,
     port: port,
     protocol: 'http'
   }
-  config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.perform_caching = false
-  config.action_mailer.delivery_method = :letter_opener_web
 end

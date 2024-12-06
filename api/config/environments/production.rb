@@ -27,6 +27,27 @@ Rails.application.configure do
   Rails.application.routes.default_url_options = routes_config
   config.action_controller.default_url_options = routes_config
 
+  # メール設定
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_caching = false
+  config.action_mailer.default_url_options = {
+    host: host,
+    protocol: 'https'
+  }
+
+  # Gmail SMTP設定
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.gmail.com',
+    port: 587,
+    domain: host,
+    user_name: ENV['GMAIL_USERNAME'],
+    password: ENV['GMAIL_APP_PASSWORD'],
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
+
   # セキュリティ設定
   config.force_ssl = true
 end

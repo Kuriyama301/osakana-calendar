@@ -27,27 +27,26 @@ Rails.application.configure do
   Rails.application.routes.default_url_options = routes_config
   config.action_controller.default_url_options = routes_config
 
-  # メール設定
+  # セキュリティ設定
+  config.force_ssl = true
+
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_caching = false
   config.action_mailer.default_url_options = {
-    host: host,
+    host: 'www.osakana-calendar.com',
     protocol: 'https'
   }
 
-  # Gmail SMTP設定
+  # お名前.comのSMTP設定
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: 'smtp.gmail.com',
-    port: 587,
-    domain: host,
-    user_name: ENV['GMAIL_USERNAME'],
-    password: ENV['GMAIL_APP_PASSWORD'],
+    address: ENV['SMTP_ADDRESS'],        # お名前.comのSMTPサーバーアドレス
+    port: 587,                          # SMTP用ポート
+    domain: 'osakana-calendar.com',     # あなたのドメイン
+    user_name: ENV['SMTP_USERNAME'],    # お名前.comで設定したメールアドレス
+    password: ENV['SMTP_PASSWORD'],     # お名前.comで設定したパスワード
     authentication: :plain,
     enable_starttls_auto: true
   }
-
-  # セキュリティ設定
-  config.force_ssl = true
 end

@@ -9,7 +9,7 @@ Rails.application.configure do
 
   # ログ設定
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info").to_sym
-  config.log_tags = [ :request_id ]
+  config.log_tags = [:request_id]
   config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT)) if ENV["RAILS_LOG_TO_STDOUT"].present?
 
   # データベース設定
@@ -30,23 +30,33 @@ Rails.application.configure do
   # セキュリティ設定
   config.force_ssl = true
 
+  # メール送信設定
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_caching = false
+
+  # URLオプションの設定
   config.action_mailer.default_url_options = {
-    host: 'www.osakana-calendar.com',
+    host: ENV.fetch('HOST', 'www.osakana-calendar.com'),
     protocol: 'https'
   }
 
-  # お名前.comのSMTP設定
+  # デフォルトのメール送信元設定
+  config.action_mailer.default_options = {
+    from: ENV.fetch('MAILER_FROM', 'info@osakana-calendar.com')
+  }
+
+  # SMTP設定
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: ENV['SMTP_ADDRESS'],        # お名前.comのSMTPサーバーアドレス
-    port: 587,                          # SMTP用ポート
-    domain: 'osakana-calendar.com',     # あなたのドメイン
-    user_name: ENV['SMTP_USERNAME'],    # お名前.comで設定したメールアドレス
-    password: ENV['SMTP_PASSWORD'],     # お名前.comで設定したパスワード
-    authentication: :plain,
-    enable_starttls_auto: true
+    address: ENV.fetch('SMTP_ADDRESS', 'mail1026.onamae.ne.jp'),
+    port: ENV.fetch('SMTP_PORT', 587).to_i,
+    domain: ENV.fetch('SMTP_DOMAIN', 'osakana-calendar.com'),
+    user_name: ENV.fetch('SMTP_USERNAME', 'info@osakana-calendar.com'),
+    password: ENV.fetch('SMTP_PASSWORD'),
+    authentication: :login,
+    enable_starttls_auto: true,
+    open_timeout: 5,
+    read_timeout: 5
   }
 end

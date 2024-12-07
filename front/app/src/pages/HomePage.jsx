@@ -1,20 +1,49 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { MainCalendar, SubCalendar } from "../components";
+import { Home, Utensils, Heart, HelpCircle } from "lucide-react";
 import SeasonalFishModal from "../components/Fish/SeasonalFishModal";
+import SearchForm from "../components/Fish/SearchForm";
+import SearchModal from "../components/Fish/SearchModal";
+import { searchFish } from "../api/fish";
 import { useDailyFishModal } from "../hooks/useDailyFishModal";
 import LoadingScreen from "../components/Common/LoadingScreen";
+
+const NavItem = ({ icon, label }) => (
+  <li className="flex items-center space-x-3 p-3 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
+    <span className="text-gray-600">{icon}</span>
+    <span className="font-medium text-gray-700">{label}</span>
+  </li>
+);
 
 const HomePage = () => {
   const [showSubCalendar, setShowSubCalendar] = useState(true);
   const containerRef = useRef(null);
   const {
-    isModalOpen,
+    isModalOpen: isFishModalOpen,
     selectedModalDate,
-    isLoading,
+    isLoading: isFishLoading,
     seasonalFish,
     error,
-    closeModal,
+    closeModal: closeFishModal,
   } = useDailyFishModal();
+
+  // 検索関連の状態
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+
+  const handleSearch = async (searchTerm) => {
+    setIsSearchLoading(true);
+    try {
+      const results = await searchFish(searchTerm);
+      setSearchResults(results);
+      setIsSearchModalOpen(true);
+    } catch (error) {
+      console.error('Search failed:', error);
+    } finally {
+      setIsSearchLoading(false);
+    }
+  };
 
   const checkSize = useCallback(() => {
     if (containerRef.current) {
@@ -52,16 +81,38 @@ const HomePage = () => {
         backgroundBlendMode: "overlay",
       }}
     >
-      <LoadingScreen isOpen={isLoading} />
+      <LoadingScreen isOpen={isFishLoading} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex justify-center items-start h-full">
-          {/* サブカレンダー */}
+          {/* サブカレンダー、ロゴ、ナビゲーション */}
           <div
-            className={`sub-calendar-container ${
+            className={`${
               showSubCalendar ? "block" : "hidden"
             } lg:block lg:w-80 fixed left-4 top-20 lg:sticky lg:top-20 lg:left-auto`}
           >
-            <SubCalendar />
+            {/* ロゴ */}
+            <div className="mb-6">
+              <img
+                src="/titlelogo.png"
+                alt="Osakana Calendar"
+                className="w-48 mx-auto"
+              />
+            </div>
+            
+            {/* サブカレンダー */}
+            <div className="mb-6">
+              <SubCalendar />
+            </div>
+
+            {/* ナビゲーション */}
+            <nav className="bg-white p-6 rounded-lg shadow w-full">
+              <ul className="space-y-2">
+                <NavItem icon={<Home size={20} />} label="HOME" />
+                <NavItem icon={<Utensils size={20} />} label="COLLECTION" />
+                <NavItem icon={<Heart size={20} />} label="FAVORITE" />
+                <NavItem icon={<HelpCircle size={20} />} label="HELP" />
+              </ul>
+            </nav>
           </div>
 
           {/* 縦線 */}
@@ -69,6 +120,17 @@ const HomePage = () => {
 
           {/* メインカレンダー */}
           <div className="main-calendar-container w-full max-w-3xl relative">
+            {/* 検索フォームヘッダー */}
+            <div className="sticky top-0 z-10 py-4 bg-white/80 backdrop-blur-sm mb-4 border-b border-gray-200">
+              <div className="flex justify-end">
+                <SearchForm 
+                  onSearch={handleSearch}
+                  isLoading={isSearchLoading}
+                  className="w-full max-w-md"
+                />
+              </div>
+            </div>
+
             <MainCalendar />
             {/* 縦線 */}
             <div className="hidden lg:block w-px bg-gray-300/30 absolute right-[-2rem] top-0 h-screen" />
@@ -76,12 +138,19 @@ const HomePage = () => {
         </div>
       </div>
 
+      {/* モーダル */}
+      <SearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        searchResults={searchResults}
+      />
+
       <SeasonalFishModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
+        isOpen={isFishModalOpen}
+        onClose={closeFishModal}
         currentDate={selectedModalDate}
         seasonalFish={seasonalFish}
-        isLoading={isLoading}
+        isLoading={isFishLoading}
         error={error}
       />
     </div>

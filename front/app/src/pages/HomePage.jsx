@@ -123,8 +123,8 @@ const HomePage = () => {
             {/* メインコンテンツエリア */}
             <div className="flex-1">
               {/* 検索フォームヘッダー */}
-              <div className="sticky top-0 z-10 bg-white shadow-sm border-b mb-4">
-                <div className="flex justify-end p-4">
+              <div className="sticky top-0 z-10 bg-white border-b mb-4">
+                <div className="flex justify-end p-4 -mx-8 border-t border-b border-gray-300/30">
                   <SearchForm 
                     onSearch={handleSearch}
                     isLoading={isSearchLoading}

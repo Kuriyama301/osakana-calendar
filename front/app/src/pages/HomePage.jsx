@@ -88,10 +88,10 @@ const HomePage = () => {
           <div
             className={`${
               showSubCalendar ? "block" : "hidden"
-            } lg:block lg:w-80 fixed left-4 top-20 lg:sticky lg:top-20 lg:left-auto`}
+            } lg:block lg:w-80 fixed left-4 top-12 lg:sticky lg:top-12 lg:left-auto`}
           >
             {/* ロゴ */}
-            <div className="mb-6">
+            <div className="mb-4">
               <img
                 src="/titlelogo.png"
                 alt="Osakana Calendar"
@@ -100,7 +100,7 @@ const HomePage = () => {
             </div>
             
             {/* サブカレンダー */}
-            <div className="mb-6">
+            <div className="mb-4">
               <SubCalendar />
             </div>
 

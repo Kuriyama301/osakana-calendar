@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import PropTypes from 'prop-types';
 import { MainCalendar, SubCalendar } from "../components";
 import { Home, Utensils, Heart, HelpCircle } from "lucide-react";
 import SeasonalFishModal from "../components/Fish/SeasonalFishModal";
@@ -14,6 +15,12 @@ const NavItem = ({ icon, label }) => (
     <span className="font-medium text-gray-700">{label}</span>
   </li>
 );
+
+// PropTypes
+NavItem.propTypes = {
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string.isRequired
+};
 
 const HomePage = () => {
   const [showSubCalendar, setShowSubCalendar] = useState(true);

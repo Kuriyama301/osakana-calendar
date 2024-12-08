@@ -115,25 +115,30 @@ const HomePage = () => {
             </nav>
           </div>
 
-          {/* 縦線 */}
+          {/* 中央の縦線 */}
           <div className="hidden lg:block w-px bg-gray-300/30 mx-8 h-screen sticky top-0" />
 
-          {/* メインカレンダー */}
-          <div className="main-calendar-container w-full max-w-3xl relative">
-            {/* 検索フォームヘッダー */}
-            <div className="sticky top-0 z-10 py-4 bg-white/80 backdrop-blur-sm mb-4 border-b border-gray-200">
-              <div className="flex justify-end">
-                <SearchForm 
-                  onSearch={handleSearch}
-                  isLoading={isSearchLoading}
-                  className="w-full max-w-md"
-                />
+          {/* メインカレンダー エリア全体 */}
+          <div className="w-full max-w-3xl relative flex">
+            {/* メインコンテンツエリア */}
+            <div className="flex-1">
+              {/* 検索フォームヘッダー */}
+              <div className="sticky top-0 z-10 bg-white shadow-sm border-b mb-4">
+                <div className="flex justify-end p-4">
+                  <SearchForm 
+                    onSearch={handleSearch}
+                    isLoading={isSearchLoading}
+                    className="w-full max-w-md"
+                  />
+                </div>
               </div>
+
+              {/* カレンダー本体 */}
+              <MainCalendar />
             </div>
 
-            <MainCalendar />
-            {/* 縦線 */}
-            <div className="hidden lg:block w-px bg-gray-300/30 absolute right-[-2rem] top-0 h-screen" />
+            {/* 右側の縦線 */}
+            <div className="hidden lg:block w-px bg-gray-300/30 ml-8 h-screen sticky top-0" />
           </div>
         </div>
       </div>

@@ -2,7 +2,6 @@ import { Component, Suspense, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import { Header } from "./components";
 import { CalendarProvider } from "./CalendarContext.jsx";
 import LoadingScreen from "./components/Common/LoadingScreen.jsx";
 
@@ -27,9 +26,7 @@ class ErrorBoundary extends Component {
       return (
         <div className="flex items-center justify-center h-screen bg-gray-50">
           <div className="text-center p-4">
-            <p className="text-lg text-gray-700">
-              予期せぬエラーが発生しました
-            </p>
+            <p className="text-lg text-gray-700">予期せぬエラーが発生しました</p>
             <button
               onClick={() => window.location.reload()}
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -74,11 +71,10 @@ function App() {
     <ErrorBoundary>
       <CalendarProvider>
         <Router>
-          <div className="flex flex-col h-screen overflow-hidden bg-gray-100">
+          <div className="h-screen overflow-hidden">
             <LoadingScreen isOpen={isInitialLoading} />
-            <Header className="flex-shrink-0" />
             <Suspense fallback={<LoadingScreen isOpen={true} />}>
-              <main className="flex-grow overflow-hidden">
+              <main className="h-full">
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                 </Routes>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { MainCalendar, SubCalendar } from "../components";
 import { Home, Utensils, Heart, HelpCircle } from "lucide-react";
 import SeasonalFishModal from "../components/Fish/SeasonalFishModal";
@@ -19,7 +19,7 @@ const NavItem = ({ icon, label }) => (
 // PropTypes
 NavItem.propTypes = {
   icon: PropTypes.node.isRequired,
-  label: PropTypes.string.isRequired
+  label: PropTypes.string.isRequired,
 };
 
 const HomePage = () => {
@@ -46,7 +46,7 @@ const HomePage = () => {
       setSearchResults(results);
       setIsSearchModalOpen(true);
     } catch (error) {
-      console.error('Search failed:', error);
+      console.error("Search failed:", error);
     } finally {
       setIsSearchLoading(false);
     }
@@ -105,7 +105,7 @@ const HomePage = () => {
                 className="w-48 mx-auto"
               />
             </div>
-            
+
             {/* サブカレンダー */}
             <div className="mb-4">
               <SubCalendar />
@@ -132,7 +132,7 @@ const HomePage = () => {
               {/* 検索フォームヘッダー */}
               <div className="sticky top-0 z-10 bg-white border-b mb-4">
                 <div className="flex justify-end p-4 -mx-8 border-t border-b border-gray-300/30">
-                  <SearchForm 
+                  <SearchForm
                     onSearch={handleSearch}
                     isLoading={isSearchLoading}
                     className="w-full max-w-md"

@@ -7,7 +7,7 @@ export default defineConfig({
   // 環境変数の設定
   define: {
     "import.meta.env.VITE_API_URL": JSON.stringify(process.env.VITE_API_URL),
-    "%VITE_FRONT_URL%": JSON.stringify(process.env.VITE_FRONT_URL),
+    "import.meta.env.VITE_FRONT_URL": JSON.stringify(process.env.VITE_FRONT_URL),
   },
 
   test: {

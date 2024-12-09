@@ -20,8 +20,23 @@
       content="旬の魚を簡単に探せるカレンダーアプリ。季節ごとの美味しい魚を見つけよう。"
     />
     <meta property="og:site_name" content="オサカナカレンダー" />
-    <meta property="og:url" content="%VITE_FRONT_URL%" />
-    <meta property="og:image" content="%VITE_FRONT_URL%/ogp.jpg" />
+
+    <!-- scriptタグを使用して動的に設定 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const baseUrl = import.meta.env.VITE_FRONT_URL;
+
+        const metaUrl = document.createElement('meta');
+        metaUrl.setAttribute('property', 'og:url');
+        metaUrl.setAttribute('content', baseUrl);
+        document.head.appendChild(metaUrl);
+
+        const metaImage = document.createElement('meta');
+        metaImage.setAttribute('property', 'og:image');
+        metaImage.setAttribute('content', `${baseUrl}/ogp.jpg`);
+        document.head.appendChild(metaImage);
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

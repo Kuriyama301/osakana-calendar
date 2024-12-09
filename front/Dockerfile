@@ -9,6 +9,7 @@ COPY app ./
 # ビルド時の環境変数を設定
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_FRONT_URL=$VITE_FRONT_URL
 ENV NODE_ENV=production
 RUN npm run build
 

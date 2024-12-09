@@ -8,7 +8,6 @@ import SearchModal from "../components/Fish/SearchModal";
 import { searchFish } from "../api/fish";
 import { useDailyFishModal } from "../hooks/useDailyFishModal";
 import LoadingScreen from "../components/Common/LoadingScreen";
-import { Link } from "react-router-dom";
 
 const NavItem = ({ icon, label }) => (
   <li className="flex items-center space-x-3 p-3 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
@@ -100,16 +99,11 @@ const HomePage = () => {
           >
             {/* ロゴ */}
             <div className="mb-4">
-              <Link 
-                to="/" 
-                className="block transition-transform hover:-translate-y-0.5"
-              >
-                <img
-                  src="/titlelogo.png"
-                  alt="Osakana Calendar"
-                  className="w-48 mx-auto"
-                />
-              </Link>
+              <img
+                src="/titlelogo.png"
+                alt="Osakana Calendar"
+                className="w-48 mx-auto"
+              />
             </div>
 
             {/* サブカレンダー */}

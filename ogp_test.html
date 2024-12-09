@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
+    <script type="module">
+import RefreshRuntime from "/@react-refresh"
+RefreshRuntime.injectIntoGlobalHook(window)
+window.$RefreshReg$ = () => {}
+window.$RefreshSig$ = () => (type) => type
+window.__vite_plugin_react_preamble_installed__ = true
+</script>
+
+    <script type="module" src="/@vite/client"></script>
+
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,8 +30,22 @@
       content="旬の魚を簡単に探せるカレンダーアプリ。季節ごとの美味しい魚を見つけよう。"
     />
     <meta property="og:site_name" content="オサカナカレンダー" />
-    <meta property="og:url" content="%VITE_FRONT_URL%" />
-    <meta property="og:image" content="%VITE_FRONT_URL%/ogp.jpg" />
+
+    <script>
+      const baseUrl = "%VITE_FRONT_URL%";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const metaUrl = document.createElement("meta");
+        metaUrl.setAttribute("property", "og:url");
+        metaUrl.setAttribute("content", baseUrl);
+        document.head.appendChild(metaUrl);
+
+        const metaImage = document.createElement("meta");
+        metaImage.setAttribute("property", "og:image");
+        metaImage.setAttribute("content", `${baseUrl}/ogp.jpg`);
+        document.head.appendChild(metaImage);
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

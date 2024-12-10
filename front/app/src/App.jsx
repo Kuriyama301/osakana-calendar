@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import { CalendarProvider } from "./CalendarContext.jsx";
 import LoadingScreen from "./components/Common/LoadingScreen.jsx";
+import { AuthProvider } from "./contexts/AuthContext";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -26,7 +27,9 @@ class ErrorBoundary extends Component {
       return (
         <div className="flex items-center justify-center h-screen bg-gray-50">
           <div className="text-center p-4">
-            <p className="text-lg text-gray-700">予期せぬエラーが発生しました</p>
+            <p className="text-lg text-gray-700">
+              予期せぬエラーが発生しました
+            </p>
             <button
               onClick={() => window.location.reload()}
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -69,20 +72,22 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <CalendarProvider>
-        <Router>
-          <div className="h-screen overflow-hidden">
-            <LoadingScreen isOpen={isInitialLoading} />
-            <Suspense fallback={<LoadingScreen isOpen={true} />}>
-              <main className="h-full">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                </Routes>
-              </main>
-            </Suspense>
-          </div>
-        </Router>
-      </CalendarProvider>
+      <AuthProvider>
+        <CalendarProvider>
+          <Router>
+            <div className="h-screen overflow-hidden">
+              <LoadingScreen isOpen={isInitialLoading} />
+              <Suspense fallback={<LoadingScreen isOpen={true} />}>
+                <main className="h-full">
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                  </Routes>
+                </main>
+              </Suspense>
+            </div>
+          </Router>
+        </CalendarProvider>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }

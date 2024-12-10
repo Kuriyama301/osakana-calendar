@@ -8,6 +8,8 @@ import SearchModal from "../components/Fish/SearchModal";
 import { searchFish } from "../api/fish";
 import { useDailyFishModal } from "../hooks/useDailyFishModal";
 import LoadingScreen from "../components/Common/LoadingScreen";
+import AuthNavItem from "../components/Common/AuthNavItem";
+import AuthModal from "../components/Auth/AuthModal";
 
 const NavItem = ({ icon, label }) => (
   <li className="flex items-center space-x-3 p-3 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
@@ -24,6 +26,7 @@ NavItem.propTypes = {
 
 const HomePage = () => {
   const [showSubCalendar, setShowSubCalendar] = useState(true);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const containerRef = useRef(null);
   const {
     isModalOpen: isFishModalOpen,
@@ -95,7 +98,7 @@ const HomePage = () => {
           <div
             className={`${
               showSubCalendar ? "block" : "hidden"
-            } lg:block lg:w-80 fixed left-4 top-12 lg:sticky lg:top-12 lg:left-auto`}
+            } lg:block lg:w-80 fixed left-4 top-6 lg:sticky lg:top-6 lg:left-auto space-y-4`}
           >
             {/* ロゴ */}
             <div className="mb-4">
@@ -120,6 +123,10 @@ const HomePage = () => {
                 <NavItem icon={<HelpCircle size={20} />} label="HELP" />
               </ul>
             </nav>
+
+            <div className="bg-white p-6 rounded-lg shadow w-full">
+              <AuthNavItem onAuthClick={() => setIsAuthModalOpen(true)} />
+            </div>
           </div>
 
           {/* 中央の縦線 */}
@@ -164,6 +171,11 @@ const HomePage = () => {
         seasonalFish={seasonalFish}
         isLoading={isFishLoading}
         error={error}
+      />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
     </div>
   );

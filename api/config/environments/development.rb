@@ -30,7 +30,7 @@ Rails.application.configure do
   config.active_record.verbose_query_logs = true
 
   # ホスト許可設定
-  config.hosts = nil # 開発環境ではホストチェックを無効化
+  config.hosts = nil
 
   # URL・メール設定
   host = ENV.fetch('MAILER_HOST', 'localhost')
@@ -44,13 +44,22 @@ Rails.application.configure do
   }
 
   # メール設定
+  config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.perform_caching = false
-  config.action_mailer.delivery_method = :test
   config.action_mailer.default_url_options = {
-    host: host,
-    port: port,
+    host: ENV.fetch('MAILER_HOST', 'localhost'),
+    port: ENV.fetch('MAILER_PORT', 3000),
     protocol: 'http'
+  }
+
+  config.action_mailer.smtp_settings = {
+    address: 'email-smtp.ap-northeast-1.amazonaws.com',
+    port: 587,
+    user_name: ENV.fetch('AWS_SES_SMTP_USER'),
+    password: ENV.fetch('AWS_SES_SMTP_PASSWORD'),
+    authentication: :login,
+    enable_starttls_auto: true,
+    domain: 'osakana-calendar.com'
   }
 end

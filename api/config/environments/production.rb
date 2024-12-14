@@ -46,17 +46,20 @@ Rails.application.configure do
     from: ENV.fetch('MAILER_FROM', 'info@osakana-calendar.com')
   }
 
-  # SMTP設定
+  # メール設定セクションを更新
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch('SMTP_ADDRESS', 'mail1026.onamae.ne.jp'),
-    port: ENV.fetch('SMTP_PORT', 587).to_i,
-    domain: ENV.fetch('SMTP_DOMAIN', 'osakana-calendar.com'),
-    user_name: ENV.fetch('SMTP_USERNAME', 'info@osakana-calendar.com'),
-    password: ENV.fetch('SMTP_PASSWORD'),
+    address: 'email-smtp.ap-northeast-1.amazonaws.com',
+    port: 587,
+    user_name: ENV.fetch('AWS_SES_SMTP_USER'),
+    password: ENV.fetch('AWS_SES_SMTP_PASSWORD'),
     authentication: :login,
     enable_starttls_auto: true,
-    open_timeout: 5,
-    read_timeout: 5
+    domain: 'osakana-calendar.com'
+  }
+
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch('HOST', 'www.osakana-calendar.com'),
+    protocol: 'https'
   }
 end

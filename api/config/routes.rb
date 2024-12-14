@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  namespace :api do
-    namespace :v1 do
+  # API用のルーティング
+  scope :api do
+    scope :v1 do
       # Devise認証ルーティング
       devise_for :users,
         path: 'auth',
@@ -11,7 +12,12 @@ Rails.application.routes.draw do
           passwords: 'api/v1/auth/passwords',
           confirmations: 'api/v1/auth/confirmations'
         }
+    end
+  end
 
+  # API機能用のルーティング
+  namespace :api do
+    namespace :v1 do
       # YouTube検索
       get 'youtube/search', to: 'youtube#search'
 

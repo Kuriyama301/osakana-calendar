@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
   include ActionController::MimeResponds
-  include ActionController::HttpAuthentication::Token::ControllerMethods
+  include Devise::Controllers::Helpers
   respond_to :json
 
   before_action :configure_permitted_parameters, if: :devise_controller?
@@ -12,19 +12,31 @@ class ApplicationController < ActionController::API
     devise_parameter_sanitizer.permit(:account_update, keys: [:name])
   end
 
-  def authenticate_user!
+  def authenticate_user!  # 'ddef' を 'def' に修正
     if request.headers['Authorization'].present?
-      jwt_payload = JWT.decode(request.headers['Authorization'].split(' ').last,
-                             Rails.application.credentials.secret_key_base).first
-      @current_user_id = jwt_payload['sub']
+      token = request.headers['Authorization'].split(' ').last
+      begin
+        @current_user_id = JWT.decode(
+          token,
+          ENV['DEVISE_JWT_SECRET_KEY'],
+          true,
+          {
+            algorithm: ENV.fetch('JWT_ALGORITHM', 'HS256'),
+            exp_leeway: 30
+          }
+        ).first['sub']
+        current_user
+      rescue JWT::DecodeError
+        render json: { error: 'Invalid token' }, status: :unauthorized
+      end
     else
-      render json: { error: 'Not Authorized' }, status: :unauthorized
+      render json: { error: 'Token missing' }, status: :unauthorized
     end
-  rescue JWT::ExpiredSignature, JWT::VerificationError, JWT::DecodeError
-    render json: { error: 'Not Authorized' }, status: :unauthorized
   end
 
   def current_user
-    @current_user ||= super || User.find(@current_user_id)
+    @current_user ||= User.find(@current_user_id)
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'User not found' }, status: :unauthorized
   end
 end

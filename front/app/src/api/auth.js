@@ -15,42 +15,43 @@ export const authAPI = {
   // ログイン
   login: async (email, password) => {
     try {
+      console.log("Login attempt with:", { email });
+
       const response = await client.post("/api/v1/auth/sign_in", {
         user: { email, password },
       });
 
-      // JWTトークンをレスポンスヘッダーから取得
-      const authToken = response.headers["authorization"];
-      if (authToken) {
-        // クライアントのデフォルトヘッダーにトークンを設定
-        client.defaults.headers.common["Authorization"] = authToken;
+      console.log("Login response:", {
+        status: response.status,
+        headers: response.headers,
+        data: response.data,
+      });
+
+      const token = response.data.token;
+      console.log("Extracted token:", token);
+
+      if (token) {
+        // Bearer スキーマを追加
+        const bearerToken = `Bearer ${token}`;
+        // ローカルストレージにトークンを保存
+        localStorage.setItem("jwt_token", token);
+        // Axiosのデフォルトヘッダーに設定
+        client.defaults.headers.common["Authorization"] = bearerToken;
+        console.log("Token set in headers:", bearerToken);
+      } else {
+        console.warn("No auth token received");
       }
 
       return {
-        user: response.data,
-        token: authToken,
+        user: response.data.data,
+        token: token,
       };
     } catch (error) {
-      throw formatError(error);
-    }
-  },
-
-  // サインアップ
-  signup: async (email, password, passwordConfirmation) => {
-    try {
-      const response = await client.post("/api/v1/auth/sign_up", {
-        user: {
-          email,
-          password,
-          password_confirmation: passwordConfirmation,
-        },
+      console.error("Login error details:", {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
       });
-
-      return {
-        user: response.data,
-        message: "アカウントを作成しました。確認メールをご確認ください。",
-      };
-    } catch (error) {
       throw formatError(error);
     }
   },
@@ -59,11 +60,23 @@ export const authAPI = {
   logout: async () => {
     try {
       await client.delete("/api/v1/auth/sign_out");
+      // トークンをローカルストレージから削除
+      localStorage.removeItem("jwt_token");
       // ヘッダーからトークンを削除
       delete client.defaults.headers.common["Authorization"];
     } catch (error) {
       throw formatError(error);
     }
+  },
+
+  // トークンの復元処理を追加
+  restoreToken: () => {
+    const token = localStorage.getItem("jwt_token");
+    if (token) {
+      client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      return true;
+    }
+    return false;
   },
 };
 

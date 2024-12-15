@@ -6,6 +6,7 @@ Rails.application.configure do
   config.eager_load = false
   config.consider_all_requests_local = true
   config.server_timing = true
+  config.debug_exception_response_format = :api
 
   # キャッシュ設定
   if Rails.root.join("tmp/caching-dev.txt").exist?

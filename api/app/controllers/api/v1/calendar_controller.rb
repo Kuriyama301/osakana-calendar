@@ -8,15 +8,18 @@ class Api::V1::CalendarController < ApplicationController
       .with_attached_image
       .select(:id, :name, :features, :nutrition, :origin)
 
-    if @fish.exists?
-      # as_jsonメソッドを使用して画像URLを含める rails7から？
-      render json: @fish.as_json(
-        include: :fish_seasons,
-        methods: [:image_url]
-      )
+    result = if @fish.exists?
+      @fish.map do |fish|
+        fish.as_json(
+          include: :fish_seasons,
+          methods: [:image_url]
+        )
+      end
     else
-      render json: { message: "No fish found for this date" }, status: :not_found
+      []
     end
+
+    render json: result
   rescue ArgumentError
     render json: { error: "Invalid date format" }, status: :bad_request
   end

@@ -2,8 +2,12 @@ import axios from "axios";
 
 // APIのベースURL取得
 const getApiUrl = () => {
-  // Viteの環境変数
-  return import.meta.env.VITE_API_URL || "http://localhost:3000";
+  // 本番環境のURLを明示的に設定
+  if (import.meta.env.PROD) {
+    return "https://osakana-calendar-api-7fca63533648.herokuapp.com";
+  }
+  // 開発環境のURL
+  return "http://localhost:3000";
 };
 
 // axiosインスタンスの作成

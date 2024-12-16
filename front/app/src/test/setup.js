@@ -2,19 +2,17 @@ import "@testing-library/jest-dom";
 import { vi, beforeEach, afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
 
-// 必要なモックの設定
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
+// 基本的なjs-cookieモック
+vi.mock("js-cookie", () => ({
+  default: {
+    get: vi.fn(),
+    set: vi.fn(),
+    remove: vi.fn(),
+  },
 }));
 
-// スクロール関連のモック
-Element.prototype.scrollIntoView = vi.fn();
-Element.prototype.scrollTo = vi.fn();
-
-// IntersectionObserverのモック
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+// 既存のモック設定
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),

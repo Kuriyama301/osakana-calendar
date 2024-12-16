@@ -1,5 +1,16 @@
-<p>ようこそ <%= @email %>!</p>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <p>ようこそ <%= @email %>!</p>
 
-<p>以下のリンクをクリックして、メールアドレスの確認を完了してください：</p>
+  <p>以下のリンクをクリックして、メールアドレスの確認を完了してください：</p>
 
-<p><%= link_to 'メールアドレスを確認する', user_confirmation_url(confirmation_token: @token) %></p>
+  <p><%= link_to 'メールアドレスを確認する', "#{@frontend_url}/auth/confirm?token=#{@token}" %></p>
+
+  <hr>
+  <small>※このメールは送信専用です。返信はできませんのでご了承ください。</small>
+</body>
+</html>

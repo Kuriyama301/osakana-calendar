@@ -1,33 +1,56 @@
 module Api
   module V1
     module Auth
-      class ConfirmationsController < Devise::ConfirmationsController
-        respond_to :json
+      class ConfirmationsController < ApplicationController
+        include ActionController::MimeResponds
 
         def show
-          self.resource = resource_class.confirm_by_token(params[:confirmation_token])
+          params[:confirmation_token] = params[:token] if params[:token].present?
 
-          if resource.errors.empty?
-            render json: { message: 'メールアドレスが確認されました' }, status: :ok
+          user = User.find_by(confirmation_token: params[:confirmation_token])
+
+          if user.nil?
+            render json: {
+              status: 'error',
+              message: 'このトークンは無効です',
+              error_code: 'invalid_token'
+            }, status: :unprocessable_entity
+            return
+          end
+
+          if user.confirmed?
+            render json: {
+              status: 'error',
+              message: 'このメールアドレスは既に確認済みです',
+              error_code: 'already_confirmed'
+            }, status: :unprocessable_entity
+            return
+          end
+
+          if user.confirm
+            render json: {
+              status: 'success',
+              message: 'メールアドレスの確認が完了しました',
+              data: {
+                email: user.email,
+                confirmed: true
+              }
+            }, status: :ok
           else
             render json: {
-              message: '確認に失敗しました',
-              errors: resource.errors.full_messages
+              status: 'error',
+              message: 'メールアドレスの確認に失敗しました',
+              errors: user.errors.full_messages,
+              error_code: 'confirmation_failed'
             }, status: :unprocessable_entity
           end
-        end
-
-        def create
-          self.resource = resource_class.send_confirmation_instructions(resource_params)
-
-          if successfully_sent?(resource)
-            render json: { message: '確認メールを再送信しました' }, status: :ok
-          else
-            render json: {
-              message: 'メール送信に失敗しました',
-              errors: resource.errors.full_messages
-            }, status: :unprocessable_entity
-          end
+        rescue StandardError => e
+          Rails.logger.error "Confirmation error: #{e.message}"
+          render json: {
+            status: 'error',
+            message: '予期せぬエラーが発生しました',
+            error_code: 'system_error'
+          }, status: :internal_server_error
         end
 
         private

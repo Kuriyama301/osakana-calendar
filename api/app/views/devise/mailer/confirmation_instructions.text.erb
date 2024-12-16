@@ -1,0 +1,5 @@
+オサカナカレンダーへようこそ <%= @email %>!
+
+以下のリンクをクリックして、メールアドレスの確認を完了してください：
+
+<%= "#{ENV.fetch('VITE_FRONT_URL', 'http://localhost:5173')}/auth/confirm?token=#{@token}" %>

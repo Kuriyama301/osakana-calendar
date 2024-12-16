@@ -49,9 +49,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_url_options = {
-    host: ENV.fetch('MAILER_HOST', 'localhost'),
-    port: ENV.fetch('MAILER_PORT', 3000),
-    protocol: 'http'
+    host: ENV.fetch('VITE_FRONT_URL', 'http://localhost:5173').gsub(%r{^https?://}, '')
   }
 
   config.action_mailer.smtp_settings = {
@@ -63,4 +61,7 @@ Rails.application.configure do
     enable_starttls_auto: true,
     domain: 'osakana-calendar.com'
   }
+
+  # メールのデバッグログ
+  config.action_mailer.logger = Logger.new(STDOUT)
 end

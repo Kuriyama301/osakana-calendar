@@ -2,9 +2,8 @@ import axios from "axios";
 
 // APIのベースURL取得
 const getApiUrl = () => {
-  return process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : import.meta.env.VITE_API_URL;
+  // Viteの環境変数
+  return import.meta.env.VITE_API_URL || "http://localhost:3000";
 };
 
 // axiosインスタンスの作成
@@ -14,10 +13,11 @@ const client = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: true,
+  // 認証が必要なエンドポイントのみにwitchCredentialsを設定
+  withCredentials: false,
 });
 
-// レスポンスインターセプターの改善
+// 認証関連のインターセプター
 client.interceptors.response.use(
   (response) => {
     // トークンの取得方法を修正
@@ -42,12 +42,10 @@ client.interceptors.response.use(
   }
 );
 
-// 起動時のトークン復元処理を改善
+// トークン復元処理
 const storedToken = localStorage.getItem("jwt_token");
 if (storedToken) {
-  const bearerToken = `Bearer ${storedToken}`;
-  client.defaults.headers.common["Authorization"] = bearerToken;
-  console.log("Restored token on client initialization:", bearerToken);
+  client.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
 }
 
 export default client;

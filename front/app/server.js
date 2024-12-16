@@ -43,8 +43,8 @@ if (NODE_ENV === "production") {
   });
 }
 
-// エラーハンドリング
-app.use((err, req, res, next) => {
+// エラーハンドリング（_nextを使用）
+app.use((err, req, res, _next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });

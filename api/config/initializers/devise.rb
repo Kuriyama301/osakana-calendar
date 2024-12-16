@@ -7,7 +7,7 @@ Devise.setup do |config|
   config.navigational_formats = []
 
   # メール送信者の設定
-  config.mailer_sender = ENV.fetch('MAILER_FROM', 'no-reply@example.com')
+  config.mailer_sender = ENV.fetch('MAILER_FROM', 'info@osakana-calendar.com')
 
   # 基本設定
   config.case_insensitive_keys = [:email]
@@ -43,6 +43,9 @@ Devise.setup do |config|
     jwt.expiration_time = ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours.to_i)
     jwt.algorithm = 'HS256'
   end
+
+  # メール確認のリダイレクト先設定
+  config.mailer = 'DeviseMailer'
 
   # その他のDevise設定
   config.authentication_keys = [:email]

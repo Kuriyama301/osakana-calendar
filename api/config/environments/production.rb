@@ -34,10 +34,15 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_caching = false
+  config.action_mailer.delivery_method = :smtp
 
-  # URLオプションの設定
+  # フロントエンドのURLを使用する
+  frontend_host = ENV.fetch('FRONTEND_URL', 'https://www.osakana-calendar.com')
+                    .gsub(%r{^https?://}, '')
+
+  # メール設定
   config.action_mailer.default_url_options = {
-    host: ENV.fetch('HOST', 'www.osakana-calendar.com'),
+    host: frontend_host,
     protocol: 'https'
   }
 
@@ -46,8 +51,7 @@ Rails.application.configure do
     from: ENV.fetch('MAILER_FROM', 'info@osakana-calendar.com')
   }
 
-  # メール設定セクションを更新
-  config.action_mailer.delivery_method = :smtp
+  # SMTP設定
   config.action_mailer.smtp_settings = {
     address: 'email-smtp.ap-northeast-1.amazonaws.com',
     port: 587,
@@ -55,11 +59,12 @@ Rails.application.configure do
     password: ENV.fetch('AWS_SES_SMTP_PASSWORD'),
     authentication: :login,
     enable_starttls_auto: true,
-    domain: 'osakana-calendar.com'
+    domain: frontend_host
   }
 
-  config.action_mailer.default_url_options = {
-    host: ENV.fetch('HOST', 'www.osakana-calendar.com'),
-    protocol: 'https'
-  }
+  # Action Cableの設定
+  config.action_cable.disable_request_forgery_protection = true
+  config.action_cable.allowed_request_origins = [
+    ENV.fetch('FRONTEND_URL', 'https://www.osakana-calendar.com')
+  ].compact
 end

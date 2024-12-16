@@ -78,6 +78,18 @@ export const authAPI = {
     }
     return false;
   },
+
+  // メール確認
+  confirmEmail: async (token) => {
+    try {
+      const response = await client.get(`/api/v1/auth/confirmation`, {
+        params: { token },
+      });
+      return response.data;
+    } catch (error) {
+      throw formatError(error);
+    }
+  },
 };
 
 export default authAPI;

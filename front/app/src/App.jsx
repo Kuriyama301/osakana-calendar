@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import { CalendarProvider } from "./CalendarContext.jsx";
 import LoadingScreen from "./components/Common/LoadingScreen.jsx";
 import { AuthProvider } from "./contexts/AuthContext";
+import EmailConfirmation from "./components/Auth/EmailConfirmation"; // 追加
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -81,6 +82,10 @@ function App() {
                 <main className="h-full">
                   <Routes>
                     <Route path="/" element={<HomePage />} />
+                    <Route
+                      path="/auth/confirm"
+                      element={<EmailConfirmation />}
+                    />{" "}
                   </Routes>
                 </main>
               </Suspense>

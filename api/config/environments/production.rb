@@ -63,8 +63,8 @@ Rails.application.configure do
   }
 
   # Action Cableの設定
-  config.action_cable.disable_request_forgery_protection = true
-  config.action_cable.allowed_request_origins = [
+  Rails.application.config.action_cable.disable_request_forgery_protection = true
+  Rails.application.config.action_cable.allowed_request_origins = [
     ENV.fetch('FRONTEND_URL', 'https://www.osakana-calendar.com')
   ].compact
 end

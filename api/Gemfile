@@ -9,7 +9,8 @@ gem "pg", "~> 1.1"
 gem "puma", "~> 5.0"
 gem "rack-cors"
 gem "bootsnap", require: false
-gem 'jsonapi-serializer'
+gem 'jsonapi-serializer', '~> 2.0'
+gem 'actioncable'                      # WebSocket通信
 
 # 認証関連のgems
 gem 'devise'                           # 基本的な認証機能

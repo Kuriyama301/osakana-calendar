@@ -28,9 +28,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const token = Cookies.get(TOKEN_COOKIE_KEY);
         if (token) {
-          // TODO: トークンの有効性検証やユーザー情報の取得
-          // 現時点では簡易的な実装
-          client.defaults.headers.common["Authorization"] = token;
+          client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         }
       } catch (err) {
         console.error("Authentication check failed:", err);
@@ -48,7 +46,10 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       const { user, token } = await authAPI.login(email, password);
       setUser(user);
-      Cookies.set(TOKEN_COOKIE_KEY, token, { secure: true });
+      Cookies.set(TOKEN_COOKIE_KEY, `Bearer ${token}`, {
+        secure: true,
+        sameSite: "Strict",
+      });
       return user;
     } catch (err) {
       setError(err);
@@ -56,21 +57,24 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // サインアップ処理
-  const signup = useCallback(async (email, password, passwordConfirmation) => {
-    try {
-      setError(null);
-      const result = await authAPI.signup(
-        email,
-        password,
-        passwordConfirmation
-      );
-      return result;
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, []);
+  const signup = useCallback(
+    async (email, password, passwordConfirmation, name) => {
+      try {
+        setError(null);
+        const response = await authAPI.signup(
+          email,
+          password,
+          passwordConfirmation,
+          name
+        );
+        return response;
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    []
+  );
 
   // ログアウト処理
   const logout = useCallback(async () => {
@@ -78,6 +82,7 @@ export const AuthProvider = ({ children }) => {
       await authAPI.logout();
       setUser(null);
       Cookies.remove(TOKEN_COOKIE_KEY);
+      delete client.defaults.headers.common["Authorization"];
     } catch (err) {
       setError(err);
       throw err;

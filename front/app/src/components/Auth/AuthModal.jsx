@@ -8,6 +8,7 @@ import RegisterSection from "./RegisterSection";
 const AuthModal = ({ isOpen, onClose }) => {
   // モーダルのアニメーション状態を管理
   const [isAnimating, setIsAnimating] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
 
   // モーダルの開閉アニメーション
   useEffect(() => {
@@ -19,7 +20,10 @@ const AuthModal = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // Google認証のハンドラー 未実装
+  const toggleAuthMode = () => {
+    setAuthMode((prevMode) => (prevMode === "login" ? "register" : "login"));
+  };
+
   const handleGoogleAuth = () => {
     console.log("Google auth clicked");
   };
@@ -36,7 +40,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     >
       {/* モーダルコンテンツ */}
       <div
-        className={`bg-white rounded-lg text-gray-800 relative w-full mx-4 sm:mx-8 md:mx-auto md:max-w-4xl transform transition-all duration-300 ${
+        className={`bg-white rounded-lg text-gray-800 relative w-full mx-4 sm:mx-8 md:mx-auto md:max-w-md transform transition-all duration-300 ${
           isAnimating && isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -50,12 +54,44 @@ const AuthModal = ({ isOpen, onClose }) => {
           <X size={24} />
         </button>
 
-        {/* モーダルの2カラムレイアウト */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
-          <LoginForm onGoogleLogin={handleGoogleAuth} />
-          <div className="md:border-l md:pl-8">
-            <RegisterSection onGoogleRegister={handleGoogleAuth} />
-          </div>
+        <div className="p-8">
+          {authMode === "login" ? (
+            <>
+              <LoginForm onGoogleLogin={handleGoogleAuth} />
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleAuthMode();
+                    }}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    はじめてご利用の方
+                  </a>
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <RegisterSection onGoogleRegister={handleGoogleAuth} />
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleAuthMode();
+                    }}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    すでにアカウントをお持ちの方はこちら
+                  </a>
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

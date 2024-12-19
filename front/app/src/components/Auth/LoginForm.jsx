@@ -85,8 +85,8 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
                 type="button"
                 onClick={() => handleClear("email")}
                 className="absolute right-2 top-1/2 -translate-y-1/2
-                  text-gray-600 hover:bg-gray-100 rounded-full p-1
-                  transition-colors duration-200"
+                  text-gray-600 bg-white hover:bg-gray-300 hover:text-gray-800 
+                  rounded-full p-2 transition-colors duration-200"
                 aria-label="クリア"
               >
                 <X size={16} />
@@ -118,8 +118,8 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
                 type="button"
                 onClick={() => handleClear("password")}
                 className="absolute right-2 top-1/2 -translate-y-1/2
-                  text-gray-600 hover:bg-gray-100 rounded-full p-1
-                  transition-colors duration-200"
+                  text-gray-600 bg-white hover:bg-gray-300 hover:text-gray-800 
+                  rounded-full p-2 transition-colors duration-200"
                 aria-label="クリア"
               >
                 <X size={16} />

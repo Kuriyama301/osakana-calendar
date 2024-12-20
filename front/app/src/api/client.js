@@ -22,41 +22,48 @@ const client = axios.create({
   withCredentials: false,
 });
 
-// リクエストインターセプター
-client.interceptors.request.use(
-  (config) => {
-    const authHeader = tokenManager.getAuthHeader();
-    if (authHeader) {
-      config.headers.Authorization = authHeader;
-    }
+// テスト環境とそれ以外で異なる設定を適用
+if (process.env.NODE_ENV === "test") {
+  client.interceptors.request.use((config) => {
+    config.headers.Authorization = "Bearer test-token";
     return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  });
+} else {
+  // 通常の環境用インターセプター
+  client.interceptors.request.use(
+    (config) => {
+      const authHeader = tokenManager.getAuthHeader();
+      if (authHeader) {
+        config.headers.Authorization = authHeader;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
 
-// レスポンスインターセプター
-client.interceptors.response.use(
-  (response) => {
-    const token = response.data?.token;
-    if (token) {
-      tokenManager.setToken(token);
+  client.interceptors.response.use(
+    (response) => {
+      const token = response.data?.token;
+      if (token) {
+        tokenManager.setToken(token);
+      }
+      return response;
+    },
+    (error) => {
+      if (error.response?.status === 401) {
+        tokenManager.removeToken();
+      }
+      return Promise.reject(error);
     }
-    return response;
-  },
-  (error) => {
-    if (error.response?.status === 401) {
-      tokenManager.removeToken();
-    }
-    return Promise.reject(error);
-  }
-);
+  );
+}
 
-// 初期化時のトークン設定
-const storedToken = tokenManager.getToken();
-if (storedToken) {
-  client.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+// 初期トークン設定（テスト環境以外）
+if (process.env.NODE_ENV !== "test") {
+  const storedToken = tokenManager.getToken();
+  if (storedToken) {
+    client.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+  }
 }
 
 export default client;

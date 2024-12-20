@@ -1,4 +1,5 @@
 import axios from "axios";
+import { tokenManager } from "../utils/tokenManager";
 
 // APIのベースURL取得
 const getApiUrl = () => {
@@ -21,33 +22,39 @@ const client = axios.create({
   withCredentials: false,
 });
 
-// 認証関連のインターセプター
+// リクエストインターセプター
+client.interceptors.request.use(
+  (config) => {
+    const authHeader = tokenManager.getAuthHeader();
+    if (authHeader) {
+      config.headers.Authorization = authHeader;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// レスポンスインターセプター
 client.interceptors.response.use(
   (response) => {
-    // トークンの取得方法を修正
     const token = response.data?.token;
     if (token) {
-      // Bearer スキーマを追加
-      const bearerToken = `Bearer ${token}`;
-      client.defaults.headers.common["Authorization"] = bearerToken;
-      localStorage.setItem("jwt_token", token);
-      console.log("Token stored in interceptor:", bearerToken);
+      tokenManager.setToken(token);
     }
     return response;
   },
   (error) => {
-    // エラーハンドリングを追加
     if (error.response?.status === 401) {
-      // 認証エラー時の処理
-      localStorage.removeItem("jwt_token");
-      delete client.defaults.headers.common["Authorization"];
+      tokenManager.removeToken();
     }
     return Promise.reject(error);
   }
 );
 
-// トークン復元処理
-const storedToken = localStorage.getItem("jwt_token");
+// 初期化時のトークン設定
+const storedToken = tokenManager.getToken();
 if (storedToken) {
   client.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
 }

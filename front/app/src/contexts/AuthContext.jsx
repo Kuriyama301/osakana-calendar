@@ -8,10 +8,11 @@ import {
 import PropTypes from "prop-types";
 import { authAPI } from "../api/auth";
 import client from "../api/client";
-import { tokenManager } from "../utils/tokenManager"; // tokenManager をインポート
+import { tokenManager } from "../utils/tokenManager";
+import { formatError } from "../utils/errorHandler";
 
-// トークン用のCookie名を定数化（定数は別ファイルに移動することも検討）
-const TOKEN_COOKIE_KEY = "auth_token";
+// トークン用のCookie名を定数化
+// const TOKEN_COOKIE_KEY = "auth_token";
 
 // コンテキストの作成
 const AuthContext = createContext(null);

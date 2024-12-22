@@ -4,20 +4,22 @@ module Api
       class SessionsController < Devise::SessionsController
         respond_to :json
         skip_before_action :verify_signed_out_user
+        before_action :configure_sign_in_params, only: [:create]
 
         def create
           Rails.logger.info "ログイン試行パラメータ: #{params.inspect}"
 
-          self.resource = warden.authenticate(auth_options)
+          # ユーザー認証を試みる
+          user = User.find_by(email: sign_in_params[:email])
 
-          if resource&.confirmed?
-            sign_in(resource_name, resource)
-            token = generate_jwt_token(resource)
+          if user&.valid_password?(sign_in_params[:password])
+            sign_in(resource_name, user)
+            token = generate_jwt_token(user)
 
             render json: {
               status: 'success',
               message: 'ログインしました',
-              data: UserSerializer.new(resource).serializable_hash,
+              data: UserSerializer.new(user).serializable_hash,
               token: token
             }, status: :ok
           else
@@ -83,6 +85,22 @@ module Api
         end
 
         private
+
+        def sign_in_params
+          params.require(:user).permit(:email, :password)
+        end
+
+        def configure_sign_in_params
+          devise_parameter_sanitizer.permit(:sign_in, keys: [:email])
+        end
+
+        def user_params
+          params.require(:user).permit(:email, :password)
+        end
+
+        def auth_options
+          { scope: resource_name, recall: "#{controller_path}#create" }
+        end
 
         def generate_jwt_token(resource)
           JWT.encode(

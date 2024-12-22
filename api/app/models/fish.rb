@@ -2,6 +2,10 @@ class Fish < ApplicationRecord
   has_many :fish_seasons
   has_one_attached :image
 
+  # アソシエーションの追加
+  has_many :favorites, dependent: :destroy
+  has_many :favorited_by_users, through: :favorites, source: :user
+
   # 特定の日付の旬の魚を取得するスコープ
   scope :in_season_on, ->(date) {
     joins(:fish_seasons).where(

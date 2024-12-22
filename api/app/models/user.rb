@@ -17,4 +17,8 @@ class User < ApplicationRecord
       'name' => name
     })
   end
+
+  # アソシエーション
+  has_many :favorites, dependent: :destroy
+  has_many :favorite_fishes, through: :favorites, source: :fish
 end

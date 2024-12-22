@@ -24,6 +24,9 @@ Rails.application.routes.draw do
 
       # カレンダー関連
       get 'calendar/fish', to: 'calendar#fish_by_date'
+
+      # お気に入り関連
+      resources :favorites, only: [:index, :create, :destroy]
     end
   end
 end

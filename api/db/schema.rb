@@ -43,8 +43,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_22_111108) do
   end
 
   create_table "favorites", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "fish_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["fish_id"], name: "index_favorites_on_fish_id"
+    t.index ["user_id", "fish_id"], name: "index_favorites_on_user_id_and_fish_id", unique: true
+    t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
   create_table "fish", force: :cascade do |t|
@@ -102,5 +107,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_22_111108) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "favorites", "fish"
+  add_foreign_key "favorites", "users"
   add_foreign_key "fish_seasons", "fish"
 end

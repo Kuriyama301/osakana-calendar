@@ -50,7 +50,7 @@ const AuthNavItem = ({ onAuthClick }) => {
         </div>
 
         {isMenuOpen && (
-          <div className="absolute left-full top-0 ml-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden z-50">
+          <div className="absolute left-full top-0 ml-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden z-[110]">
             <div onClick={handleLogout} className={commonStyles}>
               <span className="text-gray-600">
                 <LogOut size={20} />
@@ -64,7 +64,7 @@ const AuthNavItem = ({ onAuthClick }) => {
   }
 
   return (
-    <li className={`${commonStyles} relative`} onClick={onAuthClick}>
+    <li className={`${commonStyles}`} onClick={onAuthClick}>
       <span className="text-gray-600">
         <UserCircle size={20} />
       </span>

@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 初期化時の処理を改善
+  // 初期化時の処理
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -49,7 +49,32 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, []);
 
-  // ログイン処理の改善
+  // サインアップ処理
+  const signup = useCallback(
+    async (email, password, passwordConfirmation, name) => {
+      try {
+        setError(null);
+        const response = await authAPI.signup(
+          email,
+          password,
+          passwordConfirmation,
+          name
+        );
+
+        if (response.status === "success") {
+          return response;
+        } else {
+          throw new Error(response.message || "登録に失敗しました");
+        }
+      } catch (err) {
+        setError(formatError(err));
+        throw err;
+      }
+    },
+    []
+  );
+
+  // ログイン処理
   const login = useCallback(async (email, password) => {
     try {
       setError(null);
@@ -66,7 +91,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ログアウト処理の改善
+  // ログアウト処理
   const logout = useCallback(async () => {
     try {
       await authAPI.logout();
@@ -81,13 +106,14 @@ export const AuthProvider = ({ children }) => {
 
   // 認証状態チェック
   const isAuthenticated = useCallback(() => {
-    return !!user && !!tokenManager.getToken(); // tokenManager でトークン存在確認
+    return !!user && !!tokenManager.getToken();
   }, [user]);
 
   const value = {
     user,
     loading,
     error,
+    signup,
     login,
     logout,
     isAuthenticated,

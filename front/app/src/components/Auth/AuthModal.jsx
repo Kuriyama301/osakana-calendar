@@ -28,6 +28,11 @@ const AuthModal = ({ isOpen, onClose }) => {
     console.log("Google auth clicked");
   };
 
+  // ログイン成功時のハンドラ
+  const handleLoginSuccess = () => {
+    onClose();
+  };
+
   if (!isAnimating && !isOpen) return null;
 
   return (
@@ -57,7 +62,10 @@ const AuthModal = ({ isOpen, onClose }) => {
         <div className="p-8">
           {authMode === "login" ? (
             <>
-              <LoginForm onGoogleLogin={handleGoogleAuth} />
+              <LoginForm
+                onGoogleLogin={handleGoogleAuth}
+                onSuccess={handleLoginSuccess} // ここでonSuccessを渡す
+              />
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
                   <a

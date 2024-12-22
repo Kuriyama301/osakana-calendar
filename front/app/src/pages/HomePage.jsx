@@ -98,7 +98,7 @@ const HomePage = () => {
           <div
             className={`${
               showSubCalendar ? "block" : "hidden"
-            } lg:block lg:w-80 fixed left-4 top-6 lg:sticky lg:top-6 lg:left-auto space-y-4 z-[100]`}
+            } lg:block lg:w-80 fixed left-4 top-6 lg:sticky lg:top-6 lg:left-auto space-y-4 z-[50]`} // z-[100]から z-[50]に変更
           >
             {/* ロゴ */}
             <div className="mb-4">

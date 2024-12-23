@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import SeasonalFishModal from "../SeasonalFishModal";
 import { FavoritesProvider } from "../../../contexts/FavoritesContext";
+import { AuthProvider } from "../../../contexts/AuthContext";
 
-// FavoritesContextのモックを作成
+// 両方のContextのモックを作成
 vi.mock("../../../contexts/FavoritesContext", () => ({
   useFavorites: () => ({
     favorites: [],
@@ -11,6 +12,13 @@ vi.mock("../../../contexts/FavoritesContext", () => ({
     removeFavorite: vi.fn(),
   }),
   FavoritesProvider: ({ children }) => children,
+}));
+
+vi.mock("../../../contexts/AuthContext", () => ({
+  useAuth: () => ({
+    isAuthenticated: () => true,
+  }),
+  AuthProvider: ({ children }) => children,
 }));
 
 describe("SeasonalFishModal", () => {
@@ -39,12 +47,14 @@ describe("SeasonalFishModal", () => {
     error: null,
   };
 
-  // コンポーネントをProviderでラップするヘルパー関数
+  // 両方のProviderでラップするヘルパー関数
   const renderWithProviders = (props) => {
     return render(
-      <FavoritesProvider>
-        <SeasonalFishModal {...props} />
-      </FavoritesProvider>
+      <AuthProvider>
+        <FavoritesProvider>
+          <SeasonalFishModal {...props} />
+        </FavoritesProvider>
+      </AuthProvider>
     );
   };
 

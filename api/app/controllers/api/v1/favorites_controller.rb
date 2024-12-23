@@ -1,25 +1,25 @@
 class Api::V1::FavoritesController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_active_storage_current
 
   def index
     @favorites = current_user.favorite_fishes
-    render json: @favorites.as_json(include: :fish_seasons, methods: :image_url)
+                           .includes(:fish_seasons)
+                           .with_attached_image
+    render json: @favorites.map { |fish|
+      fish.as_json(include: :fish_seasons, methods: :image_url)
+    }
   end
 
-  def create
-    @favorite = current_user.favorites.build(fish_id: params[:fish_id])
-    if @favorite.save
-      render json: @favorite.fish.as_json(include: :fish_seasons, methods: :image_url), status: :created
-    else
-      render json: { error: @favorite.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
+  private
 
-  def destroy
-    @favorite = current_user.favorites.find_by!(fish_id: params[:id])
-    @favorite.destroy
-    head :no_content
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Favorite not found' }, status: :not_found
+  def set_active_storage_current
+    return if Rails.env.production?
+
+    ActiveStorage::Current.url_options = {
+      host: ENV.fetch('API_HOST', 'localhost'),
+      port: ENV.fetch('API_PORT', 3000),
+      protocol: ENV.fetch('API_PROTOCOL', 'http')
+    }
   end
 end

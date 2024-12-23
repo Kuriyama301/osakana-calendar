@@ -5,14 +5,19 @@ import { Home, Utensils, Heart, HelpCircle } from "lucide-react";
 import SeasonalFishModal from "../components/Fish/SeasonalFishModal";
 import SearchForm from "../components/Fish/SearchForm";
 import SearchModal from "../components/Fish/SearchModal";
+import FavoritesModal from "../components/Fish/FavoritesModal";
 import { searchFish } from "../api/fish";
 import { useDailyFishModal } from "../hooks/useDailyFishModal";
 import LoadingScreen from "../components/Common/LoadingScreen";
 import AuthNavItem from "../components/Common/AuthNavItem";
 import AuthModal from "../components/Auth/AuthModal";
+import { useAuth } from "../contexts/AuthContext";
 
-const NavItem = ({ icon, label }) => (
-  <li className="flex items-center space-x-3 p-3 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
+const NavItem = ({ icon, label, onClick }) => (
+  <li
+    className="flex items-center space-x-3 p-3 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors"
+    onClick={onClick}
+  >
     <span className="text-gray-600">{icon}</span>
     <span className="font-medium text-gray-700">{label}</span>
   </li>
@@ -22,12 +27,15 @@ const NavItem = ({ icon, label }) => (
 NavItem.propTypes = {
   icon: PropTypes.node.isRequired,
   label: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
 };
 
 const HomePage = () => {
   const [showSubCalendar, setShowSubCalendar] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
   const containerRef = useRef(null);
+  const { isAuthenticated } = useAuth();
   const {
     isModalOpen: isFishModalOpen,
     selectedModalDate,
@@ -79,6 +87,23 @@ const HomePage = () => {
     };
   }, [checkSize]);
 
+  const navItems = [
+    { icon: <Home size={20} />, label: "HOME" },
+    { icon: <Utensils size={20} />, label: "COLLECTION" },
+    {
+      icon: <Heart size={20} />,
+      label: "FAVORITE",
+      onClick: () => {
+        if (isAuthenticated()) {
+          setIsFavoritesModalOpen(true);
+        } else {
+          setIsAuthModalOpen(true);
+        }
+      },
+    },
+    { icon: <HelpCircle size={20} />, label: "HELP" },
+  ];
+
   return (
     <div
       ref={containerRef}
@@ -98,7 +123,7 @@ const HomePage = () => {
           <div
             className={`${
               showSubCalendar ? "block" : "hidden"
-            } lg:block lg:w-80 fixed left-4 top-6 lg:sticky lg:top-6 lg:left-auto space-y-4 z-[50]`} // z-[100]から z-[50]に変更
+            } lg:block lg:w-80 fixed left-4 top-6 lg:sticky lg:top-6 lg:left-auto space-y-4 z-[50]`}
           >
             {/* ロゴ */}
             <div className="mb-4">
@@ -117,10 +142,14 @@ const HomePage = () => {
             {/* ナビゲーション */}
             <nav className="bg-white p-6 rounded-lg shadow w-full">
               <ul className="space-y-2">
-                <NavItem icon={<Home size={20} />} label="HOME" />
-                <NavItem icon={<Utensils size={20} />} label="COLLECTION" />
-                <NavItem icon={<Heart size={20} />} label="FAVORITE" />
-                <NavItem icon={<HelpCircle size={20} />} label="HELP" />
+                {navItems.map((item, index) => (
+                  <NavItem
+                    key={index}
+                    icon={item.icon}
+                    label={item.label}
+                    onClick={item.onClick}
+                  />
+                ))}
               </ul>
             </nav>
 
@@ -157,7 +186,11 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* モーダル */}
+      <FavoritesModal
+        isOpen={isFavoritesModalOpen}
+        onClose={() => setIsFavoritesModalOpen(false)}
+      />
+
       <SearchModal
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { X } from "lucide-react";
-import SeasonTerm from './SeasonTerm';
-import FishDetails from './FishDetails';
+import SeasonTerm from "./SeasonTerm";
+import FishDetails from "./FishDetails";
+import FavoriteButton from "./FavoriteButton";
 
 const SeasonalFishModal = ({
   isOpen,
@@ -37,9 +38,9 @@ const SeasonalFishModal = ({
   };
 
   const handleImageError = (fishId, fishName) => {
-    setImageErrors(prev => ({
+    setImageErrors((prev) => ({
       ...prev,
-      [fishId]: true
+      [fishId]: true,
     }));
     console.log(`Image loading failed for ${fishName}`);
   };
@@ -49,15 +50,15 @@ const SeasonalFishModal = ({
   if (!isAnimating && !isOpen) return null;
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out ${
-        isAnimating && isOpen ? 'bg-opacity-50' : 'bg-opacity-0'
+        isAnimating && isOpen ? "bg-opacity-50" : "bg-opacity-0"
       } flex items-center justify-center z-50`}
       onClick={handleCloseSeasonalFishModal}
     >
-      <div 
+      <div
         className={`bg-white rounded-lg text-gray-800 relative w-full mx-4 sm:mx-8 md:mx-auto md:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all duration-300 ease-in-out ${
-          isAnimating && isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          isAnimating && isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -82,26 +83,34 @@ const SeasonalFishModal = ({
           ) : filteredFish.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
               {filteredFish.map((fish) => (
-                <div 
-                  key={fish.id} 
-                  className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 hover:scale-105"
+                <div
+                  key={fish.id}
+                  className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 hover:scale-105 relative"
                   onClick={() => handleFishClick(fish)}
                 >
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mb-2">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mb-2 relative">
                     {!imageErrors[fish.id] ? (
-                      <img 
+                      <img
                         src={fish.image_url}
-                        alt={fish.name} 
+                        alt={fish.name}
                         className="max-w-full max-h-full object-contain rounded-lg"
                         onError={() => handleImageError(fish.id, fish.name)}
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-lg">
-                        <span className="text-sm text-gray-600">{fish.name}</span>
+                        <span className="text-sm text-gray-600">
+                          {fish.name}
+                        </span>
                       </div>
                     )}
+                    <div className="absolute bottom-0 right-0 bg-transparent z-10 transform-none">
+                      {" "}
+                      <FavoriteButton fishId={fish.id} />
+                    </div>
                   </div>
-                  <p className="font-semibold text-gray-800 text-sm sm:text-base">{fish.name}</p>
+                  <p className="font-semibold text-gray-800 text-sm sm:text-base">
+                    {fish.name}
+                  </p>
                   {fish.fish_seasons && fish.fish_seasons.length > 0 ? (
                     fish.fish_seasons.map((season, index) => (
                       <SeasonTerm key={index} season={season} />
@@ -141,13 +150,13 @@ SeasonalFishModal.propTypes = {
           start_month: PropTypes.number.isRequired,
           start_day: PropTypes.number.isRequired,
           end_month: PropTypes.number.isRequired,
-          end_day: PropTypes.number.isRequired
+          end_day: PropTypes.number.isRequired,
         })
-      ).isRequired
+      ).isRequired,
     })
   ).isRequired,
   isLoading: PropTypes.bool.isRequired,
-  error: PropTypes.string
+  error: PropTypes.string,
 };
 
 export default SeasonalFishModal;

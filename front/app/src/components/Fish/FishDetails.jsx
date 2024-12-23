@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";
 import SeasonTerm from "./SeasonTerm";
-import FishVideo from "./FishVideo";  // FishVideoコンポーネントをインポート
+import FishVideo from "./FishVideo";
+import FavoriteButton from "./FavoriteButton";
 
 const FishDetails = ({ isOpen, onClose, fish }) => {
   const [isAnimating, setIsAnimating] = useState(false);
@@ -44,16 +45,22 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-white z-10 p-4 sm:p-6 border-b border-gray-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">
-            {fish?.name}
-          </h2>
-          <button
-            onClick={handleClose}
-            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-600 bg-white hover:bg-gray-300 hover:text-gray-800 rounded-full p-2 transition-colors duration-200"
-            aria-label="Close modal"
-          >
-            <X size={24} />
-          </button>
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+              {fish?.name}
+            </h2>
+            <div className="flex items-center space-x-2">
+              {fish && <FavoriteButton fishId={fish.id} />}{" "}
+              {/* FavoriteButtonの追加 */}
+              <button
+                onClick={handleClose}
+                className="text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors duration-200"
+                aria-label="Close modal"
+              >
+                <X size={24} />
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="flex-grow overflow-y-auto scrollbar-hide p-4 sm:p-6">
@@ -97,7 +104,6 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
               <h3 className="text-xl font-semibold mb-2">特徴</h3>
               <p className="text-lg text-gray-700 mb-4">{fish?.features}</p>
 
-              {/* YouTube動画セクション */}
               <div className="mt-6">
                 <FishVideo fishName={fish?.name} />
               </div>
@@ -113,6 +119,7 @@ FishDetails.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   fish: PropTypes.shape({
+    id: PropTypes.number,
     name: PropTypes.string,
     image_url: PropTypes.string,
     fish_seasons: PropTypes.arrayOf(

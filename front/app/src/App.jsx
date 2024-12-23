@@ -5,7 +5,8 @@ import HomePage from "./pages/HomePage";
 import { CalendarProvider } from "./CalendarContext.jsx";
 import LoadingScreen from "./components/Common/LoadingScreen.jsx";
 import { AuthProvider } from "./contexts/AuthContext";
-import EmailConfirmation from "./components/Auth/EmailConfirmation"; // 追加
+import { FavoritesProvider } from "./contexts/FavoritesContext";
+import EmailConfirmation from "./components/Auth/EmailConfirmation";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -74,24 +75,26 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <CalendarProvider>
-          <Router>
-            <div className="h-screen overflow-hidden">
-              <LoadingScreen isOpen={isInitialLoading} />
-              <Suspense fallback={<LoadingScreen isOpen={true} />}>
-                <main className="h-full">
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route
-                      path="/auth/confirm"
-                      element={<EmailConfirmation />}
-                    />{" "}
-                  </Routes>
-                </main>
-              </Suspense>
-            </div>
-          </Router>
-        </CalendarProvider>
+        <FavoritesProvider>
+          <CalendarProvider>
+            <Router>
+              <div className="h-screen overflow-hidden">
+                <LoadingScreen isOpen={isInitialLoading} />
+                <Suspense fallback={<LoadingScreen isOpen={true} />}>
+                  <main className="h-full">
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route
+                        path="/auth/confirm"
+                        element={<EmailConfirmation />}
+                      />
+                    </Routes>
+                  </main>
+                </Suspense>
+              </div>
+            </Router>
+          </CalendarProvider>
+        </FavoritesProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

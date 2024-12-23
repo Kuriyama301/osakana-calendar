@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import PropTypes from "prop-types";
 import { favoritesAPI } from "../api/favorites";
 
@@ -25,9 +31,12 @@ export const FavoritesProvider = ({ children }) => {
     async (fishId) => {
       try {
         await favoritesAPI.addFavorite(fishId);
-        await fetchFavorites();
+        await fetchFavorites(); // 成功後に一覧を更新
       } catch (error) {
         console.error("Failed to add favorite:", error);
+        if (error.response?.status === 422) {
+          await fetchFavorites();
+        }
       }
     },
     [fetchFavorites]
@@ -44,6 +53,14 @@ export const FavoritesProvider = ({ children }) => {
     },
     [fetchFavorites]
   );
+
+  // 初期データを取得
+  useEffect(() => {
+    const initializeFavorites = async () => {
+      await fetchFavorites();
+    };
+    initializeFavorites();
+  }, []); // fetchFavorites（無限ループ防止）
 
   const value = {
     favorites,
@@ -71,3 +88,5 @@ export const useFavorites = () => {
   }
   return context;
 };
+
+export default FavoritesContext;

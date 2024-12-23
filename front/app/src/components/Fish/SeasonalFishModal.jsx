@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import SeasonTerm from "./SeasonTerm";
 import FishDetails from "./FishDetails";
 import FavoriteButton from "./FavoriteButton";
+import { useFavorites } from "../../contexts/FavoritesContext";
 
 const SeasonalFishModal = ({
   isOpen,
@@ -17,15 +18,17 @@ const SeasonalFishModal = ({
   const [isFishDetailsOpen, setIsFishDetailsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [imageErrors, setImageErrors] = useState({});
+  const { fetchFavorites } = useFavorites();
 
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
+      fetchFavorites();
     } else {
       const timer = setTimeout(() => setIsAnimating(false), 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, fetchFavorites]);
 
   const handleFishClick = (fish) => {
     setSelectedFish(fish);
@@ -85,10 +88,10 @@ const SeasonalFishModal = ({
               {filteredFish.map((fish) => (
                 <div
                   key={fish.id}
-                  className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 hover:scale-105 relative"
+                  className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 relative"
                   onClick={() => handleFishClick(fish)}
                 >
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mb-2 relative">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mb-2">
                     {!imageErrors[fish.id] ? (
                       <img
                         src={fish.image_url}
@@ -103,14 +106,16 @@ const SeasonalFishModal = ({
                         </span>
                       </div>
                     )}
-                    <div className="absolute bottom-0 right-0 bg-transparent z-10 transform-none">
-                      {" "}
+                  </div>
+                  {/* 魚の名前とお気に入りボタンを横並びに */}
+                  <div className="flex items-center space-x-2 mb-1">
+                    <p className="font-semibold text-gray-800 text-sm sm:text-base">
+                      {fish.name}
+                    </p>
+                    <div onClick={(e) => e.stopPropagation()}>
                       <FavoriteButton fishId={fish.id} />
                     </div>
                   </div>
-                  <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                    {fish.name}
-                  </p>
                   {fish.fish_seasons && fish.fish_seasons.length > 0 ? (
                     fish.fish_seasons.map((season, index) => (
                       <SeasonTerm key={index} season={season} />

@@ -83,7 +83,7 @@ const SearchModal = ({ isOpen, onClose, searchResults }) => {
               {searchResults.map((fish) => (
                 <div
                   key={fish.id}
-                  className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 hover:scale-105"
+                  className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 "
                   onClick={() => handleFishClick(fish)}
                 >
                   {/* 魚の画像表示 */}

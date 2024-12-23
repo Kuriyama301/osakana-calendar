@@ -38,16 +38,16 @@ const FavoriteButton = ({ fishId }) => {
     <button
       onClick={handleClick}
       disabled={isLoading}
-      className="flex items-center justify-center bg-transparent transform-none" // transform-noneを追加
+      className="flex items-center justify-center bg-transparent transform-none"
       style={{ padding: "8px" }}
       aria-label={isFavorited ? "お気に入りから削除" : "お気に入りに追加"}
     >
       <Heart
-        className={`w-6 h-6 transform-none ${
+        className={`w-4 h-4 transform-none ${
           isLoading
             ? "text-gray-300"
             : isFavorited
-            ? "fill-red-500 text-red-500"
+            ? "fill-pink-500 text-pink-500"
             : "text-gray-400"
         }`}
       />

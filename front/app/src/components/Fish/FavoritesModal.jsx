@@ -45,7 +45,7 @@ const FavoritesModal = ({ isOpen, onClose }) => {
       >
         <div className="sticky top-0 bg-white z-10 p-4 sm:p-6 border-b border-gray-200">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 pr-8">
-            お気に入りの魚
+            お気に入りのオサカナ
           </h2>
           <button
             onClick={onClose}
@@ -60,7 +60,7 @@ const FavoritesModal = ({ isOpen, onClose }) => {
           {isLoading ? (
             <div className="text-center py-4">読み込み中...</div>
           ) : favorites.length === 0 ? (
-            <div className="text-center py-4">お気に入りの魚はありません</div>
+            <div className="text-center py-4">お気に入りのオサカナはありません</div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {favorites.map((fish) => (

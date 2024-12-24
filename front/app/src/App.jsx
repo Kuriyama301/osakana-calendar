@@ -7,6 +7,7 @@ import LoadingScreen from "./components/Common/LoadingScreen.jsx";
 import { AuthProvider } from "./contexts/AuthContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 import EmailConfirmation from "./components/Auth/EmailConfirmation";
+import NewPasswordForm from "./components/Auth/NewPasswordForm";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -88,6 +89,10 @@ function App() {
                         path="/auth/confirm"
                         element={<EmailConfirmation />}
                       />
+                      <Route
+                        path="/reset-password"
+                        element={<NewPasswordForm />}
+                      />{" "}
                     </Routes>
                   </main>
                 </Suspense>

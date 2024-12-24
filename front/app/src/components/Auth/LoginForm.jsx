@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { X } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import SocialAuthButton from "./SocialAuthButton";
+import PasswordResetModal from "./PasswordResetModal";
 
 const LoginForm = ({ onGoogleLogin, onSuccess }) => {
   const { login } = useAuth();
@@ -12,6 +13,7 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showResetModal, setShowResetModal] = useState(false);
 
   // 入力値の更新処理
   const handleChange = (e) => {
@@ -52,6 +54,11 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleResetClick = (e) => {
+    e.preventDefault();
+    setShowResetModal(true);
   };
 
   return (
@@ -142,15 +149,24 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
 
       {/* パスワードリセットリンク */}
       <div className="text-center">
-        <a href="#" className="text-sm text-gray-600 hover:text-gray-800">
+        <button
+          onClick={handleResetClick}
+          className="text-sm text-gray-600 hover:text-gray-800"
+        >
           パスワードをお忘れの方はこちら
-        </a>
+        </button>
       </div>
 
       <SocialAuthButton
         onClick={onGoogleLogin}
         type="login"
         disabled={loading}
+      />
+
+      {/* パスワードリセットモーダル */}
+      <PasswordResetModal
+        isOpen={showResetModal}
+        onClose={() => setShowResetModal(false)}
       />
     </div>
   );

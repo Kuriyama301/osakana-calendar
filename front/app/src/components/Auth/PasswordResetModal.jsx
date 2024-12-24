@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Modal from "../Common/Modal";
-import InputField from "../Common/InputField";
-import Button from "../Common/Button";
+// import InputField from "../Common/InputField";
+// import Button from "../Common/Button";
 import authAPI from "../../api/auth";
 
 const PasswordResetModal = ({ isOpen, onClose }) => {

@@ -7,31 +7,34 @@ import {
 } from "react";
 import PropTypes from "prop-types";
 import { favoritesAPI } from "../api/favorites";
+import { useAuth } from "./AuthContext";
 
 const FavoritesContext = createContext(null);
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const fetchFavorites = useCallback(async () => {
+    if (!isAuthenticated()) return;
     setIsLoading(true);
     try {
-      const data = await favoritesAPI.getFavorites();
-      setFavorites(data);
+      const response = await favoritesAPI.getFavorites();
+      setFavorites(response);
     } catch (error) {
       console.error("Failed to fetch favorites:", error);
       setFavorites([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const addFavorite = useCallback(
     async (fishId) => {
       try {
         await favoritesAPI.addFavorite(fishId);
-        await fetchFavorites(); // 成功後に一覧を更新
+        await fetchFavorites();
       } catch (error) {
         console.error("Failed to add favorite:", error);
         if (error.response?.status === 422) {
@@ -60,7 +63,7 @@ export const FavoritesProvider = ({ children }) => {
       await fetchFavorites();
     };
     initializeFavorites();
-  }, []); // fetchFavorites（無限ループ防止）
+  }, [fetchFavorites]);
 
   const value = {
     favorites,

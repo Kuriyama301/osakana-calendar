@@ -10,8 +10,11 @@ const FavoriteButton = ({ fishId }) => {
   const { favorites, addFavorite, removeFavorite } = useFavorites();
   const [isFavorited, setIsFavorited] = useState(false);
 
+  // お気に入り状態を更新
   useEffect(() => {
-    setIsFavorited(favorites.some((fish) => fish.id === fishId));
+    if (favorites && fishId) {
+      setIsFavorited(favorites.some((fish) => fish.id === fishId));
+    }
   }, [favorites, fishId]);
 
   const handleClick = async (e) => {
@@ -32,7 +35,10 @@ const FavoriteButton = ({ fishId }) => {
     }
   };
 
-  if (!isAuthenticated()) return null;
+  // 未認証時に空のボタンを返す
+  if (!isAuthenticated()) {
+    return <div style={{ display: "none" }} />;
+  }
 
   return (
     <button
@@ -43,11 +49,11 @@ const FavoriteButton = ({ fishId }) => {
       aria-label={isFavorited ? "お気に入りから削除" : "お気に入りに追加"}
     >
       <Heart
-        className={`w-4 h-4 transform-none ${
+        className={`w-6 h-6 transform-none ${
           isLoading
             ? "text-gray-300"
             : isFavorited
-            ? "fill-pink-500 text-pink-500"
+            ? "fill-pink-300 text-pink-300"
             : "text-gray-400"
         }`}
       />

@@ -64,7 +64,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             <>
               <LoginForm
                 onGoogleLogin={handleGoogleAuth}
-                onSuccess={handleLoginSuccess} // ここでonSuccessを渡す
+                onSuccess={handleLoginSuccess}
               />
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">

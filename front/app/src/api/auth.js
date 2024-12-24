@@ -16,15 +16,15 @@ export const authAPI = {
   signup: async (email, password, passwordConfirmation, name) => {
     try {
       // デバッグ用ログの追加
-      console.log('Sending signup request with:', { email, name });
+      console.log("Sending signup request with:", { email, name });
 
       const response = await client.post("/api/v1/auth", {
         user: {
           email,
           password,
           password_confirmation: passwordConfirmation,
-          name
-        }
+          name,
+        },
       });
 
       return response.data;
@@ -82,6 +82,36 @@ export const authAPI = {
       });
       return response.data;
     } catch (error) {
+      throw formatError(error);
+    }
+  },
+
+  // パスワードリセットメールの送信リクエスト
+  requestPasswordReset: async (email) => {
+    try {
+      const response = await client.post("/api/v1/auth/password", {
+        user: { email },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Password reset request error:", error);
+      throw formatError(error);
+    }
+  },
+
+  // 新しいパスワードの設定
+  resetPassword: async (password, passwordConfirmation, resetToken) => {
+    try {
+      const response = await client.put("/api/v1/auth/password", {
+        user: {
+          reset_password_token: resetToken,
+          password: password,
+          password_confirmation: passwordConfirmation,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Password reset error:", error);
       throw formatError(error);
     }
   },

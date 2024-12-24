@@ -10,10 +10,7 @@ const FavoriteButton = ({ fishId }) => {
   const { favorites, addFavorite, removeFavorite } = useFavorites();
   const [isFavorited, setIsFavorited] = useState(false);
 
-  if (!isAuthenticated()) {
-    return null;
-  }
-
+  // お気に入り状態を更新
   useEffect(() => {
     if (favorites && fishId) {
       setIsFavorited(favorites.some((fish) => fish.id === fishId));
@@ -37,6 +34,11 @@ const FavoriteButton = ({ fishId }) => {
       setIsLoading(false);
     }
   };
+
+  // 未認証時に空のボタンを返す
+  if (!isAuthenticated()) {
+    return <div style={{ display: "none" }} />;
+  }
 
   return (
     <button

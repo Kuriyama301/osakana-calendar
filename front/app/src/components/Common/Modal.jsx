@@ -9,20 +9,21 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!shouldRender) return null;
 
   return (
-    <>
+    <div
+      className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+        isAnimating ? "opacity-100" : "opacity-0"
+      }`}
+    >
       {/* オーバーレイ背景 */}
       <div
-        className={`fixed inset-0 bg-black transition-opacity duration-300 ${
+        className={`absolute inset-0 bg-black ${
           isAnimating ? "opacity-50" : "opacity-0"
-        }`}
+        } transition-opacity duration-300`}
         onClick={onClose}
       />
 
       {/* モーダルコンテンツ */}
-      <div
-        className="fixed inset-0 flex items-center justify-center z-[60]"
-        onClick={onClose}
-      >
+      <div className="fixed inset-0 flex items-center justify-center">
         <div
           className={`bg-white rounded-lg text-gray-800 relative transition-all duration-300 
             w-full mx-4 sm:mx-8 md:mx-auto md:max-w-2xl 
@@ -47,7 +48,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

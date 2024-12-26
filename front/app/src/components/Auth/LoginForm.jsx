@@ -8,7 +8,7 @@ import PasswordResetModal from "./PasswordResetModal";
 import { authAPI } from "../../api/auth";
 import { tokenManager } from "../../utils/tokenManager";
 
-const LoginForm = ({ onGoogleLogin, onSuccess }) => {
+const LoginForm = ({ onSuccess }) => {
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
@@ -200,7 +200,7 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
 };
 
 LoginForm.propTypes = {
-  onGoogleLogin: PropTypes.func.isRequired,
+  // onGoogleLogin: PropTypes.func.isRequired,
   onSuccess: PropTypes.func,
 };
 

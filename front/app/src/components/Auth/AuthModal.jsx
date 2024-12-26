@@ -63,7 +63,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           {authMode === "login" ? (
             <>
               <LoginForm
-                onGoogleLogin={handleGoogleAuth}
+                // onGoogleLogin={handleGoogleAuth}
                 onSuccess={handleLoginSuccess}
               />
               <div className="mt-6 text-center">

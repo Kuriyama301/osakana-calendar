@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useGoogleLogin } from "@react-oauth/google";
 import SocialAuthButton from "./SocialAuthButton";
 import PasswordResetModal from "./PasswordResetModal";
+import { authAPI } from "../../api/auth";
+import { tokenManager } from "../../utils/tokenManager";
 
-const LoginForm = ({ onGoogleLogin, onSuccess }) => {
+const LoginForm = ({ onSuccess }) => {
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
@@ -60,6 +63,29 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
     e.preventDefault();
     setShowResetModal(true);
   };
+
+  // GoogleLogin
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        console.log("Google Login Success:", tokenResponse);
+        // tokenResponseの形式を確認
+        const result = await authAPI.googleAuth(tokenResponse.access_token);
+        if (result.token) {
+          tokenManager.setToken(result.token);
+          tokenManager.setUser(result.user);
+          if (onSuccess) {
+            onSuccess();
+          }
+        }
+      } catch (err) {
+        console.error("Google Auth Error:", err);
+        setError(err.message || "Google認証に失敗しました");
+      }
+    },
+    flow: "implicit",
+    scope: "email profile",
+  });
 
   return (
     <>
@@ -156,7 +182,7 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
         </div>
 
         <SocialAuthButton
-          onClick={onGoogleLogin}
+          onClick={handleGoogleLogin}
           type="login"
           disabled={loading}
         />
@@ -174,7 +200,7 @@ const LoginForm = ({ onGoogleLogin, onSuccess }) => {
 };
 
 LoginForm.propTypes = {
-  onGoogleLogin: PropTypes.func.isRequired,
+  // onGoogleLogin: PropTypes.func.isRequired,
   onSuccess: PropTypes.func,
 };
 

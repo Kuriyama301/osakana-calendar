@@ -115,6 +115,30 @@ export const authAPI = {
       throw formatError(error);
     }
   },
+
+  googleAuth: async (credential) => {
+    try {
+      const response = await client.post(
+        "/api/v1/auth/google_oauth2/callback",
+        {
+          credential: credential,
+        }
+      );
+
+      const token = response.data.token;
+      if (token) {
+        client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      }
+
+      return {
+        user: response.data.data,
+        token: token,
+      };
+    } catch (error) {
+      console.error("Google auth error:", error);
+      throw formatError(error);
+    }
+  },
 };
 
 export default authAPI;

@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 // Googleロゴ
 const GoogleIcon = () => (
@@ -24,13 +24,17 @@ const GoogleIcon = () => (
 );
 
 // Googleログイン/登録ボタンコンポーネント
-const SocialAuthButton = ({ onClick, type = "login" }) => {
+const SocialAuthButton = ({ onClick, type = "login", disabled = false }) => {
   const buttonText = type === "login" ? "Googleでログイン" : "Googleで登録";
 
   return (
     <button
       onClick={onClick}
-      className="w-full p-3 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+      disabled={disabled}
+      className={`w-full p-3 bg-white border border-gray-300 rounded-md 
+        flex items-center justify-center gap-2
+        ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"}
+        transition-colors`}
     >
       <GoogleIcon />
       {buttonText}
@@ -41,7 +45,8 @@ const SocialAuthButton = ({ onClick, type = "login" }) => {
 // PropTypesの定義
 SocialAuthButton.propTypes = {
   onClick: PropTypes.func.isRequired,
-  type: PropTypes.oneOf(["login", "register"])
+  type: PropTypes.oneOf(["login", "register"]),
+  disabled: PropTypes.bool,
 };
 
 export default SocialAuthButton;

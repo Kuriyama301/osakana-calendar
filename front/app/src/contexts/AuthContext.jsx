@@ -104,6 +104,23 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Google認証処理を追加
+  const googleAuth = useCallback(async (credential) => {
+    try {
+      setError(null);
+      const { user, token } = await authAPI.googleAuth(credential);
+      
+      tokenManager.setToken(token);
+      tokenManager.setUser(user);
+      setUser(user);
+
+      return user;
+    } catch (err) {
+      setError(formatError(err));
+      throw err;
+    }
+  }, []);
+
   // 認証状態チェック
   const isAuthenticated = useCallback(() => {
     return !!user && !!tokenManager.getToken();
@@ -117,6 +134,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated,
+    googleAuth,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

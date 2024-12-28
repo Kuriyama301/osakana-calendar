@@ -64,4 +64,6 @@ Rails.application.configure do
 
   # メールのデバッグログ
   config.action_mailer.logger = Logger.new(STDOUT)
+
+  config.log_level = :debug
 end

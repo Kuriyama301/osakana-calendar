@@ -118,12 +118,16 @@ export const authAPI = {
 
   googleAuth: async (credential) => {
     try {
+      console.log("Sending Google auth request with credential:", credential);
+
       const response = await client.post(
         "/api/v1/auth/google_oauth2/callback",
         {
           credential: credential,
         }
       );
+
+      console.log("Google auth response:", response.data);
 
       const token = response.data.token;
       if (token) {
@@ -136,6 +140,12 @@ export const authAPI = {
       };
     } catch (error) {
       console.error("Google auth error:", error);
+      if (error.response) {
+        console.error("Error response:", {
+          status: error.response.status,
+          data: error.response.data,
+        });
+      }
       throw formatError(error);
     }
   },

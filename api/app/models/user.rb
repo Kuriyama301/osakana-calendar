@@ -44,7 +44,7 @@ class User < ApplicationRecord
         email: email,
         exp: 24.hours.from_now.to_i
       },
-      ENV['DEVISE_JWT_SECRET_KEY'],  # credentialsではなく環境変数を使用
+      ENV['DEVISE_JWT_SECRET_KEY'],
       'HS256'
     )
   end

@@ -104,15 +104,21 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Google認証処理を追加
+  // Google認証処理
   const googleAuth = useCallback(async (credential) => {
     try {
       setError(null);
       const { user, token } = await authAPI.googleAuth(credential);
-      
+
       tokenManager.setToken(token);
       tokenManager.setUser(user);
       setUser(user);
+
+      // トークンの保存確認
+      const savedToken = tokenManager.getToken();
+      if (!savedToken) {
+        throw new Error("トークンの保存に失敗しました");
+      }
 
       return user;
     } catch (err) {

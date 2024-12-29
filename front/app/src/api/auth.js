@@ -118,6 +118,8 @@ export const authAPI = {
 
   googleAuth: async (credential) => {
     try {
+      console.log("Sending Google auth request with credential:", credential);
+
       const response = await client.post(
         "/api/v1/auth/google_oauth2/callback",
         {
@@ -125,10 +127,9 @@ export const authAPI = {
         }
       );
 
+      console.log("Google auth response:", response.data);
+
       const token = response.data.token;
-      if (token) {
-        client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      }
 
       return {
         user: response.data.data,

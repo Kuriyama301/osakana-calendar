@@ -130,9 +130,6 @@ export const authAPI = {
       console.log("Google auth response:", response.data);
 
       const token = response.data.token;
-      if (token) {
-        client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      }
 
       return {
         user: response.data.data,
@@ -140,12 +137,6 @@ export const authAPI = {
       };
     } catch (error) {
       console.error("Google auth error:", error);
-      if (error.response) {
-        console.error("Error response:", {
-          status: error.response.status,
-          data: error.response.data,
-        });
-      }
       throw formatError(error);
     }
   },

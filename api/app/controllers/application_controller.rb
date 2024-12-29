@@ -12,11 +12,11 @@ class ApplicationController < ActionController::API
     devise_parameter_sanitizer.permit(:account_update, keys: [:name])
   end
 
-  def authenticate_user!  # 'ddef' を 'def' に修正
+  def authenticate_user!
     if request.headers['Authorization'].present?
       token = request.headers['Authorization'].split(' ').last
       begin
-        @current_user_id = JWT.decode(
+        decoded = JWT.decode(
           token,
           ENV['DEVISE_JWT_SECRET_KEY'],
           true,
@@ -24,9 +24,12 @@ class ApplicationController < ActionController::API
             algorithm: ENV.fetch('JWT_ALGORITHM', 'HS256'),
             exp_leeway: 30
           }
-        ).first['sub']
+        ).first
+
+        @current_user_id = decoded['sub'] || decoded['id']
         current_user
-      rescue JWT::DecodeError
+      rescue JWT::DecodeError => e
+        Rails.logger.error "JWT decode error: #{e.message}"
         render json: { error: 'Invalid token' }, status: :unauthorized
       end
     else

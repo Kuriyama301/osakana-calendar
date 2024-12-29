@@ -19,6 +19,9 @@ module Api
             response = Net::HTTP.get_response(auth_uri)
             user_info = JSON.parse(response.body)
 
+            # エラーログの追加
+            Rails.logger.debug "Google user info: #{user_info.inspect}"
+
             @user = User.find_or_initialize_by(email: user_info['email']) do |user|
               user.provider = 'google_oauth2'
               user.uid = user_info['sub']
@@ -28,7 +31,7 @@ module Api
             end
 
             if @user.save
-              token = @user.generate_jwt
+              token = generate_jwt_token(@user)
 
               render json: {
                 status: 'success',
@@ -37,6 +40,7 @@ module Api
                 token: token
               }
             else
+              Rails.logger.error "User save failed: #{@user.errors.full_messages}"
               render json: {
                 status: 'error',
                 message: 'Failed to authenticate user',
@@ -44,12 +48,13 @@ module Api
               }, status: :unprocessable_entity
             end
           rescue => e
-            Rails.logger.error "Error in google_oauth2 callback: #{e.message}"
+            Rails.logger.error "Google OAuth Error: #{e.class}: #{e.message}"
             Rails.logger.error e.backtrace.join("\n")
 
             render json: {
               status: 'error',
-              message: 'Authentication failed'
+              message: 'Authentication failed',
+              error: e.message
             }, status: :internal_server_error
           end
         end
@@ -59,6 +64,20 @@ module Api
         def after_omniauth_failure_path_for(_scope)
           '/auth/failure'
         end
+
+        def generate_jwt_token(resource)
+          JWT.encode(
+            {
+              sub: resource.id,
+              exp: (Time.now + ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours).to_i).to_i,
+              jti: SecureRandom.uuid,
+              iat: Time.now.to_i
+            },
+            ENV['DEVISE_JWT_SECRET_KEY'],
+            'HS256'
+          )
+        end
+
       end
     end
   end

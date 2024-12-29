@@ -40,8 +40,10 @@ class User < ApplicationRecord
   def generate_jwt
     JWT.encode(
       {
+        sub: id.to_s,
         id: id,
         email: email,
+        jti: SecureRandom.uuid,
         exp: 24.hours.from_now.to_i
       },
       ENV['DEVISE_JWT_SECRET_KEY'],

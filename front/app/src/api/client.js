@@ -68,4 +68,20 @@ if (process.env.NODE_ENV !== "test") {
   }
 }
 
+// デバッグログを追加するインターセプター
+client.interceptors.request.use(
+  (config) => {
+    console.log("Request Config:", {
+      url: config.url,
+      headers: config.headers,
+      method: config.method,
+    });
+    return config;
+  },
+  (error) => {
+    console.error("Request Error:", error);
+    return Promise.reject(error);
+  }
+);
+
 export default client;

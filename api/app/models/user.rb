@@ -35,4 +35,17 @@ class User < ApplicationRecord
       user.confirmed_at = Time.current # Google認証の場合はメール確認済みに
     end
   end
+
+  # JWT生成
+  def generate_jwt
+    JWT.encode(
+      {
+        id: id,
+        email: email,
+        exp: 24.hours.from_now.to_i
+      },
+      ENV['DEVISE_JWT_SECRET_KEY'],  # credentialsではなく環境変数を使用
+      'HS256'
+    )
+  end
 end

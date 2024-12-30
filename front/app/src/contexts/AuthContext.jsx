@@ -107,23 +107,26 @@ export const AuthProvider = ({ children }) => {
   // Google認証処理
   const googleAuth = useCallback(async (credential) => {
     try {
-      console.log("Starting Google auth with credential:", credential);
       setError(null);
-
       const result = await authAPI.googleAuth(credential);
-      console.log("Auth result:", result);
 
       if (result.token) {
-        console.log("Updating auth state...");
-        tokenManager.setToken(result.token);
-        tokenManager.setUser(result.user);
-        setUser(result.user);
+        // userData をレスポンス構造に合わせて抽出
+        const userData = result.user.data.attributes;
 
-        // 認証状態の確認
-        console.log("Updated state:", {
-          user: result.user,
-          token: result.token,
-          isAuthenticated: !!result.user && !!result.token,
+        tokenManager.setToken(result.token);
+        tokenManager.setUser(userData);
+        setUser(userData);
+
+        // Authorization ヘッダーを設定
+        client.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${result.token}`;
+
+        console.log("Auth state updated:", {
+          userData,
+          hasToken: !!result.token,
+          isAuthenticated: !!userData && !!result.token,
         });
       }
 

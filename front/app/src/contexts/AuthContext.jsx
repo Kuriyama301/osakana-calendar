@@ -107,21 +107,29 @@ export const AuthProvider = ({ children }) => {
   // Google認証処理
   const googleAuth = useCallback(async (credential) => {
     try {
+      console.log("Starting Google auth with credential:", credential);
       setError(null);
-      const { user, token } = await authAPI.googleAuth(credential);
 
-      tokenManager.setToken(token);
-      tokenManager.setUser(user);
-      setUser(user);
+      const result = await authAPI.googleAuth(credential);
+      console.log("Auth result:", result);
 
-      // トークンの保存確認
-      const savedToken = tokenManager.getToken();
-      if (!savedToken) {
-        throw new Error("トークンの保存に失敗しました");
+      if (result.token) {
+        console.log("Updating auth state...");
+        tokenManager.setToken(result.token);
+        tokenManager.setUser(result.user);
+        setUser(result.user);
+
+        // 認証状態の確認
+        console.log("Updated state:", {
+          user: result.user,
+          token: result.token,
+          isAuthenticated: !!result.user && !!result.token,
+        });
       }
 
-      return user;
+      return result.user;
     } catch (err) {
+      console.error("Google auth error:", err);
       setError(formatError(err));
       throw err;
     }

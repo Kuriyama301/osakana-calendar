@@ -5,11 +5,11 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useGoogleLogin } from "@react-oauth/google";
 import SocialAuthButton from "./SocialAuthButton";
 import PasswordResetModal from "./PasswordResetModal";
-import { authAPI } from "../../api/auth";
-import { tokenManager } from "../../utils/tokenManager";
+// import { authAPI } from "../../api/auth";
+// import { tokenManager } from "../../utils/tokenManager";
 
 const LoginForm = ({ onSuccess }) => {
-  const { login } = useAuth();
+  const { login, googleAuth } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -64,24 +64,31 @@ const LoginForm = ({ onSuccess }) => {
     setShowResetModal(true);
   };
 
-  // GoogleLogin
+  // GoogleLogin処理を修正
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
         console.log("Google Login Success:", tokenResponse);
-        // tokenResponseの形式を確認
-        const result = await authAPI.googleAuth(tokenResponse.access_token);
-        if (result.token) {
-          tokenManager.setToken(result.token);
-          tokenManager.setUser(result.user);
-          if (onSuccess) {
-            onSuccess();
-          }
+        setLoading(true);
+
+        console.log("Calling googleAuth...");
+        const result = await googleAuth(tokenResponse.access_token);
+        console.log("Google Auth Result:", result);
+
+        if (onSuccess) {
+          console.log("Calling onSuccess callback...");
+          onSuccess();
         }
       } catch (err) {
         console.error("Google Auth Error:", err);
         setError(err.message || "Google認証に失敗しました");
+      } finally {
+        setLoading(false);
       }
+    },
+    onError: (error) => {
+      console.error("Google Login Error:", error);
+      setError("Google認証に失敗しました");
     },
     flow: "implicit",
     scope: "email profile",
@@ -188,7 +195,6 @@ const LoginForm = ({ onSuccess }) => {
         />
       </div>
 
-      {/* モーダルをフラグメントの直下に移動 */}
       {showResetModal && (
         <PasswordResetModal
           isOpen={showResetModal}
@@ -200,7 +206,6 @@ const LoginForm = ({ onSuccess }) => {
 };
 
 LoginForm.propTypes = {
-  // onGoogleLogin: PropTypes.func.isRequired,
   onSuccess: PropTypes.func,
 };
 

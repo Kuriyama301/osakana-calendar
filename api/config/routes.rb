@@ -3,8 +3,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       # OmniAuthルートを明示的に設定
       devise_scope :user do
-        get 'auth/google_oauth2', to: 'auth/omniauth_callbacks#passthru'
-        get 'auth/google_oauth2/callback', to: 'auth/omniauth_callbacks#google_oauth2'
+        # get 'auth/google_oauth2', to: 'auth/omniauth_callbacks#passthru'
+        # get 'auth/google_oauth2/callback', to: 'auth/omniauth_callbacks#google_oauth2'
         post 'auth/google_oauth2/callback', to: 'auth/omniauth_callbacks#google_oauth2'
       end
 

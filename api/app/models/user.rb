@@ -44,7 +44,8 @@ class User < ApplicationRecord
         id: id,
         email: email,
         jti: SecureRandom.uuid,
-        exp: 24.hours.from_now.to_i
+        exp: 24.hours.from_now.to_i,
+        iat: Time.current.to_i
       },
       ENV['DEVISE_JWT_SECRET_KEY'],
       'HS256'

@@ -84,4 +84,15 @@ client.interceptors.request.use(
   }
 );
 
+// 新しいデバッグインターセプター
+client.interceptors.request.use((config) => {
+  console.group("API Request Debug");
+  console.log("URL:", config.url);
+  console.log("Token from tokenManager:", tokenManager.getToken());
+  console.log("Auth Header from tokenManager:", tokenManager.getAuthHeader());
+  console.log("Final headers:", config.headers);
+  console.groupEnd();
+  return config;
+});
+
 export default client;

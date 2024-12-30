@@ -127,16 +127,32 @@ export const authAPI = {
         }
       );
 
+      console.log("Full response:", response);
       console.log("Google auth response:", response.data);
+      console.log("Response token:", response.data.token);
 
       const token = response.data.token;
+      if (!token) {
+        console.error("No token in response");
+        throw new Error("認証トークンが見つかりません");
+      }
+
+      client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      console.log(
+        "Set Authorization header:",
+        client.defaults.headers.common["Authorization"]
+      );
 
       return {
         user: response.data.data,
         token: token,
       };
     } catch (error) {
-      console.error("Google auth error:", error);
+      console.error("Google auth error details:", {
+        message: error.message,
+        response: error.response,
+        data: error.response?.data,
+      });
       throw formatError(error);
     }
   },

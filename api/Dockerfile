@@ -20,7 +20,7 @@ COPY . .
 RUN rm -rf /app/channels && \
     rm -rf /app/tmp/cache /app/tmp/pids /app/tmp/sockets
 
-# 本番環境用の最適化
+# 本番環境
 FROM ruby:3.3.4-slim
 
 RUN apt-get update -qq && \
@@ -29,6 +29,25 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
+# バックエンド用の環境変数
+ARG GOOGLE_CLIENT_SECRET
+ARG GOOGLE_CLIENT_ID
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_REGION
+ARG AWS_BUCKET
+ARG DEVISE_JWT_SECRET_KEY
+ARG SECRET_KEY_BASE
+
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ENV AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+ENV AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+ENV AWS_REGION=$AWS_REGION
+ENV AWS_BUCKET=$AWS_BUCKET
+ENV DEVISE_JWT_SECRET_KEY=$DEVISE_JWT_SECRET_KEY
+ENV SECRET_KEY_BASE=$SECRET_KEY_BASE
 
 # ビルドステージからファイルをコピー
 COPY --from=builder /usr/local/bundle /usr/local/bundle

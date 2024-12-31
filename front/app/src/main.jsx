@@ -6,11 +6,25 @@ import "./index.css";
 import { setupOGP } from "./utils/ogpUtils";
 
 // DOMContentLoadedイベントでOGP設定を実行
-document.addEventListener("DOMContentLoaded", setupOGP);
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+console.log("OAuth Initialization:", {
+  clientId,
+  env: import.meta.env.MODE,
+  allEnv: import.meta.env,
+});
 
+// エラーハンドリングを追加
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider
+      clientId={clientId}
+      onScriptLoadError={(error) =>
+        console.error("Google Script load error:", error)
+      }
+      onScriptLoadSuccess={() =>
+        console.log("Google Script loaded successfully")
+      }
+    >
       <App />
     </GoogleOAuthProvider>
   </StrictMode>

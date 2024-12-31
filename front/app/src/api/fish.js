@@ -3,16 +3,15 @@ import client from "./client";
 export const getFishByDate = async (date) => {
   try {
     if (!date) {
-      throw new Error('Date parameter is required');
+      throw new Error("Date parameter is required");
     }
-    
-    const formattedDate = date instanceof Date 
-      ? date.toISOString().split('T')[0] 
-      : date;
+
+    const formattedDate =
+      date instanceof Date ? date.toISOString().split("T")[0] : date;
 
     // baseURLが設定されているため、先頭のスラッシュを削除
-    const response = await client.get('api/v1/calendar/fish', {
-      params: { date: formattedDate }
+    const response = await client.get("api/v1/calendar/fish", {
+      params: { date: formattedDate },
     });
 
     return response.data;
@@ -20,27 +19,25 @@ export const getFishByDate = async (date) => {
     if (error.response?.status === 404) {
       return []; // 魚が見つからない場合は空配列
     }
-    console.error('Failed to fetch fish data:', error);
+    console.error("Failed to fetch fish data:", error);
     throw new Error(
-      error.response?.data?.message || 
-      error.message || 
-      'Failed to fetch fish data'
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch fish data"
     );
   }
 };
 
 export const searchFish = async (searchTerm) => {
   try {
-    const response = await client.get('api/v1/fish/search', {
-      params: { query: searchTerm }
+    const response = await client.get("api/v1/fish/search", {
+      params: { query: searchTerm },
     });
     return response.data;
   } catch (error) {
-    console.error('Failed to search fish:', error);
+    console.error("Failed to search fish:", error);
     throw new Error(
-      error.response?.data?.message || 
-      error.message || 
-      'Failed to search fish'
+      error.response?.data?.message || error.message || "Failed to search fish"
     );
   }
 };

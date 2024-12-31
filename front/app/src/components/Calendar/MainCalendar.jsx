@@ -123,8 +123,8 @@ const MainCalendar = React.forwardRef((props, ref) => {
           );
         })}
       </div>
-      <SeasonalFishModal 
-        isOpen={isModalOpen} 
+      <SeasonalFishModal
+        isOpen={isModalOpen}
         onClose={closeModal}
         currentDate={selectedModalDate}
         seasonalFish={seasonalFish}

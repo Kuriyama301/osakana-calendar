@@ -7,9 +7,12 @@ import { setupOGP } from "./utils/ogpUtils";
 
 // main.jsx の冒頭部分に追加
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-console.log("Environment:", {
+console.log("Environment Variables:", {
+  googleClientId: clientId,
+  apiUrl: import.meta.env.VITE_API_URL,
+  frontUrl: import.meta.env.VITE_FRONT_URL,
   mode: import.meta.env.MODE,
-  hasClientId: !!clientId,
+  allEnvKeys: Object.keys(import.meta.env)
 });
 
 // DOMContentLoadedイベントでOGP設定を実行

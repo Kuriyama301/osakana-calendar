@@ -19,7 +19,7 @@ const client = axios.create({
     Accept: "application/json",
   },
   // 認証が必要なエンドポイントのみにwitchCredentialsを設定
-  withCredentials: false,
+  withCredentials: true,
 });
 
 // テスト環境とそれ以外で異なる設定を適用

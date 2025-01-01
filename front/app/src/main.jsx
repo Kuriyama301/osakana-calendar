@@ -5,24 +5,19 @@ import App from "./App.jsx";
 import "./index.css";
 import { setupOGP } from "./utils/ogpUtils";
 
-// main.jsx の冒頭部分に追加
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-console.log("Environment Variables:", {
-  googleClientId: clientId,
-  apiUrl: import.meta.env.VITE_API_URL,
-  frontUrl: import.meta.env.VITE_FRONT_URL,
-  mode: import.meta.env.MODE,
-  allEnvKeys: Object.keys(import.meta.env)
-});
+// クライアントIDを直接記述
+const clientId =
+  "970626181711-egumgs3fofda67de67e393b8ekt48pls.apps.googleusercontent.com";
 
-// DOMContentLoadedイベントでOGP設定を実行
+// デバッグ情報の出力
+console.group("OAuth Debug Information");
+console.log("Current URL:", window.location.href);
+console.log("Origin:", window.location.origin);
+console.log("Client ID:", clientId);
+console.log("Environment:", import.meta.env.MODE);
+console.groupEnd();
+
 document.addEventListener("DOMContentLoaded", setupOGP);
-
-console.log("OAuth Initialization:", {
-  clientId,
-  env: import.meta.env.MODE,
-  allEnv: import.meta.env,
-});
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

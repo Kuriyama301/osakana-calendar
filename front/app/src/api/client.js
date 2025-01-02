@@ -95,4 +95,26 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
+// client.jsのインターセプターに追加
+client.interceptors.response.use(
+  (response) => {
+    console.group("API Response Debug");
+    console.log("URL:", response.config.url);
+    console.log("Status:", response.status);
+    console.log("Headers:", response.headers);
+    console.log("Data:", response.data);
+    console.groupEnd();
+    return response;
+  },
+  (error) => {
+    console.group("API Error Debug");
+    console.log("URL:", error.config?.url);
+    console.log("Status:", error.response?.status);
+    console.log("Error Data:", error.response?.data);
+    console.log("Error Headers:", error.response?.headers);
+    console.groupEnd();
+    return Promise.reject(error);
+  }
+);
+
 export default client;

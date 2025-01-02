@@ -21,6 +21,16 @@ vi.mock("../../../contexts/AuthContext", () => ({
   AuthProvider: ({ children }) => children,
 }));
 
+vi.mock("../../../contexts/CollectionsContext", () => ({
+  useCollections: () => ({
+    collections: [],
+    fetchCollections: vi.fn(),
+    addCollection: vi.fn(),
+    removeCollection: vi.fn(),
+  }),
+  CollectionsProvider: ({ children }) => children,
+}));
+
 describe("SeasonalFishModal", () => {
   const mockFish = [
     {
@@ -52,7 +62,9 @@ describe("SeasonalFishModal", () => {
     return render(
       <AuthProvider>
         <FavoritesProvider>
-          <SeasonalFishModal {...props} />
+          <CollectionsProvider>
+            <SeasonalFishModal {...props} />
+          </CollectionsProvider>
         </FavoritesProvider>
       </AuthProvider>
     );

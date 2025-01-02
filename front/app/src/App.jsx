@@ -8,6 +8,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 import EmailConfirmation from "./components/Auth/EmailConfirmation";
 import NewPasswordForm from "./components/Auth/NewPasswordForm";
+import { CollectionsProvider } from "./contexts/CollectionsContext";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -77,28 +78,30 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <FavoritesProvider>
-          <CalendarProvider>
-            <Router>
-              <div className="h-screen overflow-hidden">
-                <LoadingScreen isOpen={isInitialLoading} />
-                <Suspense fallback={<LoadingScreen isOpen={true} />}>
-                  <main className="h-full">
-                    <Routes>
-                      <Route path="/" element={<HomePage />} />
-                      <Route
-                        path="/auth/confirm"
-                        element={<EmailConfirmation />}
-                      />
-                      <Route
-                        path="/reset-password"
-                        element={<NewPasswordForm />}
-                      />{" "}
-                    </Routes>
-                  </main>
-                </Suspense>
-              </div>
-            </Router>
-          </CalendarProvider>
+          <CollectionsProvider>
+            <CalendarProvider>
+              <Router>
+                <div className="h-screen overflow-hidden">
+                  <LoadingScreen isOpen={isInitialLoading} />
+                  <Suspense fallback={<LoadingScreen isOpen={true} />}>
+                    <main className="h-full">
+                      <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route
+                          path="/auth/confirm"
+                          element={<EmailConfirmation />}
+                        />
+                        <Route
+                          path="/reset-password"
+                          element={<NewPasswordForm />}
+                        />
+                      </Routes>
+                    </main>
+                  </Suspense>
+                </div>
+              </Router>
+            </CalendarProvider>
+          </CollectionsProvider>
         </FavoritesProvider>
       </AuthProvider>
     </ErrorBoundary>

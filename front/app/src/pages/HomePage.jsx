@@ -12,6 +12,7 @@ import LoadingScreen from "../components/Common/LoadingScreen";
 import AuthNavItem from "../components/Common/AuthNavItem";
 import AuthModal from "../components/Auth/AuthModal";
 import { useAuth } from "../contexts/AuthContext";
+import CollectionsModal from "../components/Fish/CollectionsModal";
 
 const NavItem = ({ icon, label, onClick }) => (
   <li
@@ -34,6 +35,7 @@ const HomePage = () => {
   const [showSubCalendar, setShowSubCalendar] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
+  const [isCollectionsModalOpen, setIsCollectionsModalOpen] = useState(false);
   const containerRef = useRef(null);
   const { isAuthenticated } = useAuth();
   const {
@@ -89,7 +91,17 @@ const HomePage = () => {
 
   const navItems = [
     { icon: <Home size={20} />, label: "HOME" },
-    { icon: <Utensils size={20} />, label: "COLLECTION" },
+    {
+      icon: <Utensils size={20} />,
+      label: "COLLECTION",
+      onClick: () => {
+        if (isAuthenticated()) {
+          setIsCollectionsModalOpen(true);
+        } else {
+          setIsAuthModalOpen(true);
+        }
+      },
+    },
     {
       icon: <Heart size={20} />,
       label: "FAVORITE",
@@ -185,6 +197,11 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+
+      <CollectionsModal
+        isOpen={isCollectionsModalOpen}
+        onClose={() => setIsCollectionsModalOpen(false)}
+      />
 
       <FavoritesModal
         isOpen={isFavoritesModalOpen}

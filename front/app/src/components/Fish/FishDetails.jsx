@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import SeasonTerm from "./SeasonTerm";
 import FishVideo from "./FishVideo";
 import FavoriteButton from "./FavoriteButton";
+import CollectionButton from "./CollectionButton";
 
 const FishDetails = ({ isOpen, onClose, fish }) => {
   const [isAnimating, setIsAnimating] = useState(false);
@@ -49,45 +50,49 @@ const FishDetails = ({ isOpen, onClose, fish }) => {
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
               {fish?.name}
             </h2>
-            <div className="flex items-center space-x-2">
-              {fish && <FavoriteButton fishId={fish.id} />}{" "}
-              {/* FavoriteButtonの追加 */}
-              <button
-                onClick={handleClose}
-                className="text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors duration-200"
-                aria-label="Close modal"
-              >
-                <X size={24} />
-              </button>
-            </div>
+            <button
+              onClick={handleClose}
+              className="text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors duration-200"
+              aria-label="Close modal"
+            >
+              <X size={24} />
+            </button>
           </div>
         </div>
 
         <div className="flex-grow overflow-y-auto scrollbar-hide p-4 sm:p-6">
           <div className="flex flex-col items-center">
             <div className="w-full max-w-md mb-6">
-              {fish?.image_url && !imageError ? (
-                <img
-                  src={fish.image_url}
-                  alt={fish.name}
-                  className="w-full h-auto object-contain rounded-lg"
-                  onError={handleImageError}
-                />
-              ) : (
-                <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg">
-                  <div className="text-center">
-                    <span className="text-gray-600 block">{fish?.name}</span>
-                    <span className="text-gray-500 text-sm block mt-2">
-                      画像を読み込めませんでした
-                    </span>
+              <div className="mb-2">
+                {fish?.image_url && !imageError ? (
+                  <img
+                    src={fish.image_url}
+                    alt={fish.name}
+                    className="w-full h-auto object-contain rounded-lg"
+                    onError={handleImageError}
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg">
+                    <div className="text-center">
+                      <span className="text-gray-600 block">{fish?.name}</span>
+                      <span className="text-gray-500 text-sm block mt-2">
+                        画像を読み込めませんでした
+                      </span>
+                    </div>
                   </div>
+                )}
+              </div>
+              {fish && (
+                <div className="flex justify-end items-center space-x-2">
+                  <FavoriteButton fishId={fish.id} />
+                  <CollectionButton fishId={fish.id} />
                 </div>
               )}
             </div>
 
             <div className="w-full">
               <h3 className="text-xl font-semibold mb-2">旬の季節</h3>
-              {fish?.fish_seasons && fish.fish_seasons.length > 0 ? (
+              {fish?.fish_seasons?.length > 0 ? (
                 fish.fish_seasons.map((season, index) => (
                   <SeasonTerm key={index} season={season} />
                 ))

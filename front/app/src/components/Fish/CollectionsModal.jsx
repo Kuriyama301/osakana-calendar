@@ -5,27 +5,43 @@ import { useCollections } from "../../contexts/CollectionsContext";
 import SeasonTerm from "./SeasonTerm";
 import FishDetails from "./FishDetails";
 import { useModal } from "../../hooks/useModal";
+import client from "../../api/client";
 
 const CollectionsModal = ({ isOpen, onClose }) => {
-  const { collections, isLoading, fetchCollections } = useCollections();
+  const { collections } = useCollections();
+  const [allFish, setAllFish] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedFish, setSelectedFish] = useState(null);
   const [isFishDetailsOpen, setIsFishDetailsOpen] = useState(false);
   const { isAnimating, shouldRender } = useModal(isOpen);
   const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
-    if (isOpen) {
-      fetchCollections();
-    }
-  }, [isOpen, fetchCollections]);
+    const fetchAllFish = async () => {
+      if (isOpen) {
+        setIsLoading(true);
+        try {
+          const response = await client.get("/api/v1/fish/search");
+          setAllFish(response.data);
+        } catch (error) {
+          console.error("Failed to fetch fish data:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchAllFish();
+  }, [isOpen]);
 
   const handleFishClick = (fish) => {
     setSelectedFish(fish);
     setIsFishDetailsOpen(true);
   };
 
-  const handleImageError = (fishId) => {
+  const handleImageError = (fishId, fishName) => {
     setImageErrors((prev) => ({ ...prev, [fishId]: true }));
+    console.log(`Image loading failed for ${fishName}`);
   };
 
   if (!shouldRender) return null;
@@ -44,51 +60,66 @@ const CollectionsModal = ({ isOpen, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-white z-10 p-4 sm:p-6 border-b border-gray-200">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 pr-8">
-            食べたオサカナ
-          </h2>
-          <button
-            onClick={onClose}
-            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors duration-200"
-            aria-label="Close modal"
-          >
-            <X size={24} />
-          </button>
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 pr-8">
+              食べたオサカナ一覧
+            </h2>
+            <button
+              onClick={onClose}
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-600 bg-white hover:bg-gray-300 hover:text-gray-800 rounded-full p-2 transition-colors duration-200"
+              aria-label="Close modal"
+            >
+              <X size={24} />
+            </button>
+          </div>
         </div>
 
-        <div className="flex-grow overflow-y-auto p-4 sm:p-6">
+        <div className="flex-grow overflow-y-auto scrollbar-hide p-4 sm:p-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
           {isLoading ? (
             <div className="text-center py-4">読み込み中...</div>
-          ) : collections.length === 0 ? (
-            <div className="text-center py-4">
-              食べたオサカナはありません
-            </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {collections.map((fish) => (
-                <div
-                  key={fish.id}
-                  className="flex flex-col items-center p-2 cursor-pointer hover:bg-gray-50 rounded-lg"
-                  onClick={() => handleFishClick(fish)}
-                >
-                  {!imageErrors[fish.id] ? (
-                    <img
-                      src={fish.image_url}
-                      alt={fish.name}
-                      className="w-32 h-32 object-contain rounded-lg"
-                      onError={() => handleImageError(fish.id)}
-                    />
-                  ) : (
-                    <div className="w-32 h-32 bg-gray-200 flex items-center justify-center rounded-lg">
-                      <span className="text-sm text-gray-600">{fish.name}</span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+              {allFish.map((fish) => {
+                const isCollected = collections.some(
+                  (collected) => collected.id === fish.id
+                );
+                return (
+                  <div
+                    key={fish.id}
+                    className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 relative"
+                    onClick={() => handleFishClick(fish)}
+                  >
+                    <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mb-2">
+                      {!imageErrors[fish.id] ? (
+                        <img
+                          src={fish.image_url}
+                          alt={fish.name}
+                          className={`max-w-full max-h-full object-contain rounded-lg transition-all duration-200 ${
+                            !isCollected ? "grayscale opacity-50" : ""
+                          }`}
+                          onError={() => handleImageError(fish.id, fish.name)}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-lg">
+                          <span className="text-sm text-gray-600">
+                            {fish.name}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  <p className="mt-2 text-center font-semibold">{fish.name}</p>
-                  {fish.fish_seasons?.[0] && (
-                    <SeasonTerm season={fish.fish_seasons[0]} />
-                  )}
-                </div>
-              ))}
+                    <p className="font-semibold text-gray-800 text-sm sm:text-base mb-1">
+                      {fish.name}
+                    </p>
+                    {fish.fish_seasons && fish.fish_seasons.length > 0 ? (
+                      fish.fish_seasons.map((season, index) => (
+                        <SeasonTerm key={index} season={season} />
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-600">シーズン情報なし</p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

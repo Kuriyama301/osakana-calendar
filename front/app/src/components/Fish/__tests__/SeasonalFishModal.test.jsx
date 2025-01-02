@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import SeasonalFishModal from "../SeasonalFishModal";
 import { FavoritesProvider } from "../../../contexts/FavoritesContext";
 import { AuthProvider } from "../../../contexts/AuthContext";
+import { CollectionsProvider } from "../../../contexts/CollectionsContext";
 
 // 両方のContextのモックを作成
 vi.mock("../../../contexts/FavoritesContext", () => ({

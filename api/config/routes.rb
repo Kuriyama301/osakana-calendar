@@ -34,6 +34,9 @@ Rails.application.routes.draw do
 
       # お気に入り関連
       resources :favorites, only: [:index, :create, :destroy]
+
+      # 魚コレクション関連
+      resources :fish_collections, only: [:index, :create, :destroy]
     end
   end
 end

@@ -24,8 +24,9 @@ const FavoritesModal = ({ isOpen, onClose }) => {
     setIsFishDetailsOpen(true);
   };
 
-  const handleImageError = (fishId) => {
+  const handleImageError = (fishId, fishName) => {
     setImageErrors((prev) => ({ ...prev, [fishId]: true }));
+    console.log(`Image loading failed for ${fishName}`);
   };
 
   if (!shouldRender) return null;
@@ -45,45 +46,57 @@ const FavoritesModal = ({ isOpen, onClose }) => {
       >
         <div className="sticky top-0 bg-white z-10 p-4 sm:p-6 border-b border-gray-200">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 pr-8">
-            お気に入りのオサカナ
+            お気に入りのオサカナ一覧
           </h2>
           <button
             onClick={onClose}
-            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors duration-200"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-600 bg-white hover:bg-gray-300 hover:text-gray-800 rounded-full p-2 transition-colors duration-200"
             aria-label="Close modal"
           >
             <X size={24} />
           </button>
         </div>
 
-        <div className="flex-grow overflow-y-auto p-4 sm:p-6">
+        <div className="flex-grow overflow-y-auto scrollbar-hide p-4 sm:p-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
           {isLoading ? (
             <div className="text-center py-4">読み込み中...</div>
           ) : favorites.length === 0 ? (
-            <div className="text-center py-4">お気に入りのオサカナはありません</div>
+            <div className="text-center py-4">
+              お気に入りのオサカナはありません
+            </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
               {favorites.map((fish) => (
                 <div
                   key={fish.id}
-                  className="flex flex-col items-center p-2 cursor-pointer hover:bg-gray-50 rounded-lg"
+                  className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 relative"
                   onClick={() => handleFishClick(fish)}
                 >
-                  {!imageErrors[fish.id] ? (
-                    <img
-                      src={fish.image_url}
-                      alt={fish.name}
-                      className="w-32 h-32 object-contain rounded-lg"
-                      onError={() => handleImageError(fish.id)}
-                    />
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mb-2">
+                    {!imageErrors[fish.id] ? (
+                      <img
+                        src={fish.image_url}
+                        alt={fish.name}
+                        className="max-w-full max-h-full object-contain rounded-lg"
+                        onError={() => handleImageError(fish.id, fish.name)}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-lg">
+                        <span className="text-sm text-gray-600">
+                          {fish.name}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <p className="font-semibold text-gray-800 text-sm sm:text-base mb-1">
+                    {fish.name}
+                  </p>
+                  {fish.fish_seasons && fish.fish_seasons.length > 0 ? (
+                    fish.fish_seasons.map((season, index) => (
+                      <SeasonTerm key={index} season={season} />
+                    ))
                   ) : (
-                    <div className="w-32 h-32 bg-gray-200 flex items-center justify-center rounded-lg">
-                      <span className="text-sm text-gray-600">{fish.name}</span>
-                    </div>
-                  )}
-                  <p className="mt-2 text-center font-semibold">{fish.name}</p>
-                  {fish.fish_seasons?.[0] && (
-                    <SeasonTerm season={fish.fish_seasons[0]} />
+                    <p className="text-sm text-gray-600">シーズン情報なし</p>
                   )}
                 </div>
               ))}

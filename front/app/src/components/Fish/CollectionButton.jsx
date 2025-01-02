@@ -53,7 +53,7 @@ const CollectionButton = ({ fishId }) => {
           isLoading
             ? "text-gray-300"
             : isCollected
-            ? "fill-indigo-300 text-indigo-300"
+            ? "fill-yellow-250 text-yellow-200"
             : "text-gray-400"
         }`}
       />

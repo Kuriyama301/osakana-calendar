@@ -3,10 +3,6 @@ import PropTypes from "prop-types";
 import { X } from "lucide-react";
 import SeasonTerm from "./SeasonTerm";
 import FishDetails from "./FishDetails";
-import FavoriteButton from "./FavoriteButton";
-import CollectionButton from "./CollectionButton";
-import { useFavorites } from "../../contexts/FavoritesContext";
-import { useCollections } from "../../contexts/CollectionsContext";
 
 const SeasonalFishModal = ({
   isOpen,
@@ -20,19 +16,15 @@ const SeasonalFishModal = ({
   const [isFishDetailsOpen, setIsFishDetailsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [imageErrors, setImageErrors] = useState({});
-  const { fetchFavorites } = useFavorites();
-  const { fetchCollections } = useCollections();
 
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
-      fetchFavorites();
-      fetchCollections();
     } else {
       const timer = setTimeout(() => setIsAnimating(false), 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen, fetchFavorites, fetchCollections]);
+  }, [isOpen]);
 
   const handleFishClick = (fish) => {
     setSelectedFish(fish);
@@ -111,18 +103,9 @@ const SeasonalFishModal = ({
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center space-x-2 mb-1">
-                    <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                      {fish.name}
-                    </p>
-                    <div
-                      className="flex items-center"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FavoriteButton fishId={fish.id} />
-                      <CollectionButton fishId={fish.id} />
-                    </div>
-                  </div>
+                  <p className="font-semibold text-gray-800 text-sm sm:text-base mb-1">
+                    {fish.name}
+                  </p>
                   {fish.fish_seasons && fish.fish_seasons.length > 0 ? (
                     fish.fish_seasons.map((season, index) => (
                       <SeasonTerm key={index} season={season} />

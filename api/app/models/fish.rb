@@ -5,6 +5,8 @@ class Fish < ApplicationRecord
   # アソシエーションの追加
   has_many :favorites, dependent: :destroy
   has_many :favorited_by_users, through: :favorites, source: :user
+  has_many :fish_collections, dependent: :destroy
+  has_many :collected_by_users, through: :fish_collections, source: :user
 
   # 特定の日付の旬の魚を取得するスコープ
   scope :in_season_on, ->(date) {

@@ -23,6 +23,8 @@ class User < ApplicationRecord
   # アソシエーション
   has_many :favorites, dependent: :destroy
   has_many :favorite_fishes, through: :favorites, source: :fish
+  has_many :fish_collections, dependent: :destroy
+  has_many :collected_fishes, through: :fish_collections, source: :fish
 
   # Google OAuth用のメソッドを追加
   def self.from_omniauth(auth)

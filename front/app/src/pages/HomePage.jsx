@@ -40,7 +40,6 @@ const HomePage = () => {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const containerRef = useRef(null);
   const { isAuthenticated } = useAuth();
-  const mainCalendarRef = useRef(null);
   const {
     isModalOpen: isFishModalOpen,
     selectedModalDate,

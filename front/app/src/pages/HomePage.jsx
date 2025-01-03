@@ -40,6 +40,7 @@ const HomePage = () => {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const containerRef = useRef(null);
   const { isAuthenticated } = useAuth();
+  const mainCalendarRef = useRef(null);
   const {
     isModalOpen: isFishModalOpen,
     selectedModalDate,
@@ -91,8 +92,19 @@ const HomePage = () => {
     };
   }, [checkSize]);
 
+  const handleHomeClick = useCallback(() => {
+    const todayElement = document.querySelector(".today");
+    if (todayElement) {
+      todayElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, []);
+
   const navItems = [
-    { icon: <Home size={20} />, label: "HOME" },
+    {
+      icon: <Home size={20} />,
+      label: "HOME",
+      onClick: handleHomeClick, // クリックハンドラを追加
+    },
     {
       icon: <Utensils size={20} />,
       label: "COLLECTION",

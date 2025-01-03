@@ -11,6 +11,7 @@ import { useDailyFishModal } from "../hooks/useDailyFishModal";
 import LoadingScreen from "../components/Common/LoadingScreen";
 import AuthNavItem from "../components/Common/AuthNavItem";
 import AuthModal from "../components/Auth/AuthModal";
+import HelpModal from "../components/Common/HelpModal";
 import { useAuth } from "../contexts/AuthContext";
 import CollectionsModal from "../components/Fish/CollectionsModal";
 
@@ -36,6 +37,7 @@ const HomePage = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
   const [isCollectionsModalOpen, setIsCollectionsModalOpen] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const containerRef = useRef(null);
   const { isAuthenticated } = useAuth();
   const {
@@ -113,7 +115,11 @@ const HomePage = () => {
         }
       },
     },
-    { icon: <HelpCircle size={20} />, label: "HELP" },
+    {
+      icon: <HelpCircle size={20} />,
+      label: "HELP",
+      onClick: () => setIsHelpModalOpen(true),
+    },
   ];
 
   return (
@@ -173,13 +179,12 @@ const HomePage = () => {
           {/* 中央の縦線 */}
           <div className="hidden lg:block w-px bg-gray-300/30 mx-8 h-screen sticky top-0" />
 
-          {/* メインカレンダー エリア全体 */}
+          {/* メインコンテンツエリア */}
           <div className="w-full max-w-3xl relative flex">
-            {/* メインコンテンツエリア */}
             <div className="flex-1">
               {/* 検索フォームヘッダー */}
               <div className="sticky top-0 z-10 bg-white border-b mb-4">
-                <div className="flex justify-end p-4 -mx-8 border-t border-b border-gray-300/30">
+                <div className="flex justify-end p-4">
                   <SearchForm
                     onSearch={handleSearch}
                     isLoading={isSearchLoading}
@@ -226,6 +231,11 @@ const HomePage = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+      />
+
+      <HelpModal
+        isOpen={isHelpModalOpen}
+        onClose={() => setIsHelpModalOpen(false)}
       />
     </div>
   );

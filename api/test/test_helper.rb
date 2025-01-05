@@ -42,4 +42,12 @@ class ActiveSupport::TestCase
       error: "動画の検索に失敗しました"
     }
   end
+
+  def auth_headers(token)
+    {
+      'Authorization' => "Bearer #{token}",
+      'Content-Type' => 'application/json',
+      'Accept' => 'application/json'
+    }
+  end
 end

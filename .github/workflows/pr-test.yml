@@ -28,6 +28,7 @@ jobs:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
       RAILS_ENV: test
+      DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }} 
 
     services:
       postgres:

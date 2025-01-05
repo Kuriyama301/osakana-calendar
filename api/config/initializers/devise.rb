@@ -35,7 +35,7 @@ Devise.setup do |config|
 
   # JWT設定
   config.jwt do |jwt|
-    jwt.secret = ENV['DEVISE_JWT_SECRET_KEY']
+    jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY') { 'test-secret-key' if Rails.env.test? }
     jwt.dispatch_requests = [
       ['POST', %r{^/api/v1/auth/sign_in$}],
       ['POST', %r{^/api/v1/auth/google_oauth2/callback$}]

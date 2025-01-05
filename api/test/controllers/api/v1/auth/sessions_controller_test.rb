@@ -2,7 +2,7 @@ require "test_helper"
 
 class Api::V1::Auth::SessionsControllerTest < ActionDispatch::IntegrationTest
   def setup
-    @user = users(:user)  # 既存のfixtureを使用
+    @user = users(:user)
   end
 
   test "should sign in confirmed user" do
@@ -10,7 +10,7 @@ class Api::V1::Auth::SessionsControllerTest < ActionDispatch::IntegrationTest
       params: {
         user: {
           email: @user.email,
-          password: 'password'  # fixtureに合わせたパスワード
+          password: 'password'
         }
       },
       as: :json
@@ -63,7 +63,8 @@ class Api::V1::Auth::SessionsControllerTest < ActionDispatch::IntegrationTest
 
     # ログアウト
     delete destroy_api_v1_user_session_path,
-      headers: { 'Authorization' => token }
+    headers: { 'Authorization' => "Bearer #{token}" },
+    as: :json
 
     assert_response :success
   end

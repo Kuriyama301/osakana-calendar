@@ -9,4 +9,4 @@ build:
     RAILS_SERVE_STATIC_FILES: enabled
     RAILS_LOG_TO_STDOUT: enabled
 run:
-  web: bundle exec rails server -b 0.0.0.0 -p $PORT
+  web: bundle exec rails server -b 0.0.0.0 -p $PORTn

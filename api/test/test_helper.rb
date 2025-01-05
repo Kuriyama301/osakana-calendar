@@ -5,7 +5,7 @@ require "minitest/mock"
 
 class ActiveSupport::TestCase
   include Devise::Test::IntegrationHelpers
-  include Rails.application.routes.url_helpers # 追加
+  include Rails.application.routes.url_helpers
 
   fixtures :all
 

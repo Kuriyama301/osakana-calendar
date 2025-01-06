@@ -38,25 +38,25 @@ https://drive.google.com/file/d/1AklczGIFwVYjGe806iCxsERWpWhz5SOA/view?usp=shari
      - 魚の栄養価や健康効果に関する情報を提供することで、健康的な食生活を目指すニーズに答えられるため。
 
 ■サービスの利用イメージ
-1. ユーザーはロードマップ形式で表示されたカレンダーとその時に旬の魚を一目で確認できます。
-2. カレンダーは約一週間分を立てに表示し、スクロールで前後の期間を閲覧できます。
-3. 期間を移動すると、その時期に旬な魚のイラストと名前が左右に表示されます。
+1. ユーザーは縦スクロール形式で表示されたカレンダーとそのタイミングで旬の魚を一目で確認できます。
+2. カレンダーは約一週間分を表示し、スクロールで前後の期間を閲覧できます。
+3. 期間を移動すると、その時期に旬な魚のイラストと名前がモーダルに表示されます。
 4. 魚のイラストをクリックすると、その魚の詳細ページにアクセスできます。
 5. 詳細ページでは、魚の特色や産地、栄養価、美味しい食べ方などの情報を得ることができます。
-6. YouTubeの料理動画リンクなども表示され、実際の調理方法や食べ方も視覚的に学ぶことができます。
+6. YouTubeの料理動画なども表示され、実際の調理方法や食べ方も視覚的に学ぶことができます。
 7. カレンダーを通じて、季節の移り変わりと共に変化する魚の旬を意識することができます。
 
 これらにより、ユーザーは以下の価値を得られます。
 
 1. 魚の旬について、簡単に習得できる
-2. 旬を理解することで、スーパーなどで魚を手にする機会が増える
+2. 旬を理解することで、スーパーや飲食店で魚を手にする機会が増える
 3. 健康的な食生活を送るための選択肢を増やすことができる
 4. 日本の食文化への理解を深められる
 
 ■ サービスの差別化ポイント・推しポイント
 
-1. ロードマップ形式のカレンダー表示
-  - 他の旬の魚情報サイトの多くが静的なリストや月別表示なのに対し、本サービスでは動的なロードマップ形式で表示します。
+1. 縦スクロール形式のカレンダー表示
+  - 他の旬の魚情報サイトの多くが静的なリストや月別表示なのに対し、本サービスでは動的なスクロール形式で表示します。
   - これにより、ユーザーは日々の生活の中で自然と旬の魚を意識できるようになります。
 2. ワンページ設計
   - 基本的な機能を1ページに集約することで、ユーザーの利便性を高めています。
@@ -69,7 +69,7 @@ https://drive.google.com/file/d/1AklczGIFwVYjGe806iCxsERWpWhz5SOA/view?usp=shari
 
 ■ 機能候補
 MVPリリース時の機能
-1. ロードマップ形式のカレンダーを表示機能（1~2週間分の旬の魚を表示）
+1. 縦スクロール形式のカレンダーを表示機能（1~2週間分の旬の魚を表示）
 2. カレンダーのスクロール機能（前後の期間閲覧）
 3. 旬の魚のイラスト表示とリンク機能
 4. 魚の詳細情報表示機能（名前、特徴、栄養価など）
@@ -79,16 +79,81 @@ MVPリリース時の機能
 1. YouTube動画の埋め込み（調理方法や魚の紹介）
 2. 地域差による旬情報も表示
 
-■ 機能の実装方針予定
-本アプリはRuby on Railsを使用して開発を行います。
-1. ロードマップ形式のカレンダー表示機能
-   - JavaScriptライブラリ（例：FullCalendar）をカスタマイズし、縦スクロール型のカレンダーを実装
-   - Railsのコントローラーで日付に応じた魚のデータを取得し、ビューで表示
-2. 魚のイラスト表示とリンク機能
-   - Active Storageを使用して魚のイラストを管理
-   - JavaScriptを使用して、スクロールに応じてイラストを動的に表示・更新する
-3. 魚の詳細情報表示
-   - Railsのモデルを使用して魚の情報をデータベースに保存し、必要に応じて取得・表示する
-4. YouTube動画の埋め込み
-   - YouTube Data APIを使用し、関連する調理動画を検索・表示する
-   - Rails側でAPIリクエストを管理し、結果をJavaScriptで動的に表示する
+■ 技術スタックと実装内容
+
+本アプリケーションはフロントエンドとバックエンドを分離したマイクロサービスアーキテクチャで実装しています。
+
+### バックエンド（Ruby on Rails API）
+
+1. 基本構成
+# Ruby/Railsのバージョン
+ruby "3.3.4"
+gem "rails", "~> 7.0.8", ">= 7.0.8.4"
+
+# 基本的なgems
+gem "pg", "~> 1.1"
+gem "puma", "~> 5.0"
+gem "rack-cors"
+gem "bootsnap"
+gem 'jsonapi-serializer', '~> 2.0'
+
+2. 認証システム
+# 認証関連のgems
+gem 'devise'
+gem 'devise-jwt', '~> 0.11.0'
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+
+3. ストレージと外部サービス連携
+# AWS関連
+gem 'aws-sdk-s3', require: false
+gem 'aws-sdk-ses'
+
+### フロントエンド（React/Vite）
+
+1. 主要技術
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.2",
+    "tailwindcss": "^3.3.5"
+  }
+}
+
+2. 状態管理とルーティング
+// App.jsx
+import { AuthProvider } from "./contexts/AuthContext";
+import { FavoritesProvider } from "./contexts/FavoritesContext";
+import { CollectionsProvider } from "./contexts/CollectionsContext";
+import { CalendarProvider } from "./CalendarContext.jsx";
+
+3. UIライブラリ
+{
+  "dependencies": {
+    "@mui/material": "^5.15.0",
+    "@mui/icons-material": "^5.15.0",
+    "lucide-react": "^0.263.1"
+  }
+}
+
+### 開発・デプロイ環境
+
+1. 開発環境設定
+// vite.config.js
+export default defineConfig(({ mode }) => ({
+  server: {
+    host: "0.0.0.0",
+    port: 5173,
+    cors: true,
+  },
+}));
+
+2. 環境変数管理
+// vite.config.js
+define: {
+  'import.meta.env.VITE_GOOGLE_CLIENT_ID': `"${process.env.VITE_GOOGLE_CLIENT_ID}"`,
+  'import.meta.env.VITE_API_URL': `"${process.env.VITE_API_URL}"`,
+  'import.meta.env.VITE_FRONT_URL': `"${process.env.VITE_FRONT_URL}"`,
+  'import.meta.env.VITE_YOUTUBE_API_KEY': `"${process.env.VITE_YOUTUBE_API_KEY}"`
+}

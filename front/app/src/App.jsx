@@ -9,6 +9,8 @@ import { FavoritesProvider } from "./contexts/FavoritesContext";
 import EmailConfirmation from "./components/Auth/EmailConfirmation";
 import NewPasswordForm from "./components/Auth/NewPasswordForm";
 import { CollectionsProvider } from "./contexts/CollectionsContext";
+import { DeleteAccountProvider } from "./contexts/DeleteAccountContext";
+import DeleteAccountModal from "./components/Auth/DeleteAccountModal";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -79,28 +81,31 @@ function App() {
       <AuthProvider>
         <FavoritesProvider>
           <CollectionsProvider>
-            <CalendarProvider>
-              <Router>
-                <div className="h-screen overflow-hidden">
-                  <LoadingScreen isOpen={isInitialLoading} />
-                  <Suspense fallback={<LoadingScreen isOpen={true} />}>
-                    <main className="h-full">
-                      <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route
-                          path="/auth/confirm"
-                          element={<EmailConfirmation />}
-                        />
-                        <Route
-                          path="/reset-password"
-                          element={<NewPasswordForm />}
-                        />
-                      </Routes>
-                    </main>
-                  </Suspense>
-                </div>
-              </Router>
-            </CalendarProvider>
+            <Router>
+              <DeleteAccountProvider>
+                <CalendarProvider>
+                  <div className="h-screen overflow-hidden">
+                    <LoadingScreen isOpen={isInitialLoading} />
+                    <Suspense fallback={<LoadingScreen isOpen={true} />}>
+                      <main className="h-full">
+                        <Routes>
+                          <Route path="/" element={<HomePage />} />
+                          <Route
+                            path="/auth/confirm"
+                            element={<EmailConfirmation />}
+                          />
+                          <Route
+                            path="/reset-password"
+                            element={<NewPasswordForm />}
+                          />
+                        </Routes>
+                        <DeleteAccountModal />
+                      </main>
+                    </Suspense>
+                  </div>
+                </CalendarProvider>
+              </DeleteAccountProvider>
+            </Router>
           </CollectionsProvider>
         </FavoritesProvider>
       </AuthProvider>

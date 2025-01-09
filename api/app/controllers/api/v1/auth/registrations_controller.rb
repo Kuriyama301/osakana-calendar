@@ -4,6 +4,23 @@ module Api
       class RegistrationsController < Devise::RegistrationsController
         respond_to :json
         before_action :configure_sign_up_params, only: [:create]
+        before_action :authenticate_user!, only: [:destroy]
+
+        # アカウント削除のアクション
+        def destroy
+          if current_user&.destroy
+            render json: {
+              status: 'success',
+              message: 'アカウントが削除されました'
+            }, status: :ok
+          else
+            render json: {
+              status: 'error',
+              message: 'アカウントの削除に失敗しました',
+              errors: format_error_messages(current_user.errors)
+            }, status: :unprocessable_entity
+          end
+        end
 
         private
 

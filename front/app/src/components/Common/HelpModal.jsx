@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { X, Info, Lock, Mail, Book } from "lucide-react";
 import PropTypes from "prop-types";
+import { useDeleteAccount } from "../../contexts/DeleteAccountContext";
 
 const HelpModal = ({ isOpen, onClose }) => {
   const { isAnimating, shouldRender } = useModal(isOpen);
   const [selectedSection, setSelectedSection] = useState("terms");
+  const { openModal: openDeleteModal } = useDeleteAccount();
 
   if (!shouldRender) return null;
 
@@ -129,7 +131,21 @@ const HelpModal = ({ isOpen, onClose }) => {
           {"\n"}- 返信用のメールアドレスを正確にご記入ください{"\n\n"}
           4. 注意事項{"\n"}- 返信は平日のみとなります{"\n"}-
           内容によっては回答を差し控えさせていただく場合があります{"\n"}-
-          お問い合わせ内容は今後のサービス改善に活用させていただく場合があります
+          お問い合わせ内容は今後のサービス改善に活用させていただく場合があります{"\n\n"}
+          5. アカウントの削除{"\n"}- 
+          アカウントを削除する場合は
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              onClose();
+              openDeleteModal();
+            }}
+            className="text-blue-600 hover:text-blue-800 underline mx-1"
+          >
+            こちら
+          </button>
+          から手続きを行ってください。
+          削除後は全てのデータが完全に削除され、復元することはできません。
         </>
       ),
     },

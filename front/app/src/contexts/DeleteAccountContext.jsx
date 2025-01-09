@@ -12,7 +12,7 @@ export const DeleteAccountProvider = ({ children }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { logout, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const openModal = useCallback(() => {
     setIsModalOpen(true);

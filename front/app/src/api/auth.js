@@ -52,7 +52,11 @@ export const authAPI = {
       }
 
       return {
-        user: response.data.data,
+        user: {
+          data: {
+            attributes: response.data.data.data.attributes,
+          },
+        },
         token: token,
       };
     } catch (error) {
@@ -116,6 +120,7 @@ export const authAPI = {
     }
   },
 
+  // Google認証
   googleAuth: async (credential) => {
     try {
       console.log("Sending Google auth request with credential:", credential);

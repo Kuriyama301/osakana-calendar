@@ -19,7 +19,15 @@ module Api
             render json: {
               status: 'success',
               message: 'ログインしました',
-              data: UserSerializer.new(user).serializable_hash,
+              data: {
+                data: {
+                  attributes: {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name
+                  }
+                }
+              },
               token: token
             }, status: :ok
           else

@@ -80,11 +80,22 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       const { user, token } = await authAPI.login(email, password);
 
-      tokenManager.setToken(token);
-      tokenManager.setUser(user);
-      setUser(user);
+      const userData = user.data.attributes;
 
-      return user;
+      tokenManager.setToken(token);
+      tokenManager.setUser(userData);
+      setUser(userData);
+
+      // Authorization ヘッダーを設定
+      client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      console.log("Auth state updated:", {
+        userData,
+        hasToken: !!token,
+        isAuthenticated: !!userData && !!token,
+      });
+
+      return userData;
     } catch (err) {
       setError(formatError(err));
       throw err;

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::Denylist
 
@@ -15,9 +17,9 @@ class User < ApplicationRecord
   # JWTペイロードのカスタマイズ
   def jwt_payload
     super.merge({
-      'email' => email,
-      'name' => name
-    })
+                  'email' => email,
+                  'name' => name
+                })
   end
 
   # アソシエーション
@@ -28,7 +30,7 @@ class User < ApplicationRecord
 
   # Google OAuth用のメソッドを追加
   def self.from_omniauth(auth)
-    return nil unless auth&.provider && auth&.uid
+    return nil unless auth&.provider && auth.uid
 
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email if auth.info&.email
@@ -49,7 +51,7 @@ class User < ApplicationRecord
         exp: 24.hours.from_now.to_i,
         iat: Time.current.to_i
       },
-      ENV['DEVISE_JWT_SECRET_KEY'],
+      ENV.fetch('DEVISE_JWT_SECRET_KEY', nil),
       'HS256'
     )
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FishSeason < ApplicationRecord
   belongs_to :fish
 
@@ -6,9 +8,9 @@ class FishSeason < ApplicationRecord
   validates :start_day, :end_day, inclusion: { in: 1..31 }
 
   def in_season?(date)
-    date_month_day = date.month * 100 + date.day
-    start_month_day = start_month * 100 + start_day
-    end_month_day = end_month * 100 + end_day
+    date_month_day = (date.month * 100) + date.day
+    start_month_day = (start_month * 100) + start_day
+    end_month_day = (end_month * 100) + end_day
 
     if start_month_day <= end_month_day
       date_month_day.between?(start_month_day, end_month_day)
@@ -21,9 +23,7 @@ class FishSeason < ApplicationRecord
     start_date = Date.new(Date.current.year, start_month, start_day)
     end_date = Date.new(Date.current.year, end_month, end_day)
 
-    if end_date < start_date
-      end_date = end_date.next_year
-    end
+    end_date = end_date.next_year if end_date < start_date
 
     start_date..end_date
   end

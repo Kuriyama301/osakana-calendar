@@ -1,0 +1,116 @@
+require:
+  - rubocop-rails
+  - rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  Exclude:
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'bin/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'node_modules/**/*'
+
+# モデル固有の設定
+Rails/HasManyOrHasOneDependent:
+  Enabled: true
+
+Rails/InverseOf:
+  Enabled: true
+
+# バリデーション関連の設定
+Rails/Validation:
+  Enabled: true
+
+# スコープ定義の設定
+Rails/ScopeArgs:
+  Enabled: true
+
+# デバイス関連の設定
+Rails/SkipsModelValidations:
+  Exclude:
+    - 'app/models/user.rb'
+
+# 日本語コメントを許可（フィーチャーの説明等で必要）
+Style/AsciiComments:
+  Enabled: false
+
+# クラスのコメント必須を無効化
+Style/Documentation:
+  Enabled: false
+
+# メソッドの長さ制限（image_url等のメソッドがある）
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - 'test/**/*'
+
+# クラスの長さ制限（User, Fishモデルが長め）
+Metrics/ClassLength:
+  Max: 200
+  Exclude:
+    - 'test/**/*'
+    - 'app/models/user.rb'
+    - 'app/models/fish.rb'
+
+# 1行の長さ制限
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'test/**/*'
+
+# 条件分岐の複雑さ（in_season?メソッド等で必要）
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+# メソッドの複雑さ
+Metrics/AbcSize:
+  Max: 30
+  Exclude:
+    - 'app/models/fish.rb'
+    - 'app/models/user.rb'
+
+# ブロックの長さ制限
+Metrics/BlockLength:
+  Exclude:
+    - 'test/**/*'
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'app/models/fish.rb' # スコープやメソッド定義で長いブロックがある
+
+# 文字列のクォートスタイル
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  ConsistentQuotesInMultiline: true
+
+# メソッドのパラメータ数
+Metrics/ParameterLists:
+  Max: 5
+
+# 条件式の括弧
+Style/ParenthesesAroundCondition:
+  Enabled: false
+
+# コメント内の空白
+Layout/LeadingCommentSpace:
+  Enabled: true
+
+# Active Recordのバリデーション
+Rails/UniqueValidationWithoutIndex:
+  Enabled: true
+
+# メソッド名のプレフィックス
+Naming/PredicateName:
+  Enabled: true
+  NamePrefix:
+    - is_
+    - has_
+    - have_
+  ForbiddenPrefixes:
+    - is_
+
+# ガード節の使用を推奨
+Style/GuardClause:
+  Enabled: true

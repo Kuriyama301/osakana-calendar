@@ -1,28 +1,55 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     module Auth
       class RegistrationsController < Devise::RegistrationsController
         respond_to :json
+
         before_action :configure_sign_up_params, only: [:create]
         before_action :authenticate_user!, only: [:destroy]
 
-        # アカウント削除のアクション
-        def destroy
-          if current_user&.destroy
-            render json: {
-              status: 'success',
-              message: 'アカウントが削除されました'
-            }, status: :ok
+        def create
+          build_resource(sign_up_params)
+
+          resource.save
+          yield resource if block_given?
+
+          if resource.persisted?
+            handle_successful_registration(resource)
           else
-            render json: {
-              status: 'error',
-              message: 'アカウントの削除に失敗しました',
-              errors: format_error_messages(current_user.errors)
-            }, status: :unprocessable_entity
+            handle_failed_registration(resource)
           end
         end
 
+        def destroy
+          handle_account_deletion
+        end
+
         private
+
+        def handle_account_deletion
+          if current_user&.destroy
+            render_success_response
+          else
+            render_error_response
+          end
+        end
+
+        def render_success_response
+          render json: {
+            status: 'success',
+            message: 'アカウントが削除されました'
+          }, status: :ok
+        end
+
+        def render_error_response
+          render json: {
+            status: 'error',
+            message: 'アカウントの削除に失敗しました',
+            errors: format_error_messages(current_user.errors)
+          }, status: :unprocessable_entity
+        end
 
         def configure_sign_up_params
           devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
@@ -34,18 +61,26 @@ module Api
 
         def respond_with(resource, _opts = {})
           if resource.persisted?
-            render json: {
-              status: 'success',
-              message: '登録確認メールを送信しました',
-              data: UserSerializer.new(resource).serializable_hash
-            }, status: :created
+            handle_successful_registration(resource)
           else
-            render json: {
-              status: 'error',
-              message: '登録に失敗しました',
-              errors: format_error_messages(resource.errors)
-            }, status: :unprocessable_entity
+            handle_failed_registration(resource)
           end
+        end
+
+        def handle_successful_registration(resource)
+          render json: {
+            status: 'success',
+            message: '登録確認メールを送信しました',
+            data: UserSerializer.new(resource).serializable_hash
+          }, status: :created
+        end
+
+        def handle_failed_registration(resource)
+          render json: {
+            status: 'error',
+            message: '登録に失敗しました',
+            errors: format_error_messages(resource.errors)
+          }, status: :unprocessable_entity
         end
 
         protected

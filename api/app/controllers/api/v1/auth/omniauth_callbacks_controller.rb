@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     module Auth
@@ -8,12 +10,12 @@ module Api
         respond_to :json
 
         def google_oauth2
-          Rails.logger.info "Starting google_oauth2 callback"
+          Rails.logger.info 'Starting google_oauth2 callback'
 
           begin
             access_token = params[:credential]
             user_info = fetch_google_user_info(access_token)
-            Rails.logger.debug "Google user info: #{user_info.inspect}"
+            Rails.logger.debug { "Google user info: #{user_info.inspect}" }
 
             @user = find_or_create_user(user_info)
 
@@ -23,7 +25,7 @@ module Api
             else
               handle_failed_authentication
             end
-          rescue => e
+          rescue StandardError => e
             handle_error(e)
           end
         end
@@ -31,7 +33,7 @@ module Api
         private
 
         def fetch_google_user_info(access_token)
-          auth_uri = URI("https://www.googleapis.com/oauth2/v3/userinfo")
+          auth_uri = URI('https://www.googleapis.com/oauth2/v3/userinfo')
           auth_uri.query = URI.encode_www_form({ access_token: access_token })
           response = Net::HTTP.get_response(auth_uri)
           JSON.parse(response.body)

@@ -2,7 +2,7 @@ import { Component, Suspense, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import { CalendarProvider } from "./CalendarContext.jsx";
+import CalendarProvider from "./contexts/CalendarContext";
 import LoadingScreen from "./components/Common/LoadingScreen.jsx";
 import { AuthProvider } from "./contexts/AuthContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";

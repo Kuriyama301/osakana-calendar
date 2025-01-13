@@ -1,23 +1,14 @@
 import {
   createContext,
   useState,
-  useContext,
   useRef,
   useCallback,
 } from "react";
 import PropTypes from "prop-types";
 
-const CalendarContext = createContext();
+export const CalendarContext = createContext();
 
-export const useCalendar = () => {
-  const context = useContext(CalendarContext);
-  if (!context) {
-    throw new Error("useCalendar must be used within a CalendarProvider");
-  }
-  return context;
-};
-
-export const CalendarProvider = ({ children, initialDate = new Date() }) => {
+const CalendarProvider = ({ children, initialDate = new Date() }) => {
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [displayedMonth, setDisplayedMonth] = useState(initialDate);
   const [isExternalSelection, setIsExternalSelection] = useState(false);

@@ -12,7 +12,7 @@ import LoadingScreen from "../components/Common/LoadingScreen";
 import AuthNavItem from "../components/Common/AuthNavItem";
 import AuthModal from "../components/Auth/AuthModal";
 import HelpModal from "../components/Common/HelpModal";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import CollectionsModal from "../components/Fish/CollectionsModal";
 
 const NavItem = ({ icon, label, onClick }) => (

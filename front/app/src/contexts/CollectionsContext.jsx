@@ -7,7 +7,7 @@ import {
 } from "react";
 import PropTypes from "prop-types";
 import { collectionsAPI } from "../api/collections";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 const CollectionsContext = createContext(null);
 

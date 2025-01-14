@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Utensils } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { useCollections } from "../../contexts/CollectionsContext";
 
 const CollectionButton = ({ fishId }) => {

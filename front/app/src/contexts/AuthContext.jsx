@@ -1,24 +1,14 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
+import { createContext, useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import { authAPI } from "../api/auth";
 import client from "../api/client";
 import { tokenManager } from "../utils/tokenManager";
 import { formatError } from "../utils/errorHandler";
 
-// トークン用のCookie名を定数化
-// const TOKEN_COOKIE_KEY = "auth_token";
+// コンテキストの作成とエクスポート
+export const AuthContext = createContext(null);
 
-// コンテキストの作成
-const AuthContext = createContext(null);
-
-// プロバイダーコンポーネント
-export const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -168,18 +158,8 @@ export const AuthProvider = ({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// PropTypesの定義
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-// useAuthフック
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-export default AuthContext;
+export default AuthProvider;

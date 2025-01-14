@@ -7,7 +7,7 @@ import {
 } from "react";
 import PropTypes from "prop-types";
 import { favoritesAPI } from "../api/favorites";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 const FavoritesContext = createContext(null);
 

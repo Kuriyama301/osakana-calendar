@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { UserCircle, LogOut } from "lucide-react";
 import PropTypes from "prop-types";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 
 const AuthNavItem = ({ onAuthClick }) => {
   const { user, logout, isAuthenticated } = useAuth();

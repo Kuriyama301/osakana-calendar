@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import SocialAuthButton from "./SocialAuthButton";
 

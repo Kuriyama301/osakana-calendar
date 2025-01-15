@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Utensils } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
-import { useCollections } from "../../contexts/CollectionsContext";
+import { useCollections } from "../../hooks/useCollections";
 
 const CollectionButton = ({ fishId }) => {
   const [isLoading, setIsLoading] = useState(false);

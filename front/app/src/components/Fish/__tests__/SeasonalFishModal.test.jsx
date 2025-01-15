@@ -25,6 +25,7 @@ vi.mock("../../../contexts/AuthContext", () => ({
 vi.mock("../../../contexts/CollectionsContext", () => ({
   useCollections: () => ({
     collections: [],
+    isLoading: false,
     fetchCollections: vi.fn(),
     addCollection: vi.fn(),
     removeCollection: vi.fn(),

@@ -1,19 +1,10 @@
-import PropTypes from "prop-types";
 import { render } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
-
-function Wrapper({ children }) {
-  return <BrowserRouter>{children}</BrowserRouter>;
-}
-
-Wrapper.propTypes = {
-  children: PropTypes.node.isRequired,
-};
+import { TestWrapper } from "./components/TestWrapper";
 
 // Router付きのレンダリング用ヘルパー
 export function renderWithRouter(ui, { route = "/" } = {}) {
   window.history.pushState({}, "Test page", route);
-  return render(ui, { wrapper: Wrapper });
+  return render(ui, { wrapper: TestWrapper });
 }
 
 // テスト用のモックデータ生成

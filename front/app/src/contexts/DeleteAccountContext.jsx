@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import client from "../api/client";
+import { authAPI } from "../api/auth";
 import { tokenManager } from "../utils/tokenManager";
 
 const DeleteAccountContext = createContext(null);
@@ -35,23 +35,24 @@ export const DeleteAccountProvider = ({ children }) => {
       setIsDeleting(true);
       setError("");
 
-      const response = await client.delete("/api/v1/auth");
+      console.log("Current auth state:", isAuthenticated()); // 追加
+      const response = await authAPI.deleteAccount();
+      console.log("Delete account response:", response);
 
-      if (response.data.status === "success") {
-        // トークンとユーザー情報をクリア
+      if (response.status === "success") {
         tokenManager.clearAll();
-        // ホームページにリダイレクト
         navigate("/", { replace: true });
-        // モーダルを閉じる
         closeModal();
+      } else {
+        throw new Error(response.message || "アカウントの削除に失敗しました");
       }
     } catch (err) {
-      console.error("Delete account error:", err);
-      if (err.response?.status === 401) {
-        setError("ログインしてください。");
-      } else {
-        setError(err.message || "アカウントの削除に失敗しました");
-      }
+      console.error("Delete account error full details:", err);
+      setError(
+        err.response?.data?.error ||
+          err.message ||
+          "アカウントの削除に失敗しました"
+      );
     } finally {
       setIsDeleting(false);
     }

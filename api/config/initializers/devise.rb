@@ -36,15 +36,22 @@ Devise.setup do |config|
   # JWT設定
   config.jwt do |jwt|
     jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY') { 'test-secret-key' if Rails.env.test? }
+
+    # トークン発行のリクエスト設定
     jwt.dispatch_requests = [
       ['POST', %r{^/api/v1/auth/sign_in$}],
       ['POST', %r{^/api/v1/auth/google_oauth2/callback$}]
     ]
+
+    # トークン無効化のリクエスト設定（アカウント削除のパスを含める）
     jwt.revocation_requests = [
-      ['DELETE', %r{^/api/v1/auth/sign_out$}]
+      ['DELETE', %r{^/api/v1/auth/sign_out$}],
+      ['DELETE', %r{^/api/v1/auth$}]
     ]
+
+    # 基本設定
     jwt.expiration_time = ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours.to_i)
-    jwt.algorithm = 'HS256'
+    jwt.algorithm = ENV.fetch('JWT_ALGORITHM', 'HS256')
   end
 
   # Google OAuth設定

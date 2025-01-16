@@ -1,4 +1,5 @@
 import client from "./client";
+import { tokenManager } from "../utils/tokenManager";
 
 // レスポンスエラーを整形するヘルパー関数
 const formatError = (error) => {
@@ -158,6 +159,26 @@ export const authAPI = {
         response: error.response,
         data: error.response?.data,
       });
+      throw formatError(error);
+    }
+  },
+
+  // アカウント削除
+  deleteAccount: async () => {
+    try {
+      console.log(
+        "Current token:",
+        client.defaults.headers.common["Authorization"]
+      );
+      const response = await client.delete("/api/v1/auth");
+      console.log("Delete account response:", response);
+
+      delete client.defaults.headers.common["Authorization"];
+      tokenManager.clearAll();
+
+      return response.data;
+    } catch (error) {
+      console.error("Delete account error details:", error);
       throw formatError(error);
     }
   },

@@ -23,7 +23,28 @@ module Api
         end
 
         def destroy
-          handle_account_deletion
+          Rails.logger.debug "Current user: #{current_user.inspect}"
+          Rails.logger.debug "Authorization header: #{request.headers['Authorization']}"
+
+          if current_user
+            if current_user.destroy
+              render json: {
+                status: 'success',
+                message: 'アカウントが削除されました'
+              }, status: :ok
+            else
+              render json: {
+                status: 'error',
+                message: 'アカウントの削除に失敗しました',
+                errors: format_error_messages(current_user.errors)
+              }, status: :unprocessable_entity
+            end
+          else
+            render json: {
+              status: 'error',
+              message: '認証が必要です'
+            }, status: :unauthorized
+          end
         end
 
         private

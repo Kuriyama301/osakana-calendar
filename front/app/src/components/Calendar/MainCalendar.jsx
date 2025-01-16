@@ -4,7 +4,7 @@ import React, {
   useImperativeHandle,
   useCallback,
 } from "react";
-import { useCalendar } from "../../CalendarContext";
+import { useCalendar } from "../../hooks/useCalendar";
 import SeasonalFishModal from "../Fish/SeasonalFishModal";
 import { useCalendarLogic } from "../../hooks/useCalendarLogic";
 import { useFishModal } from "../../hooks/useFishModal";

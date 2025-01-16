@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";
-import { useCollections } from "../../contexts/CollectionsContext";
+import { useCollections } from "../../hooks/useCollections";
 import SeasonTerm from "./SeasonTerm";
 import FishDetails from "./FishDetails";
 import { useModal } from "../../hooks/useModal";

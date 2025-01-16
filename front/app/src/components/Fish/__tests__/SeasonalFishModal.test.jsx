@@ -2,9 +2,17 @@ import { render, screen } from "@testing-library/react";
 import SeasonalFishModal from "../SeasonalFishModal";
 import { FavoritesProvider } from "../../../contexts/FavoritesContext";
 import { AuthProvider } from "../../../contexts/AuthContext";
-import { CollectionsProvider } from "../../../contexts/CollectionsContext";
 
-// 両方のContextのモックを作成
+vi.mock("../../../hooks/useCollections", () => ({
+  useCollections: () => ({
+    collections: [],
+    isLoading: false,
+    fetchCollections: vi.fn(),
+    addCollection: vi.fn(),
+    removeCollection: vi.fn(),
+  }),
+}));
+
 vi.mock("../../../contexts/FavoritesContext", () => ({
   useFavorites: () => ({
     favorites: [],
@@ -20,16 +28,6 @@ vi.mock("../../../contexts/AuthContext", () => ({
     isAuthenticated: () => true,
   }),
   AuthProvider: ({ children }) => children,
-}));
-
-vi.mock("../../../contexts/CollectionsContext", () => ({
-  useCollections: () => ({
-    collections: [],
-    fetchCollections: vi.fn(),
-    addCollection: vi.fn(),
-    removeCollection: vi.fn(),
-  }),
-  CollectionsProvider: ({ children }) => children,
 }));
 
 describe("SeasonalFishModal", () => {
@@ -58,14 +56,11 @@ describe("SeasonalFishModal", () => {
     error: null,
   };
 
-  // 両方のProviderでラップするヘルパー関数
   const renderWithProviders = (props) => {
     return render(
       <AuthProvider>
         <FavoritesProvider>
-          <CollectionsProvider>
-            <SeasonalFishModal {...props} />
-          </CollectionsProvider>
+          <SeasonalFishModal {...props} />
         </FavoritesProvider>
       </AuthProvider>
     );

@@ -1,10 +1,5 @@
-// SubCalendar.jsx
-// - カレンダーのレイアウト
-// - 月の切り替え機能
-// - 日付の選択機能
-
 import React from "react";
-import { useCalendar } from "../../CalendarContext.jsx";
+import { useCalendar } from "../../hooks/useCalendar";
 import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
 

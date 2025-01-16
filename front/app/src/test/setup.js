@@ -28,6 +28,13 @@ vi.mock("../utils/tokenManager", () => ({
   },
 }));
 
+vi.mock("../hooks/useAuth", () => ({
+  useAuth: () => ({
+    isAuthenticated: () => true,
+    user: { id: 1, email: "test@example.com" },
+  }),
+}));
+
 // 既存のモック設定
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),

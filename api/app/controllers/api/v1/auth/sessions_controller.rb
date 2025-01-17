@@ -135,7 +135,8 @@ module Api
             sub: resource.id,
             exp: (Time.zone.now + ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours).to_i).to_i,
             jti: SecureRandom.uuid,
-            iat: Time.zone.now.to_i
+            iat: Time.current.to_i,
+            scope: 'api_v1_user'
           }
 
           Rails.logger.debug "Generating JWT with payload: #{payload}"

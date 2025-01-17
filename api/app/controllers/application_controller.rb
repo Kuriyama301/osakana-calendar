@@ -19,9 +19,13 @@ class ApplicationController < ActionController::API
     token = extract_token_from_header
     return unauthorized_error('Token missing') unless token
 
-    process_token(token)
-  rescue JWT::DecodeError => e
-    handle_jwt_error(e)
+    begin
+      decoded_token = decode_token(token)
+      @current_user_id = extract_user_id(decoded_token)
+      return unauthorized_error('User not found') unless current_user
+    rescue JWT::DecodeError => e
+      handle_jwt_error(e)
+    end
   end
 
   def current_user
@@ -35,12 +39,6 @@ class ApplicationController < ActionController::API
     return nil if header.blank?
 
     header.split.last
-  end
-
-  def process_token(token)
-    decoded = decode_token(token)
-    @current_user_id = extract_user_id(decoded)
-    current_user
   end
 
   def decode_token(token)
@@ -60,13 +58,12 @@ class ApplicationController < ActionController::API
   end
 
   def extract_user_id(decoded_token)
-    decoded_token['sub'] || decoded_token['id']
+    decoded_token['sub']
   end
 
   def find_current_user
-    User.find(@current_user_id)
-  rescue ActiveRecord::RecordNotFound
-    unauthorized_error('User not found')
+    return nil unless @current_user_id
+    User.find_by(id: @current_user_id)
   end
 
   def handle_jwt_error(error)
@@ -76,5 +73,6 @@ class ApplicationController < ActionController::API
 
   def unauthorized_error(message)
     render json: { error: message }, status: :unauthorized
+    nil
   end
 end

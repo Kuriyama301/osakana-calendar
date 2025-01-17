@@ -34,6 +34,8 @@ module Api
           sign_in(resource_name, user)
           token = generate_jwt_token(user)
 
+          Rails.logger.debug "Generated token for user #{user.id}: #{token}"
+
           render json: {
             status: 'success',
             message: 'ログインしました',
@@ -75,6 +77,8 @@ module Api
 
         def process_logout(jwt_payload)
           user = User.find_by(id: jwt_payload['sub'])
+          Rails.logger.debug "Processing logout for user ID: #{jwt_payload['sub']}, Found user: #{user.present?}"
+
           if user
             blacklist_token(jwt_payload)
             sign_out(user)
@@ -127,20 +131,26 @@ module Api
         end
 
         def generate_jwt_token(resource)
+          payload = {
+            sub: resource.id,
+            exp: (Time.zone.now + ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours).to_i).to_i,
+            jti: SecureRandom.uuid,
+            iat: Time.zone.now.to_i
+          }
+
+          Rails.logger.debug "Generating JWT with payload: #{payload}"
+
           JWT.encode(
-            {
-              sub: resource.id,
-              exp: (Time.zone.now + ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours).to_i).to_i,
-              jti: SecureRandom.uuid,
-              iat: Time.zone.now.to_i
-            },
+            payload,
             ENV.fetch('DEVISE_JWT_SECRET_KEY', nil),
             'HS256'
           )
         end
 
         def decode_jwt_token(token)
-          JWT.decode(token, ENV.fetch('DEVISE_JWT_SECRET_KEY', nil), true, algorithm: 'HS256').first
+          decoded = JWT.decode(token, ENV.fetch('DEVISE_JWT_SECRET_KEY', nil), true, algorithm: 'HS256').first
+          Rails.logger.debug "Decoded JWT payload: #{decoded}"
+          decoded
         rescue JWT::ExpiredSignature
           raise JWT::DecodeError, 'トークンが期限切れです'
         rescue JWT::DecodeError

@@ -15,11 +15,12 @@ class User < ApplicationRecord
 
   # JWTペイロードのカスタマイズ
   def jwt_payload
-    super.merge({
-      'sub' => id,  # 変更: 数値として保存
+    {
+      'sub' => id,
       'email' => email,
-      'name' => name
-    })
+      'name' => name,
+      'scope' => 'api_v1_user'
+    }
   end
 
   # アソシエーション
@@ -36,7 +37,7 @@ class User < ApplicationRecord
       user.email = auth.info.email if auth.info&.email
       user.password = Devise.friendly_token[0, 20]
       user.name = auth.info.name if auth.info&.name
-      user.confirmed_at = Time.current # Google認証の場合はメール確認済みに
+      user.confirmed_at = Time.current
     end
   end
 
@@ -47,7 +48,8 @@ class User < ApplicationRecord
         sub: id,
         exp: 24.hours.from_now.to_i,
         jti: SecureRandom.uuid,
-        iat: Time.current.to_i
+        iat: Time.current.to_i,
+        scope: 'api_v1_user'
       },
       ENV.fetch('DEVISE_JWT_SECRET_KEY', nil),
       'HS256'

@@ -7,7 +7,6 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :validatable, :trackable, :confirmable,
          :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
-
   devise :omniauthable, omniauth_providers: %i[google_oauth2]
 
   # バリデーション
@@ -17,9 +16,10 @@ class User < ApplicationRecord
   # JWTペイロードのカスタマイズ
   def jwt_payload
     super.merge({
-                  'email' => email,
-                  'name' => name
-                })
+      'sub' => id,  # 変更: 数値として保存
+      'email' => email,
+      'name' => name
+    })
   end
 
   # アソシエーション
@@ -44,11 +44,9 @@ class User < ApplicationRecord
   def generate_jwt
     JWT.encode(
       {
-        sub: id.to_s,
-        id: id,
-        email: email,
-        jti: SecureRandom.uuid,
+        sub: id,
         exp: 24.hours.from_now.to_i,
+        jti: SecureRandom.uuid,
         iat: Time.current.to_i
       },
       ENV.fetch('DEVISE_JWT_SECRET_KEY', nil),

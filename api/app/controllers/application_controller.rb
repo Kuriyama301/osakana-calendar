@@ -58,16 +58,21 @@ class ApplicationController < ActionController::API
   end
 
   def extract_user_id(decoded_token)
-    decoded_token['sub']
+    user_id = decoded_token['sub']
+    user_id.is_a?(String) ? user_id.to_i : user_id
   end
 
   def find_current_user
     return nil unless @current_user_id
+
     User.find_by(id: @current_user_id)
+  rescue ActiveRecord::RecordNotFound
+    nil
   end
 
   def handle_jwt_error(error)
     Rails.logger.error "JWT decode error: #{error.message}"
+    Rails.logger.error error.backtrace.join("\n")
     unauthorized_error('Invalid token')
   end
 

@@ -21,8 +21,12 @@ class ApplicationController < ActionController::API
 
     begin
       decoded_token = decode_token(token)
+      Rails.logger.debug "Decoded token: #{decoded_token.inspect}"
       @current_user_id = extract_user_id(decoded_token)
       return unauthorized_error('User not found') unless current_user
+
+      # scope = decoded_token['scope']
+      # return unauthorized_error('wrong scope') unless scope == 'api_v1_user'
     rescue JWT::DecodeError => e
       handle_jwt_error(e)
     end

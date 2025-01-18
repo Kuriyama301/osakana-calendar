@@ -9,20 +9,17 @@ module Api
         before_action :configure_sign_up_params, only: [:create]
         before_action :authenticate_user!, only: [:destroy]
 
-        def create
-          build_resource(sign_up_params)
-
-          resource.save
-          yield resource if block_given?
-
-          if resource.persisted?
-            handle_successful_registration(resource)
-          else
-            handle_failed_registration(resource)
-          end
+        def debug_auth_info
+          Rails.logger.debug "=== Debug Authentication Info ==="
+          Rails.logger.debug "Headers: #{request.headers.to_h.select { |k,v| k.start_with?('HTTP_') }}"
+          Rails.logger.debug "Auth Header: #{request.headers['Authorization']}"
+          Rails.logger.debug "Current User Before Auth: #{current_user.inspect}"
+          Rails.logger.debug "=========================="
         end
 
         def destroy
+          debug_auth_info
+
           Rails.logger.debug "Current user: #{current_user.inspect}"
           Rails.logger.debug "Authorization header: #{request.headers['Authorization']}"
 
@@ -40,6 +37,7 @@ module Api
               }, status: :unprocessable_entity
             end
           else
+            Rails.logger.debug "Authentication Failed: Current user is nil"
             render json: {
               status: 'error',
               message: '認証が必要です'

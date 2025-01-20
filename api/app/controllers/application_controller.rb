@@ -60,7 +60,7 @@ class ApplicationController < ActionController::API
   end
 
   def extract_user_id(decoded_token)
-    decoded_token['sub'] || decoded_token['id']
+    decoded_token['sub']  # 'sub'のみを使用するように修正
   end
 
   def find_current_user

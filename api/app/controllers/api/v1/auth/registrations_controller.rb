@@ -5,16 +5,13 @@ module Api
     module Auth
       class RegistrationsController < Devise::RegistrationsController
         respond_to :json
-
         before_action :configure_sign_up_params, only: [:create]
-        before_action :authenticate_user!, only: [:destroy]
+        before_action :authenticate_api_v1_user!, only: [:destroy]
 
         def create
           build_resource(sign_up_params)
-
           resource.save
           yield resource if block_given?
-
           if resource.persisted?
             handle_successful_registration(resource)
           else
@@ -23,11 +20,10 @@ module Api
         end
 
         def destroy
-          Rails.logger.debug "Current user: #{current_user.inspect}"
+          Rails.logger.debug "Current user: #{current_api_v1_user.inspect}"
           Rails.logger.debug "Authorization header: #{request.headers['Authorization']}"
-
-          if current_user
-            if current_user.destroy
+          if current_api_v1_user
+            if current_api_v1_user.destroy
               render json: {
                 status: 'success',
                 message: 'アカウントが削除されました'
@@ -36,7 +32,7 @@ module Api
               render json: {
                 status: 'error',
                 message: 'アカウントの削除に失敗しました',
-                errors: format_error_messages(current_user.errors)
+                errors: format_error_messages(current_api_v1_user.errors)
               }, status: :unprocessable_entity
             end
           else
@@ -50,7 +46,7 @@ module Api
         private
 
         def handle_account_deletion
-          if current_user&.destroy
+          if current_api_v1_user&.destroy
             render_success_response
           else
             render_error_response
@@ -68,7 +64,7 @@ module Api
           render json: {
             status: 'error',
             message: 'アカウントの削除に失敗しました',
-            errors: format_error_messages(current_user.errors)
+            errors: format_error_messages(current_api_v1_user.errors)
           }, status: :unprocessable_entity
         end
 
@@ -105,6 +101,14 @@ module Api
         end
 
         protected
+
+        def resource_name
+          :api_v1_user
+        end
+
+        def authenticate_scope!
+          send("authenticate_#{resource_name}!")
+        end
 
         def format_error_messages(errors)
           errors.full_messages.map do |message|

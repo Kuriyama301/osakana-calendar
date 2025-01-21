@@ -2,9 +2,17 @@ require 'devise'
 require 'devise/jwt'
 require 'devise/orm/active_record'
 require 'omniauth-google-oauth2'
+
 Devise.setup do |config|
   # API設定
   config.navigational_formats = []
+
+  # Wardenの設定
+  config.warden do |manager|
+    manager.default_strategies(scope: :api_v1_user).unshift :jwt
+    manager.failure_app = Devise::FailureApp
+    manager.default_scope = :api_v1_user
+  end
 
   # メール送信者の設定
   config.mailer_sender = ENV.fetch('MAILER_FROM', 'info@osakana-calendar.com')
@@ -29,8 +37,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 12
   config.expire_all_remember_me_on_sign_out = true
   config.sign_out_via = :delete
-  config.skip_session_storage = [:http_auth]
-
+  config.skip_session_storage = [:http_auth, :jwt]
   config.omniauth_path_prefix = ''
 
   # JWT設定
@@ -52,6 +59,7 @@ Devise.setup do |config|
     # 基本設定
     jwt.expiration_time = ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours.to_i)
     jwt.algorithm = ENV.fetch('JWT_ALGORITHM', 'HS256')
+    jwt.request_formats = { api_v1_user: [:json] }
   end
 
   # Google OAuth設定

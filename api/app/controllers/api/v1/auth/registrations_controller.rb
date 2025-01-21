@@ -6,7 +6,7 @@ module Api
       class RegistrationsController < Devise::RegistrationsController
         respond_to :json
         before_action :configure_sign_up_params, only: [:create]
-        before_action :authenticate_api_v1_user!, only: [:destroy]
+        before_action :authenticate_user!, only: [:destroy]
 
         def create
           build_resource(sign_up_params)

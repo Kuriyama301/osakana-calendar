@@ -12,7 +12,7 @@ const COOKIE_OPTIONS = {
   path: "/",
   domain:
     process.env.NODE_ENV === "production"
-      ? ".your-domain.com" // 本番環境のドメイン
+      ? "osakana-calendar.com"
       : undefined,
 };
 

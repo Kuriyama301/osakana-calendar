@@ -51,9 +51,7 @@ if (process.env.NODE_ENV === "test") {
     },
     (error) => {
       if (error.response?.status === 401) {
-        if (typeof tokenManager.removeToken === "function") {
-          tokenManager.removeToken();
-        }
+        tokenManager.clearAll();
       }
       return Promise.reject(error);
     }

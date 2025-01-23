@@ -47,6 +47,7 @@ export const authAPI = {
 
       const token = response.data.token;
       if (token) {
+        tokenManager.setToken(token);
         client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       } else {
         console.warn("No auth token received");
@@ -73,6 +74,7 @@ export const authAPI = {
   logout: async () => {
     try {
       await client.delete("/api/v1/auth/sign_out");
+      tokenManager.clearAll();
       delete client.defaults.headers.common["Authorization"];
     } catch (error) {
       throw formatError(error);
@@ -133,7 +135,6 @@ export const authAPI = {
         }
       );
 
-      console.log("Full response:", response);
       console.log("Google auth response:", response.data);
       console.log("Response token:", response.data.token);
 
@@ -143,6 +144,7 @@ export const authAPI = {
         throw new Error("認証トークンが見つかりません");
       }
 
+      tokenManager.setToken(token);
       client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       console.log(
         "Set Authorization header:",
@@ -166,20 +168,37 @@ export const authAPI = {
   // アカウント削除
   deleteAccount: async () => {
     try {
-      console.log(
-        "Current token:",
-        client.defaults.headers.common["Authorization"]
-      );
-      const response = await client.delete("/api/v1/auth");
+      const token = tokenManager.getToken();
+      console.log("Attempting to delete account with token:", token);
+
+      if (!token) {
+        throw new Error("認証情報がありません");
+      }
+
+      // 認証ヘッダーを設定
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+
+      const response = await client.delete("/api/v1/auth", { headers });
       console.log("Delete account response:", response);
 
-      delete client.defaults.headers.common["Authorization"];
-      tokenManager.clearAll();
+      if (response.status === 200 || response.status === 204) {
+        // 成功時はトークンをクリア
+        tokenManager.clearAll();
+        delete client.defaults.headers.common["Authorization"];
+      }
 
       return response.data;
     } catch (error) {
-      console.error("Delete account error details:", error);
-      throw formatError(error);
+      console.error("Delete account error details:", {
+        message: error.message,
+        response: error.response,
+        data: error.response?.data,
+      });
+      throw error.response?.data || error;
     }
   },
 };

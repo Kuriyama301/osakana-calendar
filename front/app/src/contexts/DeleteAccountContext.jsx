@@ -14,20 +14,10 @@ export const DeleteAccountProvider = ({ children }) => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const openModal = useCallback(() => {
-    setIsModalOpen(true);
-    setError("");
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setIsModalOpen(false);
-    setError("");
-  }, []);
-
+  // アカウント削除処理
   const deleteAccount = useCallback(async () => {
     if (!isAuthenticated()) {
-      setError("ログインしてください。");
-      setIsDeleting(false);
+      setError("ログインが必要です");
       return;
     }
 
@@ -35,28 +25,50 @@ export const DeleteAccountProvider = ({ children }) => {
       setIsDeleting(true);
       setError("");
 
-      console.log("Current auth state:", isAuthenticated()); // 追加
+      // トークンの存在確認
+      const token = tokenManager.getToken();
+      console.log("Attempting to delete account with token:", token);
+
+      if (!token) {
+        throw new Error("認証情報が見つかりません");
+      }
+
       const response = await authAPI.deleteAccount();
-      console.log("Delete account response:", response);
 
       if (response.status === "success") {
         tokenManager.clearAll();
-        navigate("/", { replace: true });
         closeModal();
+        navigate("/", { replace: true });
       } else {
         throw new Error(response.message || "アカウントの削除に失敗しました");
       }
     } catch (err) {
-      console.error("Delete account error full details:", err);
+      console.error("Delete account error:", err);
       setError(
         err.response?.data?.error ||
           err.message ||
-          "アカウントの削除に失敗しました"
+          "アカウントの削除に失敗しました。再度お試しください。"
       );
     } finally {
       setIsDeleting(false);
     }
-  }, [navigate, isAuthenticated, closeModal]);
+  }, [isAuthenticated, navigate]);
+
+  // モーダルを開く
+  const openModal = useCallback(() => {
+    if (!isAuthenticated()) {
+      setError("ログインが必要です");
+      return;
+    }
+    setIsModalOpen(true);
+    setError("");
+  }, [isAuthenticated]);
+
+  // モーダルを閉じる
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setError("");
+  }, []);
 
   const value = {
     isModalOpen,

@@ -16,12 +16,22 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_user!
+    Rails.logger.debug "Token extraction started"
     token = extract_token_from_header
+    Rails.logger.debug "Extracted token: #{token}"
+
     return unauthorized_error('Token missing') unless token
 
-    process_token(token)
-  rescue JWT::DecodeError => e
-    handle_jwt_error(e)
+    begin
+      decoded = decode_token(token)
+      Rails.logger.debug "Decoded token: #{decoded}"
+      @current_user_id = extract_user_id(decoded)
+      Rails.logger.debug "User ID: #{@current_user_id}"
+      current_user
+    rescue => e
+      Rails.logger.error "Authentication error: #{e.class} - #{e.message}"
+      handle_jwt_error(e)
+    end
   end
 
   def current_user
@@ -34,7 +44,7 @@ class ApplicationController < ActionController::API
     header = request.headers['Authorization']
     return nil if header.blank?
 
-    header.split.last
+    header.gsub('Bearer ', '')
   end
 
   def process_token(token)

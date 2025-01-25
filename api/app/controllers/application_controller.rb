@@ -44,7 +44,7 @@ class ApplicationController < ActionController::API
     header = request.headers['Authorization']
     return nil if header.blank?
 
-    header.split.last
+    header.gsub('Bearer ', '')
   end
 
   def process_token(token)

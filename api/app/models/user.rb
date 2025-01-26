@@ -44,12 +44,10 @@ class User < ApplicationRecord
   def generate_jwt
     JWT.encode(
       {
-        sub: id.to_s,
-        id: id,
-        email: email,
+        sub: id,
+        exp: (Time.zone.now + ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours).to_i).to_i,
         jti: SecureRandom.uuid,
-        exp: 24.hours.from_now.to_i,
-        iat: Time.current.to_i
+        iat: Time.zone.now.to_i
       },
       ENV.fetch('DEVISE_JWT_SECRET_KEY', nil),
       'HS256'

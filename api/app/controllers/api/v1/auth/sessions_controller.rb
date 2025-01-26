@@ -32,7 +32,7 @@ module Api
 
         def handle_successful_login(user)
           sign_in(resource_name, user)
-          token = generate_jwt_token(user)
+          token = user.generate_jwt
 
           render json: {
             status: 'success',

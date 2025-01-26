@@ -20,53 +20,18 @@ module Api
         end
 
         def destroy
-          Rails.logger.debug "Current user: #{current_api_v1_user.inspect}"
-          Rails.logger.debug "Authorization header: #{request.headers['Authorization']}"
-          if current_api_v1_user
-            if current_api_v1_user.destroy
-              render json: {
-                status: 'success',
-                message: 'アカウントが削除されました'
-              }, status: :ok
-            else
-              render json: {
-                status: 'error',
-                message: 'アカウントの削除に失敗しました',
-                errors: format_error_messages(current_api_v1_user.errors)
-              }, status: :unprocessable_entity
-            end
+          Rails.logger.debug "Destroying account for user ID: #{current_api_v1_user&.id}"
+          if current_api_v1_user.nil?
+            return render json: { error: "ユーザーが見つかりません" }, status: :unauthorized
+          end
+          if current_api_v1_user.destroy
+            render json: { status: 'success', message: 'アカウントが削除されました' }, status: :ok
           else
-            render json: {
-              status: 'error',
-              message: '認証が必要です'
-            }, status: :unauthorized
+            render json: { status: 'error', message: 'アカウントの削除に失敗しました' }, status: :unprocessable_entity
           end
         end
 
         private
-
-        def handle_account_deletion
-          if current_api_v1_user&.destroy
-            render_success_response
-          else
-            render_error_response
-          end
-        end
-
-        def render_success_response
-          render json: {
-            status: 'success',
-            message: 'アカウントが削除されました'
-          }, status: :ok
-        end
-
-        def render_error_response
-          render json: {
-            status: 'error',
-            message: 'アカウントの削除に失敗しました',
-            errors: format_error_messages(current_api_v1_user.errors)
-          }, status: :unprocessable_entity
-        end
 
         def configure_sign_up_params
           devise_parameter_sanitizer.permit(:sign_up, keys: [:name])

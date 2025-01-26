@@ -6,14 +6,12 @@ const USER_COOKIE_KEY = "user_data";
 
 // Cookie設定のベース
 const COOKIE_OPTIONS = {
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-  expires: 7, // 7日間の有効期限
+  secure: true,
+  sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
+  expires: 7,
   path: "/",
   domain:
-    process.env.NODE_ENV === "production"
-      ? "osakana-calendar.com"
-      : undefined,
+    process.env.NODE_ENV === "production" ? "osakana-calendar.com" : undefined,
 };
 
 // デバッグログ設定
@@ -23,45 +21,44 @@ const log = debug ? console.log : () => {};
 export const tokenManager = {
   // トークンの保存
   setToken(token) {
-    if (token) {
-      try {
-        log("Setting token:", token);
+    if (!token) return;
+
+    try {
+      log("Setting token:", token);
+      if (process.env.NODE_ENV === "production") {
         Cookies.set(TOKEN_COOKIE_KEY, token, COOKIE_OPTIONS);
-        // バックアップとしてlocalStorageにも保存
+      } else {
         localStorage.setItem(TOKEN_COOKIE_KEY, token);
-        log("Token saved successfully");
-      } catch (error) {
-        console.error("Error saving token:", error);
       }
+      log("Token saved successfully");
+    } catch (error) {
+      console.error("Error saving token:", error);
     }
   },
 
   // ユーザー情報の保存
   setUser(user) {
-    if (user) {
-      try {
-        log("Setting user:", user);
+    if (!user) return;
+
+    try {
+      log("Setting user:", user);
+      if (process.env.NODE_ENV === "production") {
         Cookies.set(USER_COOKIE_KEY, JSON.stringify(user), COOKIE_OPTIONS);
+      } else {
         localStorage.setItem(USER_COOKIE_KEY, JSON.stringify(user));
-      } catch (error) {
-        console.error("Error saving user:", error);
       }
+    } catch (error) {
+      console.error("Error saving user:", error);
     }
   },
 
   // トークンの取得
   getToken() {
     try {
-      // まずCookieから取得を試みる
-      let token = Cookies.get(TOKEN_COOKIE_KEY);
-      if (!token) {
-        // CookieになければlocalStorageから取得
-        token = localStorage.getItem(TOKEN_COOKIE_KEY);
-        if (token) {
-          // localStorageにあった場合はCookieに再設定
-          this.setToken(token);
-        }
-      }
+      const token =
+        process.env.NODE_ENV === "production"
+          ? Cookies.get(TOKEN_COOKIE_KEY)
+          : localStorage.getItem(TOKEN_COOKIE_KEY);
       log("Getting token:", token);
       return token;
     } catch (error) {
@@ -74,7 +71,9 @@ export const tokenManager = {
   getUser() {
     try {
       const userData =
-        Cookies.get(USER_COOKIE_KEY) || localStorage.getItem(USER_COOKIE_KEY);
+        process.env.NODE_ENV === "production"
+          ? Cookies.get(USER_COOKIE_KEY)
+          : localStorage.getItem(USER_COOKIE_KEY);
       log("Getting user data:", userData);
       return userData ? JSON.parse(userData) : null;
     } catch (error) {
@@ -86,14 +85,13 @@ export const tokenManager = {
   // 全てのデータを削除
   clearAll() {
     try {
-      // Cookie の削除
-      Cookies.remove(TOKEN_COOKIE_KEY, { path: "/" });
-      Cookies.remove(USER_COOKIE_KEY, { path: "/" });
-
-      // localStorage の削除
-      localStorage.removeItem(TOKEN_COOKIE_KEY);
-      localStorage.removeItem(USER_COOKIE_KEY);
-
+      if (process.env.NODE_ENV === "production") {
+        Cookies.remove(TOKEN_COOKIE_KEY, { path: "/" });
+        Cookies.remove(USER_COOKIE_KEY, { path: "/" });
+      } else {
+        localStorage.removeItem(TOKEN_COOKIE_KEY);
+        localStorage.removeItem(USER_COOKIE_KEY);
+      }
       log("All tokens and user data cleared");
     } catch (error) {
       console.error("Error clearing data:", error);

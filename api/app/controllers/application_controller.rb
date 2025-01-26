@@ -25,9 +25,12 @@ class ApplicationController < ActionController::API
     begin
       decoded = decode_token(token)
       Rails.logger.debug "Decoded token: #{decoded}"
+      Rails.logger.debug "Token exp: #{decoded['exp']}"
+      Rails.logger.debug "Current time: #{Time.now.to_i}"
       @current_user_id = extract_user_id(decoded)
       Rails.logger.debug "User ID: #{@current_user_id}"
-      current_user
+      @current_user = find_current_user
+      Rails.logger.debug "Current user found: #{@current_user.present?}"
     rescue => e
       Rails.logger.error "Authentication error: #{e.class} - #{e.message}"
       handle_jwt_error(e)
@@ -35,7 +38,12 @@ class ApplicationController < ActionController::API
   end
 
   def current_user
-    @current_user ||= find_current_user
+    return @current_user if defined?(@current_user)
+    @current_user = find_current_user
+  end
+
+  def current_api_v1_user
+    current_user
   end
 
   private
@@ -43,8 +51,8 @@ class ApplicationController < ActionController::API
   def extract_token_from_header
     header = request.headers['Authorization']
     return nil if header.blank?
-
-    header.gsub('Bearer ', '')
+    return nil unless header.start_with?('Bearer ')
+    header.split(' ').last
   end
 
   def process_token(token)
@@ -70,7 +78,7 @@ class ApplicationController < ActionController::API
   end
 
   def extract_user_id(decoded_token)
-    decoded_token['sub']  # 'sub'のみを使用するように修正
+    decoded_token['sub']
   end
 
   def find_current_user

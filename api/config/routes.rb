@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       # Google OAuth2のコールバックルートを追加
       devise_scope :user do
         post 'auth/google_oauth2/callback', to: 'auth/omniauth_callbacks#google_oauth2'
+        delete 'auth', to: 'api/v1/auth/registrations#destroy'
       end
 
       # その他のルート

@@ -73,10 +73,20 @@ export const authAPI = {
   // ログアウト
   logout: async () => {
     try {
-      await client.delete("/api/v1/auth/sign_out");
+      const token = tokenManager.getToken();
+      if (!token) {
+        console.warn("No token found during logout");
+        return;
+      }
+
+      await client.delete("/api/v1/auth");
       tokenManager.clearAll();
       delete client.defaults.headers.common["Authorization"];
     } catch (error) {
+      console.error("Logout error:", error);
+      // エラーが発生してもトークンをクリア
+      tokenManager.clearAll();
+      delete client.defaults.headers.common["Authorization"];
       throw formatError(error);
     }
   },
@@ -136,31 +146,20 @@ export const authAPI = {
       );
 
       console.log("Google auth response:", response.data);
-      console.log("Response token:", response.data.token);
-
       const token = response.data.token;
       if (!token) {
-        console.error("No token in response");
         throw new Error("認証トークンが見つかりません");
       }
 
       tokenManager.setToken(token);
       client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      console.log(
-        "Set Authorization header:",
-        client.defaults.headers.common["Authorization"]
-      );
 
       return {
         user: response.data.data,
         token: token,
       };
     } catch (error) {
-      console.error("Google auth error details:", {
-        message: error.message,
-        response: error.response,
-        data: error.response?.data,
-      });
+      console.error("Google auth error:", error);
       throw formatError(error);
     }
   },
@@ -175,14 +174,7 @@ export const authAPI = {
         throw new Error("認証情報がありません");
       }
 
-      // 認証ヘッダーを設定
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      };
-
-      const response = await client.delete("/api/v1/auth", { headers });
+      const response = await client.delete("/api/v1/auth");
       console.log("Delete account response:", response);
 
       if (response.status === 200 || response.status === 204) {
@@ -193,11 +185,7 @@ export const authAPI = {
 
       return response.data;
     } catch (error) {
-      console.error("Delete account error details:", {
-        message: error.message,
-        response: error.response,
-        data: error.response?.data,
-      });
+      console.error("Delete account error:", error);
       throw error.response?.data || error;
     }
   },

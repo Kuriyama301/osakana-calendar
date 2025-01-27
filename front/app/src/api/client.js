@@ -52,6 +52,8 @@ if (process.env.NODE_ENV === "test") {
     (error) => {
       if (error.response?.status === 401) {
         tokenManager.clearAll();
+        delete client.defaults.headers.common["Authorization"];
+        window.location.href = "/"; // トークン期限切れ時にホームにリダイレクト
       }
       return Promise.reject(error);
     }
@@ -71,8 +73,8 @@ client.interceptors.request.use(
   (config) => {
     console.log("Request Config:", {
       url: config.url,
-      headers: config.headers,
       method: config.method,
+      headers: config.headers,
     });
     return config;
   },
@@ -82,7 +84,7 @@ client.interceptors.request.use(
   }
 );
 
-// 新しいデバッグインターセプター
+// APIリクエストのデバッグ
 client.interceptors.request.use((config) => {
   console.group("API Request Debug");
   console.log("URL:", config.url);
@@ -93,7 +95,7 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
-// client.jsのインターセプターに追加
+// レスポンスのデバッグ
 client.interceptors.response.use(
   (response) => {
     console.group("API Response Debug");

@@ -64,6 +64,7 @@ const AuthProvider = ({ children }) => {
           setUser(userData);
         } else {
           clearAuthState();
+          tokenManager.clearAll();
         }
       } catch (err) {
         console.error("Auth initialization error:", err);
@@ -76,7 +77,13 @@ const AuthProvider = ({ children }) => {
     initializeAuth();
 
     // 定期的なトークンチェック
-    const tokenCheckInterval = setInterval(checkTokenExpiration, 60000); // 1分ごと
+    const tokenCheckInterval = setInterval(() => {
+      const token = tokenManager.getToken();
+      if (token && !isTokenValid(token) && !window.isRedirecting) {
+        checkTokenExpiration();
+      }
+    }, 60000); // 1分ごと
+
     return () => clearInterval(tokenCheckInterval);
   }, [clearAuthState, checkTokenExpiration]);
 
@@ -157,23 +164,26 @@ const AuthProvider = ({ children }) => {
     try {
       setError(null);
       const result = await authAPI.googleAuth(credential);
-  
+
       if (!result.token) {
         throw new Error("認証トークンが取得できませんでした");
       }
-  
+
       const userData = result.user.data.attributes;
-  
+
       tokenManager.setToken(result.token);
       tokenManager.setUser(userData);
       setUser(userData);
-  
-      client.defaults.headers.common["Authorization"] = `Bearer ${result.token}`;
-  
+
+      client.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${result.token}`;
+
       console.log("Auth state updated:", {
         userData,
         hasToken: !!result.token,
-        isAuthenticated: !!userData && !!result.token && isTokenValid(result.token)
+        isAuthenticated:
+          !!userData && !!result.token && isTokenValid(result.token),
       });
 
       return result.user;

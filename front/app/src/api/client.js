@@ -51,9 +51,15 @@ if (process.env.NODE_ENV === "test") {
     },
     (error) => {
       if (error.response?.status === 401) {
-        tokenManager.clearAll();
-        delete client.defaults.headers.common["Authorization"];
-        window.location.href = "/"; // トークン期限切れ時にホームにリダイレクト
+        if (!window.isRedirecting) {
+          window.isRedirecting = true;
+          tokenManager.clearAll();
+          delete client.defaults.headers.common["Authorization"];
+          setTimeout(() => {
+            window.isRedirecting = false;
+            window.location.href = "/";
+          }, 100);
+        }
       }
       return Promise.reject(error);
     }

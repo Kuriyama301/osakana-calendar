@@ -5,6 +5,25 @@ import client from "../api/client";
 import { tokenManager } from "../utils/tokenManager";
 import { formatError } from "../utils/errorHandler";
 
+// トークンの有効性チェック関数
+const isTokenValid = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const expiry = payload.exp * 1000;
+    const currentTime = Date.now();
+    const isValid = currentTime < expiry - 5 * 60 * 1000;
+    console.log("Token validation:", {
+      expiry: new Date(expiry),
+      currentTime: new Date(currentTime),
+      isValid,
+    });
+    return isValid;
+  } catch (error) {
+    console.error("Token validation error:", error);
+    return false;
+  }
+};
+
 // コンテキストの作成とエクスポート
 export const AuthContext = createContext(null);
 
@@ -12,6 +31,25 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // 認証状態のクリア
+  const clearAuthState = useCallback(() => {
+    setUser(null);
+    tokenManager.clearAll();
+    delete client.defaults.headers.common["Authorization"];
+  }, []);
+
+  // トークン期限切れチェックとログアウト処理
+  const checkTokenExpiration = useCallback(() => {
+    const token = tokenManager.getToken();
+    if (token && !isTokenValid(token)) {
+      console.log("Token expired, logging out...");
+      clearAuthState();
+      setError("セッションの有効期限が切れました。再度ログインしてください。");
+      return false;
+    }
+    return true;
+  }, [clearAuthState]);
 
   // 初期化時の処理
   useEffect(() => {
@@ -21,23 +59,26 @@ const AuthProvider = ({ children }) => {
         const token = tokenManager.getToken();
         const userData = tokenManager.getUser();
 
-        if (token && userData) {
-          // トークンの検証
+        if (token && userData && isTokenValid(token)) {
           client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
           setUser(userData);
         } else {
-          tokenManager.clearAll();
+          clearAuthState();
         }
       } catch (err) {
         console.error("Auth initialization error:", err);
-        tokenManager.clearAll();
+        clearAuthState();
       } finally {
         setLoading(false);
       }
     };
 
     initializeAuth();
-  }, []);
+
+    // 定期的なトークンチェック
+    const tokenCheckInterval = setInterval(checkTokenExpiration, 60000); // 1分ごと
+    return () => clearInterval(tokenCheckInterval);
+  }, [clearAuthState, checkTokenExpiration]);
 
   // サインアップ処理
   const signup = useCallback(
@@ -57,8 +98,9 @@ const AuthProvider = ({ children }) => {
           throw new Error(response.message || "登録に失敗しました");
         }
       } catch (err) {
-        setError(formatError(err));
-        throw err;
+        const errorMessage = formatError(err);
+        setError(errorMessage);
+        throw new Error(errorMessage);
       }
     },
     []
@@ -69,6 +111,10 @@ const AuthProvider = ({ children }) => {
     try {
       setError(null);
       const { user, token } = await authAPI.login(email, password);
+
+      if (!token) {
+        throw new Error("認証トークンが取得できませんでした");
+      }
 
       const userData = user.data.attributes;
 
@@ -82,66 +128,68 @@ const AuthProvider = ({ children }) => {
       console.log("Auth state updated:", {
         userData,
         hasToken: !!token,
-        isAuthenticated: !!userData && !!token,
+        isAuthenticated: !!userData && !!token && isTokenValid(token),
       });
 
       return userData;
     } catch (err) {
-      setError(formatError(err));
-      throw err;
+      const errorMessage = formatError(err);
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   }, []);
 
   // ログアウト処理
   const logout = useCallback(async () => {
     try {
-      await authAPI.logout();
+      if (checkTokenExpiration()) {
+        await authAPI.logout();
+      }
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
-      setUser(null);
-      tokenManager.clearAll();
-      delete client.defaults.headers.common["Authorization"];
+      clearAuthState();
     }
-  }, []);
+  }, [clearAuthState, checkTokenExpiration]);
 
   // Google認証処理
   const googleAuth = useCallback(async (credential) => {
     try {
       setError(null);
       const result = await authAPI.googleAuth(credential);
-
-      if (result.token) {
-        // userData をレスポンス構造に合わせて抽出
-        const userData = result.user.data.attributes;
-
-        tokenManager.setToken(result.token);
-        tokenManager.setUser(userData);
-        setUser(userData);
-
-        // Authorization ヘッダーを設定
-        client.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${result.token}`;
-
-        console.log("Auth state updated:", {
-          userData,
-          hasToken: !!result.token,
-          isAuthenticated: !!userData && !!result.token,
-        });
+  
+      if (!result.token) {
+        throw new Error("認証トークンが取得できませんでした");
       }
+  
+      const userData = result.user.data.attributes;
+  
+      tokenManager.setToken(result.token);
+      tokenManager.setUser(userData);
+      setUser(userData);
+  
+      client.defaults.headers.common["Authorization"] = `Bearer ${result.token}`;
+  
+      console.log("Auth state updated:", {
+        userData,
+        hasToken: !!result.token,
+        isAuthenticated: !!userData && !!result.token && isTokenValid(result.token)
+      });
 
       return result.user;
     } catch (err) {
+      const errorMessage = formatError(err);
       console.error("Google auth error:", err);
-      setError(formatError(err));
-      throw err;
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   }, []);
 
   // 認証状態チェック
   const isAuthenticated = useCallback(() => {
-    return !!user && !!tokenManager.getToken();
+    const token = tokenManager.getToken();
+    const isValid = token ? isTokenValid(token) : false;
+    return !!user && isValid;
   }, [user]);
 
   const value = {

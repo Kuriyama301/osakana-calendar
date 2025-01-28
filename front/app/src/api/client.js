@@ -59,22 +59,24 @@ if (process.env.NODE_ENV === "test") {
       return response;
     },
     (error) => {
+      // アボートされたリクエストのエラーは無視
+      if (error.name === "CanceledError") {
+        return Promise.reject(error);
+      }
+
+      // 401エラーの処理
       if (error.response?.status === 401 && !error.config._retry) {
         error.config._retry = true;
 
-        // 進行中のリクエストをキャンセル
-        // window.activeRequests.forEach((controller) => controller.abort());
-        // window.activeRequests = [];
-
-        // if (!window.isRedirecting) {
-        //   window.isRedirecting = true;
-        //   tokenManager.clearAll();
-        //   delete client.defaults.headers.common["Authorization"];
-        //   setTimeout(() => {
-        //     window.isRedirecting = false;
-        //     window.location.href = "/";
-        //   }, 100);
-        // }
+        // グローバルなイベントとして発行
+        window.dispatchEvent(
+          new CustomEvent("auth:unauthorized", {
+            detail: {
+              url: error.config.url,
+              status: error.response.status,
+            },
+          })
+        );
       }
       return Promise.reject(error);
     }

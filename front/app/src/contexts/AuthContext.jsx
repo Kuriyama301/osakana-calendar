@@ -64,7 +64,13 @@ const AuthProvider = ({ children }) => {
           setUser(userData);
         } else {
           clearAuthState();
-          tokenManager.clearAll();
+          if (!window.isRedirecting) {
+            window.isRedirecting = true;
+            setTimeout(() => {
+              window.isRedirecting = false;
+              window.location.href = "/";
+            }, 100);
+          }
         }
       } catch (err) {
         console.error("Auth initialization error:", err);
@@ -76,13 +82,13 @@ const AuthProvider = ({ children }) => {
 
     initializeAuth();
 
-    // 定期的なトークンチェック
+    // トークンチェックの間隔を5分に変更
     const tokenCheckInterval = setInterval(() => {
       const token = tokenManager.getToken();
       if (token && !isTokenValid(token) && !window.isRedirecting) {
         checkTokenExpiration();
       }
-    }, 60000); // 1分ごと
+    }, 300000);
 
     return () => clearInterval(tokenCheckInterval);
   }, [clearAuthState, checkTokenExpiration]);

@@ -86,11 +86,16 @@ export const tokenManager = {
   clearAll() {
     try {
       if (process.env.NODE_ENV === "production") {
-        Cookies.remove(TOKEN_COOKIE_KEY, { path: "/" });
-        Cookies.remove(USER_COOKIE_KEY, { path: "/" });
+        Cookies.remove(TOKEN_COOKIE_KEY, { ...COOKIE_OPTIONS, path: "/" });
+        Cookies.remove(USER_COOKIE_KEY, { ...COOKIE_OPTIONS, path: "/" });
       } else {
         localStorage.removeItem(TOKEN_COOKIE_KEY);
         localStorage.removeItem(USER_COOKIE_KEY);
+      }
+      // 進行中のリクエストをキャンセル
+      if (window.activeRequests) {
+        window.activeRequests.forEach((controller) => controller.abort());
+        window.activeRequests = [];
       }
       log("All tokens and user data cleared");
     } catch (error) {

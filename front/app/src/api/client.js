@@ -1,6 +1,9 @@
 import axios from "axios";
 import { tokenManager } from "../utils/tokenManager";
 
+// リクエストを管理するための配列を初期化
+window.activeRequests = [];
+
 // APIのベースURL取得
 const getApiUrl = () => {
   // 本番環境のURLを明示的に設定
@@ -32,6 +35,12 @@ if (process.env.NODE_ENV === "test") {
   // 通常の環境用インターセプター
   client.interceptors.request.use(
     (config) => {
+      // AbortControllerの設定
+      const controller = new AbortController();
+      window.activeRequests.push(controller);
+      config.signal = controller.signal;
+
+      // 認証ヘッダーの設定
       const authHeader = tokenManager.getAuthHeader();
       if (authHeader) {
         config.headers.Authorization = authHeader;
@@ -50,7 +59,13 @@ if (process.env.NODE_ENV === "test") {
       return response;
     },
     (error) => {
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 && !error.config._retry) {
+        error.config._retry = true;
+
+        // 進行中のリクエストをキャンセル
+        window.activeRequests.forEach((controller) => controller.abort());
+        window.activeRequests = [];
+
         if (!window.isRedirecting) {
           window.isRedirecting = true;
           tokenManager.clearAll();

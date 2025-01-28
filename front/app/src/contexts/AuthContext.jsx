@@ -51,7 +51,7 @@ const AuthProvider = ({ children }) => {
     return true;
   }, [clearAuthState]);
 
-  // 初期化時の処理
+  // 初期化時の処理とイベントリスナー追加
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -64,13 +64,6 @@ const AuthProvider = ({ children }) => {
           setUser(userData);
         } else {
           clearAuthState();
-          if (!window.isRedirecting) {
-            window.isRedirecting = true;
-            setTimeout(() => {
-              window.isRedirecting = false;
-              window.location.href = "/";
-            }, 100);
-          }
         }
       } catch (err) {
         console.error("Auth initialization error:", err);
@@ -85,13 +78,28 @@ const AuthProvider = ({ children }) => {
     // トークンチェックの間隔を5分に変更
     const tokenCheckInterval = setInterval(() => {
       const token = tokenManager.getToken();
-      if (token && !isTokenValid(token) && !window.isRedirecting) {
-        checkTokenExpiration();
+      if (token && !isTokenValid(token)) {
+        clearAuthState();
+        setError(
+          "セッションの有効期限が切れました。再度ログインしてください。"
+        );
       }
     }, 300000);
 
-    return () => clearInterval(tokenCheckInterval);
-  }, [clearAuthState, checkTokenExpiration]);
+    // auth:unauthorized イベントリスナーの設定
+    const handleUnauthorized = () => {
+      console.log("Unauthorized event detected, clearing auth state.");
+      clearAuthState();
+      setError("認証エラーが発生しました。再度ログインしてください。");
+    };
+
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+
+    return () => {
+      clearInterval(tokenCheckInterval);
+      window.removeEventListener("auth:unauthorized", handleUnauthorized);
+    };
+  }, [clearAuthState]);
 
   // サインアップ処理
   const signup = useCallback(

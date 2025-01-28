@@ -63,18 +63,18 @@ if (process.env.NODE_ENV === "test") {
         error.config._retry = true;
 
         // 進行中のリクエストをキャンセル
-        window.activeRequests.forEach((controller) => controller.abort());
-        window.activeRequests = [];
+        // window.activeRequests.forEach((controller) => controller.abort());
+        // window.activeRequests = [];
 
-        if (!window.isRedirecting) {
-          window.isRedirecting = true;
-          tokenManager.clearAll();
-          delete client.defaults.headers.common["Authorization"];
-          setTimeout(() => {
-            window.isRedirecting = false;
-            window.location.href = "/";
-          }, 100);
-        }
+        // if (!window.isRedirecting) {
+        //   window.isRedirecting = true;
+        //   tokenManager.clearAll();
+        //   delete client.defaults.headers.common["Authorization"];
+        //   setTimeout(() => {
+        //     window.isRedirecting = false;
+        //     window.location.href = "/";
+        //   }, 100);
+        // }
       }
       return Promise.reject(error);
     }

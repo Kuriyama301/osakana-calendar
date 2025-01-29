@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { authAPI } from "../api/auth";
 import { tokenManager } from "../utils/tokenManager";
+import { formatError } from "../utils/errorHandler";
 
 const DeleteAccountContext = createContext(null);
 
@@ -12,7 +13,7 @@ export const DeleteAccountProvider = ({ children }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
 
   // アカウント削除処理
   const deleteAccount = useCallback(async () => {
@@ -33,26 +34,33 @@ export const DeleteAccountProvider = ({ children }) => {
         throw new Error("認証情報が見つかりません");
       }
 
+      // アカウント削除APIを呼び出し
       const response = await authAPI.deleteAccount();
 
-      if (response.status === "success") {
-        tokenManager.clearAll();
+      if (
+        response.status === "success" ||
+        response.status === 200 ||
+        response.status === 204
+      ) {
+        // 認証情報をクリア
+        await logout(); // AuthContextのlogout関数を使用
+
+        // モーダルを閉じてホームページにリダイレクト
         closeModal();
-        navigate("/", { replace: true });
+        navigate("/", {
+          replace: true,
+          state: { message: "アカウントが正常に削除されました" },
+        });
       } else {
         throw new Error(response.message || "アカウントの削除に失敗しました");
       }
     } catch (err) {
       console.error("Delete account error:", err);
-      setError(
-        err.response?.data?.error ||
-          err.message ||
-          "アカウントの削除に失敗しました。再度お試しください。"
-      );
+      setError(formatError(err));
     } finally {
       setIsDeleting(false);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, logout]);
 
   // モーダルを開く
   const openModal = useCallback(() => {
@@ -77,6 +85,7 @@ export const DeleteAccountProvider = ({ children }) => {
     openModal,
     closeModal,
     deleteAccount,
+    user,
   };
 
   return (

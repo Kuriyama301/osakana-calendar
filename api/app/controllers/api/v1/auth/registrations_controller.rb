@@ -20,10 +20,9 @@ module Api
         end
 
         def destroy
-          Rails.logger.debug "Destroying account for user ID: #{current_api_v1_user&.id}"
-          if current_api_v1_user.nil?
-            return render json: { error: "ユーザーが見つかりません" }, status: :unauthorized
-          end
+          Rails.logger.debug { "Destroying account for user ID: #{current_api_v1_user&.id}" }
+          return render json: { error: 'ユーザーが見つかりません' }, status: :unauthorized if current_api_v1_user.nil?
+
           if current_api_v1_user.destroy
             render json: { status: 'success', message: 'アカウントが削除されました' }, status: :ok
           else
@@ -72,7 +71,7 @@ module Api
         end
 
         def authenticate_scope!
-          send("authenticate_#{resource_name}!")
+          send(:"authenticate_#{resource_name}!")
         end
 
         def format_error_messages(errors)

@@ -1,20 +1,20 @@
-require "test_helper"
+require 'test_helper'
 
 class Api::V1::Auth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
-  test "should register new user" do
+  test 'should register new user' do
     assert_difference('User.count') do
       post api_v1_user_registration_path,
-        params: {
-          user: {
-            email: 'new@example.com',
-            password: 'password',
-            password_confirmation: 'password',
-            name: 'New User'
-          }
-        },
-        as: :json
+           params: {
+             user: {
+               email: 'new@example.com',
+               password: 'password',
+               password_confirmation: 'password',
+               name: 'New User'
+             }
+           },
+           as: :json
     end
 
     assert_response :created
@@ -24,36 +24,36 @@ class Api::V1::Auth::RegistrationsControllerTest < ActionDispatch::IntegrationTe
     assert_equal 'New User', json['data']['data']['attributes']['name']
   end
 
-  test "should not register user with invalid data" do
+  test 'should not register user with invalid data' do
     assert_no_difference('User.count') do
       post api_v1_user_registration_path,
-        params: {
-          user: {
-            email: 'invalid-email',
-            password: 'short',
-            name: ''
-          }
-        },
-        as: :json
+           params: {
+             user: {
+               email: 'invalid-email',
+               password: 'short',
+               name: ''
+             }
+           },
+           as: :json
     end
 
     assert_response :unprocessable_entity
   end
 
-  test "should not register user with duplicate email" do
+  test 'should not register user with duplicate email' do
     existing_user = users(:user)
 
     assert_no_difference('User.count') do
       post api_v1_user_registration_path,
-        params: {
-          user: {
-            email: existing_user.email,
-            password: 'password',
-            password_confirmation: 'password',
-            name: 'Another User'
-          }
-        },
-        as: :json
+           params: {
+             user: {
+               email: existing_user.email,
+               password: 'password',
+               password_confirmation: 'password',
+               name: 'Another User'
+             }
+           },
+           as: :json
     end
 
     assert_response :unprocessable_entity
@@ -61,8 +61,7 @@ class Api::V1::Auth::RegistrationsControllerTest < ActionDispatch::IntegrationTe
     assert_equal 'error', json['status']
   end
 
-  test "should delete user account when authenticated" do
-
+  test 'should delete user account when authenticated' do
     user = User.create!(
       email: 'delete-test@example.com',
       password: 'password',
@@ -76,18 +75,18 @@ class Api::V1::Auth::RegistrationsControllerTest < ActionDispatch::IntegrationTe
 
     assert_difference('User.count', -1) do
       delete api_v1_user_registration_path,
-      headers: {
-        'Authorization': "Bearer #{token}",
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-        as: :json
+             headers: {
+               Authorization: "Bearer #{token}",
+               Accept: 'application/json',
+               'Content-Type': 'application/json'
+             },
+             as: :json
     end
 
     assert_response :ok
   end
 
-  test "should not delete user account when not authenticated" do
+  test 'should not delete user account when not authenticated' do
     assert_no_difference('User.count') do
       delete api_v1_user_registration_path, as: :json
     end

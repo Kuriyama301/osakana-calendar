@@ -1,5 +1,5 @@
 namespace :email do
-  desc "Test email configuration"
+  desc 'Test email configuration'
   task test: :environment do
     # テストユーザー作成
     user = User.new(
@@ -11,8 +11,8 @@ namespace :email do
     # 確認メール送信テスト
     begin
       user.send_confirmation_instructions
-      puts "Test email sent successfully!"
-    rescue => e
+      puts 'Test email sent successfully!'
+    rescue StandardError => e
       puts "Error sending email: #{e.message}"
     end
   end

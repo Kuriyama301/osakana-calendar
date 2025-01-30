@@ -1,7 +1,7 @@
 ENV['RAILS_ENV'] ||= 'test'
-require_relative "../config/environment"
-require "rails/test_help"
-require "minitest/mock"
+require_relative '../config/environment'
+require 'rails/test_help'
+require 'minitest/mock'
 
 class ActiveSupport::TestCase
   include Devise::Test::IntegrationHelpers
@@ -28,9 +28,9 @@ class ActiveSupport::TestCase
       success: true,
       data: [
         {
-          id: "test_video_id",
-          title: "テスト動画",
-          thumbnail_url: "http://example.com/thumbnail.jpg"
+          id: 'test_video_id',
+          title: 'テスト動画',
+          thumbnail_url: 'http://example.com/thumbnail.jpg'
         }
       ]
     }
@@ -39,7 +39,7 @@ class ActiveSupport::TestCase
   def mock_youtube_error_response
     {
       success: false,
-      error: "動画の検索に失敗しました"
+      error: '動画の検索に失敗しました'
     }
   end
 

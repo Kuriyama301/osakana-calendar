@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'net/http'
 require 'uri'
 require 'json'
@@ -12,7 +14,7 @@ class YoutubeService
     params = {
       part: 'snippet',
       q: search_query,
-      key: ENV['YOUTUBE_API_KEY'],
+      key: ENV.fetch('YOUTUBE_API_KEY', nil),
       maxResults: 3,
       type: 'video'
     }

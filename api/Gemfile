@@ -1,16 +1,16 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.3.4"
+ruby '3.3.4'
 
 # 基本的なgems
-gem "rails", "~> 7.0.8", ">= 7.0.8.4"
-gem "pg", "~> 1.1"
-gem "puma", "~> 5.0"
-gem "rack-cors"
-gem "bootsnap", require: false
+gem 'actioncable' # WebSocket通信
+gem 'bootsnap', require: false
 gem 'jsonapi-serializer', '~> 2.0'
-gem 'actioncable'                      # WebSocket通信
+gem 'pg', '~> 1.1'
+gem 'puma', '~> 5.0'
+gem 'rack-cors'
+gem 'rails', '~> 7.0.8', '>= 7.0.8.4'
 
 # 認証関連のgems
 gem 'devise'                           # 基本的な認証機能
@@ -29,16 +29,16 @@ gem 'active_storage_validations'
 
 # AWS関連
 gem 'aws-sdk-s3', require: false # S3用
-gem 'aws-sdk-ses'               # Amazon SES用
+gem 'aws-sdk-ses' # Amazon SES用
 
-gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw ]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw]
 
 group :development, :test do
-  gem "debug", platforms: %i[ mri mingw x64_mingw ]
-  gem 'rspec-rails'
+  gem 'debug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'rspec-rails'
   gem 'rubocop', require: false
-  gem 'rubocop-rails', require: false
   gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
 end

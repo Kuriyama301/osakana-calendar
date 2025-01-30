@@ -1,5 +1,5 @@
 namespace :db do
-  desc "Migrate fish seasons data to new format"
+  desc 'Migrate fish seasons data to new format'
   task migrate_fish_seasons: :environment do
     FishSeason.find_each do |season|
       start_date = Date.parse(season.start_date)
@@ -12,6 +12,6 @@ namespace :db do
         end_day: end_date.day
       )
     end
-    puts "Fish seasons data migration completed."
+    puts 'Fish seasons data migration completed.'
   end
 end

@@ -16,22 +16,22 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_user!
-    Rails.logger.debug "Token extraction started"
+    Rails.logger.debug 'Token extraction started'
     token = extract_token_from_header
-    Rails.logger.debug "Extracted token: #{token}"
+    Rails.logger.debug { "Extracted token: #{token}" }
 
     return unauthorized_error('Token missing') unless token
 
     begin
       decoded = decode_token(token)
-      Rails.logger.debug "Decoded token: #{decoded}"
-      Rails.logger.debug "Token exp: #{decoded['exp']}"
-      Rails.logger.debug "Current time: #{Time.now.to_i}"
+      Rails.logger.debug { "Decoded token: #{decoded}" }
+      Rails.logger.debug { "Token exp: #{decoded['exp']}" }
+      Rails.logger.debug { "Current time: #{Time.now.to_i}" }
       @current_user_id = extract_user_id(decoded)
-      Rails.logger.debug "User ID: #{@current_user_id}"
+      Rails.logger.debug { "User ID: #{@current_user_id}" }
       @current_user = find_current_user
-      Rails.logger.debug "Current user found: #{@current_user.present?}"
-    rescue => e
+      Rails.logger.debug { "Current user found: #{@current_user.present?}" }
+    rescue StandardError => e
       Rails.logger.error "Authentication error: #{e.class} - #{e.message}"
       handle_jwt_error(e)
     end
@@ -39,6 +39,7 @@ class ApplicationController < ActionController::API
 
   def current_user
     return @current_user if defined?(@current_user)
+
     @current_user = find_current_user
   end
 
@@ -52,7 +53,8 @@ class ApplicationController < ActionController::API
     header = request.headers['Authorization']
     return nil if header.blank?
     return nil unless header.start_with?('Bearer ')
-    header.split(' ').last
+
+    header.split.last
   end
 
   def process_token(token)

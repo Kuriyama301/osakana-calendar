@@ -18,6 +18,7 @@ gem 'devise-jwt', '~> 0.11.0'          # JWT認証サポート
 gem 'omniauth'                         # OAuth認証の基本機能
 gem 'omniauth-google-oauth2'           # Google認証
 gem 'omniauth-rails_csrf_protection'   # CSRF保護
+gem 'omniauth-line'                    # LINE認証
 
 # 必要なシステムgems
 gem 'base64'

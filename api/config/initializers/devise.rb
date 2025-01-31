@@ -2,6 +2,7 @@ require 'devise'
 require 'devise/jwt'
 require 'devise/orm/active_record'
 require 'omniauth-google-oauth2'
+require 'omniauth-line'
 
 Devise.setup do |config|
   # API設定

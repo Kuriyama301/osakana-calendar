@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
-class User < ApplicationRecord
-  include Devise::JWT::RevocationStrategies::Denylist
+  class User < ApplicationRecord
+    include Devise::JWT::RevocationStrategies::Denylist
 
-  # Devise機能
-  devise :database_authenticatable, :registerable,
-         :recoverable, :validatable, :trackable, :confirmable,
-         :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist,
-         :omniauthable, omniauth_providers: %i[google_oauth2 line]
+    # Devise機能
+    devise :database_authenticatable, :registerable,
+           :recoverable, :validatable, :trackable, :confirmable,
+           :jwt_authenticatable,
+           jwt_revocation_strategy: JwtDenylist,
+           :omniauthable,
+           omniauth_providers: %i[google_oauth2 line]
+
 
   # バリデーション
   validates :email, presence: true, uniqueness: true

@@ -2,6 +2,7 @@ require 'devise'
 require 'devise/jwt'
 require 'devise/orm/active_record'
 require 'omniauth-google-oauth2'
+require 'omniauth-line'
 
 Devise.setup do |config|
   # API設定
@@ -47,7 +48,8 @@ Devise.setup do |config|
     # トークン発行のリクエスト設定
     jwt.dispatch_requests = [
       ['POST', %r{^/api/v1/auth/sign_in$}],
-      ['POST', %r{^/api/v1/auth/google_oauth2/callback$}]
+      ['POST', %r{^/api/v1/auth/google_oauth2/callback$}],
+      ['POST', %r{^/api/v1/auth/line/callback$}]
     ]
 
     # トークン無効化のリクエスト設定（アカウント削除のパスを含める）
@@ -71,6 +73,15 @@ Devise.setup do |config|
                     prompt: 'select_account',
                     image_aspect_ratio: 'square',
                     image_size: 50
+                  }
+
+  # LINE OAuth設定を追加
+  config.omniauth :line,
+                  ENV['LINE_CHANNEL_ID'],
+                  ENV['LINE_CHANNEL_SECRET'],
+                  {
+                    scope: 'profile,openid,email',
+                    prompt: 'consent'
                   }
 
   # メール確認のリダイレクト先設定

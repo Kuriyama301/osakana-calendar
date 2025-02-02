@@ -164,6 +164,49 @@ export const authAPI = {
     }
   },
 
+  // LINE認証
+  lineAuth: {
+    // LINE認証URLの生成
+    getAuthUrl: () => {
+      const params = {
+        response_type: 'code',
+        client_id: import.meta.env.VITE_LINE_CHANNEL_ID,
+        redirect_uri: import.meta.env.VITE_LINE_CALLBACK_URL,
+        state: crypto.randomUUID(), // CSRF対策用
+        scope: 'profile openid email'
+      };
+      
+      const queryString = new URLSearchParams(params).toString();
+      return `https://access.line.me/oauth2/v2.1/authorize?${queryString}`;
+    },
+
+    // LINEコールバック処理
+    handleCallback: async (code) => {
+      try {
+        console.log("Sending LINE auth callback request with code:", code);
+
+        const response = await client.post('/api/v1/auth/line/callback', { code });
+
+        console.log("LINE auth response:", response.data);
+        const token = response.data.token;
+        if (!token) {
+          throw new Error("認証トークンが見つかりません");
+        }
+
+        tokenManager.setToken(token);
+        client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        return {
+          user: response.data.data,
+          token: token,
+        };
+      } catch (error) {
+        console.error("LINE auth error:", error);
+        throw formatError(error);
+      }
+    }
+  },
+
   // アカウント削除
   deleteAccount: async () => {
     try {

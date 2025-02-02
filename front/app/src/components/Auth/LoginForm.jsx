@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import SocialAuthButton from "./SocialAuthButton";
 import PasswordResetModal from "./PasswordResetModal";
+import LineAuthButton from "./LineAuthButton";
 // import { authAPI } from "../../api/auth";
 // import { tokenManager } from "../../utils/tokenManager";
 
@@ -188,11 +189,17 @@ const LoginForm = ({ onSuccess }) => {
           </button>
         </div>
 
-        <SocialAuthButton
-          onClick={handleGoogleLogin}
-          type="login"
-          disabled={loading}
-        />
+        <div className="space-y-3">
+          <SocialAuthButton
+            onClick={handleGoogleLogin}
+            type="login"
+            disabled={loading}
+          />
+          <LineAuthButton 
+            type="login" 
+            disabled={loading} 
+          />
+        </div>
       </div>
 
       {showResetModal && (

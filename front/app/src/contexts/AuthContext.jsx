@@ -209,6 +209,39 @@ const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // LINE認証処理
+  const lineAuth = useCallback(async (code) => {
+    try {
+      setError(null);
+      const result = await authAPI.lineAuth.handleCallback(code);
+
+      if (!result.token) {
+        throw new Error("認証トークンが取得できませんでした");
+      }
+
+      const userData = result.user.data.attributes;
+
+      tokenManager.setToken(result.token);
+      tokenManager.setUser(userData);
+      setUser(userData);
+
+      client.defaults.headers.common["Authorization"] = `Bearer ${result.token}`;
+
+      console.log("Auth state updated:", {
+        userData,
+        hasToken: !!result.token,
+        isAuthenticated: !!userData && !!result.token && isTokenValid(result.token),
+      });
+
+      return result.user;
+    } catch (err) {
+      const errorMessage = formatError(err);
+      console.error("LINE auth error:", err);
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  }, []);
+
   // 認証状態チェック
   const isAuthenticated = useCallback(() => {
     const token = tokenManager.getToken();
@@ -225,6 +258,7 @@ const AuthProvider = ({ children }) => {
     logout,
     isAuthenticated,
     googleAuth,
+    lineAuth,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

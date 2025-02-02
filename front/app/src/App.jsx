@@ -11,6 +11,7 @@ import NewPasswordForm from "./components/Auth/NewPasswordForm";
 import { CollectionsProvider } from "./contexts/CollectionsContext";
 import { DeleteAccountProvider } from "./contexts/DeleteAccountContext";
 import DeleteAccountModal from "./components/Auth/DeleteAccountModal";
+import LineCallbackPage from "./components/Auth/LineCallbackPage";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -97,6 +98,10 @@ function App() {
                           <Route
                             path="/reset-password"
                             element={<NewPasswordForm />}
+                          />
+                          <Route 
+                            path="/auth/line/callback" 
+                            element={<LineCallbackPage />} 
                           />
                         </Routes>
                         <DeleteAccountModal />

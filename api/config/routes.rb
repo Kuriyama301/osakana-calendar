@@ -12,11 +12,12 @@ Rails.application.routes.draw do
           confirmations: 'api/v1/auth/confirmations'
         }
 
-      # Google OAuth2のコールバックルートを追加
+      # Auth関連のルート
       devise_scope :user do
         post 'auth/google_oauth2/callback', to: 'auth/omniauth_callbacks#google_oauth2'
         get 'auth/line/callback', to: 'auth/line#callback'
-        delete 'auth', to: 'api/v1/auth/registrations#destroy'
+        delete 'auth/sign_out', to: 'api/v1/auth/sessions#destroy'      # ログアウト用
+        delete 'auth/delete', to: 'api/v1/auth/registrations#destroy'   # アカウント削除用
       end
 
       # その他のルート

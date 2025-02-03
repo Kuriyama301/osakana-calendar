@@ -12,6 +12,9 @@ import { CollectionsProvider } from "./contexts/CollectionsContext";
 import { DeleteAccountProvider } from "./contexts/DeleteAccountContext";
 import DeleteAccountModal from "./components/Auth/DeleteAccountModal";
 import LineCallbackPage from "./components/Auth/LineCallbackPage";
+import { useAuth } from "./hooks/useAuth";
+import { tokenManager } from "./utils/tokenManager";
+import client from "./api/client";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -56,6 +59,50 @@ ErrorBoundary.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
+// AuthParamsHandlerコンポーネントを作成
+function AuthParamsHandler({ children }) {
+  const { setUser } = useAuth();
+
+  useEffect(() => {
+    const checkAuthParams = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token");
+      const authSuccess = params.get("auth_success");
+      const userDataStr = params.get("user_data");
+
+      if (token && authSuccess && userDataStr) {
+        try {
+          console.log("Processing auth params from URL");
+          const parsedUserData = JSON.parse(decodeURIComponent(userDataStr));
+
+          // 認証情報の保存
+          tokenManager.setToken(token);
+          tokenManager.setUser(parsedUserData);
+          setUser(parsedUserData);
+
+          // 認証ヘッダーの設定
+          client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+          // URLパラメータのクリーンアップ
+          window.history.replaceState({}, "", "/");
+
+          console.log("Auth params processed successfully");
+        } catch (error) {
+          console.error("Error processing auth params:", error);
+        }
+      }
+    };
+
+    checkAuthParams();
+  }, [setUser]);
+
+  return children;
+}
+
+AuthParamsHandler.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
@@ -80,39 +127,41 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <FavoritesProvider>
-          <CollectionsProvider>
-            <Router>
-              <DeleteAccountProvider>
-                <CalendarProvider>
-                  <div className="h-screen overflow-hidden">
-                    <LoadingScreen isOpen={isInitialLoading} />
-                    <Suspense fallback={<LoadingScreen isOpen={true} />}>
-                      <main className="h-full">
-                        <Routes>
-                          <Route path="/" element={<HomePage />} />
-                          <Route
-                            path="/auth/confirm"
-                            element={<EmailConfirmation />}
-                          />
-                          <Route
-                            path="/reset-password"
-                            element={<NewPasswordForm />}
-                          />
-                          <Route 
-                            path="/auth/line/callback" 
-                            element={<LineCallbackPage />} 
-                          />
-                        </Routes>
-                        <DeleteAccountModal />
-                      </main>
-                    </Suspense>
-                  </div>
-                </CalendarProvider>
-              </DeleteAccountProvider>
-            </Router>
-          </CollectionsProvider>
-        </FavoritesProvider>
+        <AuthParamsHandler>
+          <FavoritesProvider>
+            <CollectionsProvider>
+              <Router>
+                <DeleteAccountProvider>
+                  <CalendarProvider>
+                    <div className="h-screen overflow-hidden">
+                      <LoadingScreen isOpen={isInitialLoading} />
+                      <Suspense fallback={<LoadingScreen isOpen={true} />}>
+                        <main className="h-full">
+                          <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route
+                              path="/auth/confirm"
+                              element={<EmailConfirmation />}
+                            />
+                            <Route
+                              path="/reset-password"
+                              element={<NewPasswordForm />}
+                            />
+                            <Route
+                              path="/auth/line/callback"
+                              element={<LineCallbackPage />}
+                            />
+                          </Routes>
+                          <DeleteAccountModal />
+                        </main>
+                      </Suspense>
+                    </div>
+                  </CalendarProvider>
+                </DeleteAccountProvider>
+              </Router>
+            </CollectionsProvider>
+          </FavoritesProvider>
+        </AuthParamsHandler>
       </AuthProvider>
     </ErrorBoundary>
   );

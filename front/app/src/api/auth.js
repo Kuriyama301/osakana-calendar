@@ -79,7 +79,8 @@ export const authAPI = {
         return;
       }
 
-      await client.delete("/api/v1/auth");
+      // 修正: ログアウト用のエンドポイントを変更
+      await client.delete("/api/v1/auth/sign_out");
       tokenManager.clearAll();
       delete client.defaults.headers.common["Authorization"];
     } catch (error) {
@@ -169,13 +170,13 @@ export const authAPI = {
     // LINE認証URLの生成
     getAuthUrl: () => {
       const params = {
-        response_type: 'code',
+        response_type: "code",
         client_id: import.meta.env.VITE_LINE_CHANNEL_ID,
         redirect_uri: import.meta.env.VITE_LINE_CALLBACK_URL,
         state: crypto.randomUUID(), // CSRF対策用
-        scope: 'profile openid email'
+        scope: "profile openid email",
       };
-      
+
       const queryString = new URLSearchParams(params).toString();
       return `https://access.line.me/oauth2/v2.1/authorize?${queryString}`;
     },
@@ -185,7 +186,9 @@ export const authAPI = {
       try {
         console.log("Sending LINE auth callback request with code:", code);
 
-        const response = await client.post('/api/v1/auth/line/callback', { code });
+        const response = await client.post("/api/v1/auth/line/callback", {
+          code,
+        });
 
         console.log("LINE auth response:", response.data);
         const token = response.data.token;
@@ -204,7 +207,7 @@ export const authAPI = {
         console.error("LINE auth error:", error);
         throw formatError(error);
       }
-    }
+    },
   },
 
   // アカウント削除
@@ -217,7 +220,8 @@ export const authAPI = {
         throw new Error("認証情報がありません");
       }
 
-      const response = await client.delete("/api/v1/auth");
+      // 修正: アカウント削除用のエンドポイントを変更
+      const response = await client.delete("/api/v1/auth/delete");
       console.log("Delete account response:", response);
 
       if (response.status === 200 || response.status === 204) {

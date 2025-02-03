@@ -82,13 +82,16 @@ module Api
 
         def handle_successful_authentication
           token = @user.generate_jwt
-          redirect_url = "#{ENV['VITE_FRONT_URL']}?token=#{token}"
-          redirect_to redirect_url
+          user_data = UserSerializer.new(@user).serializable_hash
+
+          # トークンとユーザー情報をクエリパラメータとして渡す
+          redirect_url = "#{ENV['VITE_FRONT_URL']}?token=#{token}&auth_success=true&user_data=#{URI.encode_www_form_component(user_data.to_json)}"
+          redirect_to redirect_url, allow_other_host: true
         end
 
         def handle_failed_authentication
           error_url = "#{ENV['VITE_FRONT_URL']}?error=authentication_failed"
-          redirect_to error_url
+          redirect_to error_url, allow_other_host: true
         end
 
         def handle_error(error)
@@ -96,7 +99,7 @@ module Api
           Rails.logger.error error.backtrace.join("\n")
 
           error_url = "#{ENV['VITE_FRONT_URL']}?error=#{URI.encode_www_form_component(error.message)}"
-          redirect_to error_url
+          redirect_to error_url, allow_other_host: true
         end
       end
     end

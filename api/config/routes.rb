@@ -16,8 +16,8 @@ Rails.application.routes.draw do
       devise_scope :user do
         post 'auth/google_oauth2/callback', to: 'auth/omniauth_callbacks#google_oauth2'
         get 'auth/line/callback', to: 'auth/line#callback'
-        delete 'auth/sign_out', to: 'api/v1/auth/sessions#destroy'      # ログアウト用
-        delete 'auth/delete', to: 'api/v1/auth/registrations#destroy'   # アカウント削除用
+        delete 'auth/sign_out', to: 'auth/sessions#destroy'
+        delete 'auth/delete', to: 'auth/registrations#destroy'
       end
 
       # その他のルート

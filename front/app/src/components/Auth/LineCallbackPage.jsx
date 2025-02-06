@@ -51,28 +51,53 @@ const LineCallbackPage = () => {
 
         try {
           const parsedUserData = JSON.parse(decodeURIComponent(userDataStr));
+          console.log("Raw parsed user data:", parsedUserData);
+
+          const userData = parsedUserData.data.attributes;
+          console.log("Processed user data:", userData);
+
           saveDebugLog("USER_DATA_PARSED", {
-            id: parsedUserData.data?.id,
-            email: parsedUserData.data?.attributes?.email,
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+            fullData: userData,
           });
 
           tokenManager.setToken(token);
-          saveDebugLog("TOKEN_SAVED", { success: !!tokenManager.getToken() });
+          console.log("Token saved:", token.substring(0, 10) + "...");
+          saveDebugLog("TOKEN_SAVED", {
+            success: !!tokenManager.getToken(),
+            tokenPreview: token.substring(0, 10) + "...",
+          });
 
-          tokenManager.setUser(parsedUserData);
-          saveDebugLog("USER_SAVED", { success: !!tokenManager.getUser() });
+          console.log("Data being saved to tokenManager:", userData);
+          tokenManager.setUser(userData);
+
+          console.log(
+            "Data retrieved from tokenManager:",
+            tokenManager.getUser()
+          );
+          saveDebugLog("USER_SAVED", {
+            success: !!tokenManager.getUser(),
+            savedData: tokenManager.getUser(),
+          });
 
           client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
           saveDebugLog("AUTH_HEADER_SET", {
             token: token.substring(0, 10) + "...",
           });
 
-          setUser(parsedUserData);
-          saveDebugLog("AUTH_CONTEXT_UPDATED", { success: true });
+          setUser(userData);
+          console.log("User data set in AuthContext:", userData);
+          saveDebugLog("AUTH_CONTEXT_UPDATED", {
+            success: true,
+            userData: userData,
+          });
 
           navigate("/", { replace: true });
           saveDebugLog("NAVIGATION_TRIGGERED", { destination: "/" });
         } catch (err) {
+          console.error("Data processing error:", err);
           saveDebugLog("ERROR", {
             message: err.message,
             stack: err.stack,

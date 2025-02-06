@@ -61,7 +61,7 @@ ErrorBoundary.propTypes = {
 
 // AuthParamsHandlerコンポーネントを作成
 function AuthParamsHandler({ children }) {
-  const { setUser } = useAuth();
+  const auth = useAuth();
 
   useEffect(() => {
     const checkAuthParams = async () => {
@@ -73,12 +73,20 @@ function AuthParamsHandler({ children }) {
       if (token && authSuccess && userDataStr) {
         try {
           console.log("Processing auth params from URL");
-          const parsedUserData = JSON.parse(decodeURIComponent(userDataStr));
+          const userDataResponse = JSON.parse(decodeURIComponent(userDataStr));
+          const userData = userDataResponse.data.attributes;
+
+          if (!userData) {
+            throw new Error("Invalid user data format");
+          }
 
           // 認証情報の保存
           tokenManager.setToken(token);
-          tokenManager.setUser(parsedUserData);
-          setUser(parsedUserData);
+          tokenManager.setUser(userData);
+
+          if (auth && typeof auth.setUser === "function") {
+            auth.setUser(userData);
+          }
 
           // 認証ヘッダーの設定
           client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -94,7 +102,7 @@ function AuthParamsHandler({ children }) {
     };
 
     checkAuthParams();
-  }, [setUser]);
+  }, [auth]);
 
   return children;
 }

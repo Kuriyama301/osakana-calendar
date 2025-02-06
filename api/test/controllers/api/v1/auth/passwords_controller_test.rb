@@ -7,22 +7,22 @@ class Api::V1::Auth::PasswordsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should send reset password instructions' do
     post api_v1_user_password_path,
-         params: { user: { email: @user.email } },
-         as: :json
+          params: { user: { email: @user.email } },
+          as: :json
 
     assert_response :ok
     json = JSON.parse(response.body)
     assert_equal 'パスワードリセット用のメールを送信しました', json['message']
   end
 
-  test 'should not send reset instructions for non-existent email' do
+  test 'should send reset instructions even for non-existent email' do
     post api_v1_user_password_path,
-         params: { user: { email: 'nonexistent@example.com' } },
-         as: :json
+          params: { user: { email: 'nonexistent@example.com' } },
+          as: :json
 
-    assert_response :unprocessable_entity
+    assert_response :ok
     json = JSON.parse(response.body)
-    assert json['errors'].present?
+    assert_equal 'パスワードリセット用のメールを送信しました', json['message']
   end
 
   test 'should reset password with token' do

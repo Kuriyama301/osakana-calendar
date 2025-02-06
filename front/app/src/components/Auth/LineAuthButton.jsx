@@ -17,7 +17,7 @@ const LineIcon = () => (
 );
 
 // LINEログイン/登録ボタンコンポーネント
-const LineAuthButton = ({ onClick, type = "login", disabled = false }) => {
+const LineAuthButton = ({ type = "login", disabled = false }) => {
   const buttonText = type === "login" ? "LINEでログイン" : "LINEで登録";
 
   const handleClick = () => {
@@ -41,7 +41,6 @@ const LineAuthButton = ({ onClick, type = "login", disabled = false }) => {
 };
 
 LineAuthButton.propTypes = {
-  onClick: PropTypes.func,
   type: PropTypes.oneOf(["login", "register"]),
   disabled: PropTypes.bool,
 };

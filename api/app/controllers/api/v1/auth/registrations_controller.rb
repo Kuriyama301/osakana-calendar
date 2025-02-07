@@ -4,10 +4,13 @@ module Api
   module V1
     module Auth
       class RegistrationsController < Devise::RegistrationsController
+        include ActionController::MimeResponds
+        include ActionController::RequestForgeryProtection
+
+        protect_from_forgery with: :null_session
         respond_to :json
         before_action :configure_sign_up_params, only: [:create]
         before_action :authenticate_user!, only: [:destroy]
-        before_action :verify_user_and_token, only: [:destroy]
 
         def create
           Rails.logger.info "アカウント登録開始: #{sign_up_params.except('password', 'password_confirmation')}"
@@ -23,19 +26,22 @@ module Api
         end
 
         def destroy
-          Rails.logger.info "アカウント削除開始: ユーザーID #{@current_user.id}"
+          Rails.logger.info "アカウント削除開始: ユーザーID #{current_user.id}"
 
           begin
             ActiveRecord::Base.transaction do
-              # トークンのブラックリスト登録
-              blacklist_token(@auth_token)
+              # トークンの取得と検証
+              jwt_payload = decode_jwt_token(extract_token_from_header)
+              blacklist_token(jwt_payload) if jwt_payload
 
               # ユーザーの削除処理
-              if @current_user.destroy
-                # Deviseのサインアウト処理
-                sign_out(@current_user)
-                Rails.logger.info "ユーザーID #{@current_user.id} のアカウントが正常に削除されました"
-                render_success('アカウントが削除されました')
+              if current_user.destroy
+                sign_out(current_user)
+                Rails.logger.info "ユーザーID #{current_user.id} のアカウントが正常に削除されました"
+                render json: {
+                  status: 'success',
+                  message: 'アカウントが削除されました'
+                }, status: :ok
               else
                 raise ActiveRecord::Rollback, 'アカウントの削除に失敗しました'
               end
@@ -47,64 +53,27 @@ module Api
             error_message = if e.message == 'アカウントの削除に失敗しました'
               {
                 message: e.message,
-                errors: @current_user.errors.full_messages
+                errors: current_user.errors.full_messages
               }
             else
               { message: 'アカウントの削除中にエラーが発生しました' }
             end
 
-            render_error(error_message, :internal_server_error)
+            render json: {
+              status: 'error',
+              message: error_message
+            }, status: :unprocessable_entity
           end
         end
 
         private
 
-        def verify_user_and_token
-          @current_user = current_api_v1_user
-          unless @current_user
-            render_error({ message: 'ユーザーが見つかりません' }, :unauthorized)
-            return false
-          end
-
-          @auth_token = extract_token_from_header
-          unless @auth_token
-            render_error({ message: '認証トークンが見つかりません' }, :unauthorized)
-            return false
-          end
-
-          begin
-            decode_jwt_token(@auth_token)
-          rescue JWT::DecodeError => e
-            Rails.logger.error "JWT decode error during verification: #{e.message}"
-            render_error({ message: '無効なトークンです' }, :unauthorized)
-            return false
-          end
-
-          true
-        end
-
         def extract_token_from_header
-          auth_header = request.headers['Authorization']
-          return nil unless auth_header
-          return nil unless auth_header.start_with?('Bearer ')
-
-          auth_header.split(' ').last
-        end
-
-        def blacklist_token(token)
-          jwt_payload = decode_jwt_token(token)
-          JwtDenylist.create!(
-            jti: jwt_payload['jti'],
-            exp: Time.at(jwt_payload['exp'])
-          )
-          Rails.logger.info "Token blacklisted: #{jwt_payload['jti']}"
-        rescue ActiveRecord::RecordNotUnique => e
-          Rails.logger.warn "Token already blacklisted: #{e.message}"
-          # トークンが既にブラックリストにある場合は正常なフロー
-          true
+          request.headers['Authorization']&.split(' ')&.last
         end
 
         def decode_jwt_token(token)
+          return nil unless token
           JWT.decode(
             token,
             ENV.fetch('DEVISE_JWT_SECRET_KEY'),
@@ -113,7 +82,18 @@ module Api
           ).first
         rescue JWT::DecodeError => e
           Rails.logger.error "JWT decode error: #{e.message}"
-          raise
+          nil
+        end
+
+        def blacklist_token(payload)
+          return unless payload&.dig('jti')
+          JwtDenylist.create!(
+            jti: payload['jti'],
+            exp: Time.at(payload['exp'])
+          )
+          Rails.logger.info "Token blacklisted: #{payload['jti']}"
+        rescue ActiveRecord::RecordNotUnique => e
+          Rails.logger.warn "Token already blacklisted: #{e.message}"
         end
 
         def configure_sign_up_params
@@ -164,27 +144,14 @@ module Api
           end
         end
 
+        protected
+
         def resource_name
-          :api_v1_user
+          :user
         end
 
         def authenticate_scope!
-          send(:"authenticate_#{resource_name}!")
-        end
-
-        def render_success(message)
-          render json: {
-            status: 'success',
-            message: message
-          }, status: :ok
-        end
-
-        def render_error(error_details, status)
-          response = {
-            status: 'error'
-          }.merge(error_details.is_a?(String) ? { message: error_details } : error_details)
-
-          render json: response, status: status
+          self.resource = send(:"current_#{resource_name}")
         end
       end
     end

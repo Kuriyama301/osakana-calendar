@@ -82,7 +82,7 @@ Devise.setup do |config|
     # トークン無効化のリクエスト設定
     jwt.revocation_requests = [
       ['DELETE', %r{^/api/v1/auth/sign_out$}],
-      ['DELETE', %r{^/api/v1/auth/delete$}]
+      ['DELETE', %r{^/api/v1/auth$}]
     ]
 
     # 基本設定

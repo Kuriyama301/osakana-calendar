@@ -17,7 +17,7 @@ Rails.application.routes.draw do
         post 'auth/google_oauth2/callback', to: 'auth/omniauth_callbacks#google_oauth2'
         get 'auth/line/callback', to: 'auth/line#callback'
         delete 'auth/sign_out', to: 'auth/sessions#destroy'
-        delete 'auth/delete', to: 'auth/registrations#destroy'
+        # delete 'auth/registration', to: 'auth/registrations#destroy'
       end
 
       # その他のルート

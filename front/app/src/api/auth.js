@@ -116,7 +116,6 @@ export const authAPI = {
       }
     } catch (error) {
       console.error("Logout error:", error);
-      // エラーが発生しても認証情報はクリア
       clearAuthInfo();
       throw error;
     }
@@ -231,8 +230,13 @@ export const authAPI = {
         throw new Error("認証情報がありません");
       }
 
-      // パスを修正して統一
-      const response = await client.delete("/api/v1/auth/delete");
+      const response = await client.delete("/api/v1/auth", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
 
       if (response.data.status === "success") {
         clearAuthInfo();

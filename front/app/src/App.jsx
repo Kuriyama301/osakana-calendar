@@ -60,7 +60,7 @@ ErrorBoundary.propTypes = {
 };
 
 function AuthParamsHandler({ children }) {
-  const { user, setUser } = useAuth(); // setUserが提供されていないため、useAuthから必要な関数を取得
+  const { user } = useAuth(); // setUserが提供されていないため、useAuthから必要な関数を取得
   const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {

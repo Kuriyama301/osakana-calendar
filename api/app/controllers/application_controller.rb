@@ -16,31 +16,46 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_user!
-    Rails.logger.debug 'Token extraction started'
+    Rails.logger.debug 'Authentication started'
     token = extract_token_from_header
     Rails.logger.debug { "Extracted token: #{token}" }
 
-    return unauthorized_error('Token missing') unless token
+    return unauthorized_error('トークンが見つかりません') unless token
 
     begin
       decoded = decode_token(token)
       Rails.logger.debug { "Decoded token: #{decoded}" }
-      Rails.logger.debug { "Token exp: #{decoded['exp']}" }
-      Rails.logger.debug { "Current time: #{Time.now.to_i}" }
-      @current_user_id = extract_user_id(decoded)
-      Rails.logger.debug { "User ID: #{@current_user_id}" }
-      @current_user = find_current_user
-      Rails.logger.debug { "Current user found: #{@current_user.present?}" }
+
+      validate_token_expiration(decoded)
+      set_current_user(decoded)
+
+      Rails.logger.debug { "Authentication successful for user: #{@current_user&.id}" }
+      true
+    rescue JWT::ExpiredSignature
+      Rails.logger.error 'Token has expired'
+      unauthorized_error('トークンの有効期限が切れています')
+    rescue JWT::DecodeError => e
+      Rails.logger.error "Token decode error: #{e.message}"
+      unauthorized_error('無効なトークンです')
     rescue StandardError => e
       Rails.logger.error "Authentication error: #{e.class} - #{e.message}"
-      handle_jwt_error(e)
+      unauthorized_error('認証に失敗しました')
     end
   end
 
   def current_user
     return @current_user if defined?(@current_user)
 
-    @current_user = find_current_user
+    token = extract_token_from_header
+    return nil unless token
+
+    begin
+      decoded = decode_token(token)
+      @current_user = User.find(decoded['sub'])
+    rescue StandardError => e
+      Rails.logger.error "Current user resolution error: #{e.message}"
+      nil
+    end
   end
 
   def current_api_v1_user
@@ -55,12 +70,27 @@ class ApplicationController < ActionController::API
     return nil unless header.start_with?('Bearer ')
 
     header.split.last
+  rescue StandardError => e
+    Rails.logger.error "Token extraction error: #{e.message}"
+    nil
   end
 
-  def process_token(token)
-    decoded = decode_token(token)
-    @current_user_id = extract_user_id(decoded)
-    current_user
+  def validate_token_expiration(decoded)
+    exp_time = Time.at(decoded['exp'])
+    if exp_time < Time.current
+      Rails.logger.error "Token expired at: #{exp_time}"
+      raise JWT::ExpiredSignature
+    end
+  end
+
+  def set_current_user(decoded)
+    @current_user_id = decoded['sub']
+    @current_user = find_current_user
+
+    unless @current_user
+      Rails.logger.error "User not found: #{@current_user_id}"
+      raise StandardError, 'User not found'
+    end
   end
 
   def decode_token(token)
@@ -79,22 +109,12 @@ class ApplicationController < ActionController::API
     }
   end
 
-  def extract_user_id(decoded_token)
-    decoded_token['sub']
-  end
-
   def find_current_user
-    User.find(@current_user_id)
-  rescue ActiveRecord::RecordNotFound
-    unauthorized_error('User not found')
-  end
-
-  def handle_jwt_error(error)
-    Rails.logger.error "JWT decode error: #{error.message}"
-    unauthorized_error('Invalid token')
+    User.find_by(id: @current_user_id)
   end
 
   def unauthorized_error(message)
     render json: { error: message }, status: :unauthorized
+    false
   end
 end

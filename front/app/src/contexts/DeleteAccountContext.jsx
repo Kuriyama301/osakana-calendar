@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { authAPI } from "../api/auth";
-import { tokenManager } from "../utils/tokenManager";
+// import { tokenManager } from "../utils/tokenManager";
 import { formatError } from "../utils/errorHandler";
 
 const DeleteAccountContext = createContext(null);
@@ -22,42 +22,42 @@ export const DeleteAccountProvider = ({ children }) => {
       return;
     }
 
+    setIsDeleting(true);
+    setError("");
+
     try {
-      setIsDeleting(true);
-      setError("");
-
-      // トークンの存在確認
-      const token = tokenManager.getToken();
-      console.log("Attempting to delete account with token:", token);
-
-      if (!token) {
-        throw new Error("認証情報が見つかりません");
-      }
-
       // アカウント削除APIを呼び出し
       const response = await authAPI.deleteAccount();
 
-      if (
-        response.status === "success" ||
-        response.status === 200 ||
-        response.status === 204
-      ) {
-        // 認証情報をクリア
-        await logout(); // AuthContextのlogout関数を使用
-
-        // モーダルを閉じてホームページにリダイレクト
-        closeModal();
-        navigate("/", {
-          replace: true,
-          state: { message: "アカウントが正常に削除されました" },
-        });
+      if (response.status === "success") {
+        // クリーンアップ処理
+        try {
+          await logout();
+          closeModal();
+          navigate("/", {
+            replace: true,
+            state: {
+              type: "success",
+              message: response.message || "アカウントが削除されました",
+            },
+          });
+        } catch (cleanupError) {
+          console.error("Cleanup after deletion failed:", cleanupError);
+          // クリーンアップに失敗してもユーザーには成功メッセージを表示
+          navigate("/", {
+            replace: true,
+            state: {
+              type: "success",
+              message: "アカウントは削除されましたが、一部の処理に失敗しました",
+            },
+          });
+        }
       } else {
         throw new Error(response.message || "アカウントの削除に失敗しました");
       }
     } catch (err) {
       console.error("Delete account error:", err);
       setError(formatError(err));
-    } finally {
       setIsDeleting(false);
     }
   }, [isAuthenticated, navigate, logout]);
@@ -74,9 +74,11 @@ export const DeleteAccountProvider = ({ children }) => {
 
   // モーダルを閉じる
   const closeModal = useCallback(() => {
-    setIsModalOpen(false);
-    setError("");
-  }, []);
+    if (!isDeleting) {
+      setIsModalOpen(false);
+      setError("");
+    }
+  }, [isDeleting]);
 
   const value = {
     isModalOpen,

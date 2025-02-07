@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import SocialAuthButton from "./SocialAuthButton";
+import LineAuthButton from "./LineAuthButton";
 
 const RegisterSection = ({ onSuccess }) => {
   const { signup, googleAuth } = useAuth();
@@ -259,12 +260,18 @@ const RegisterSection = ({ onSuccess }) => {
         </div>
       </div>
 
-      {/* Google認証ボタン */}
-      <SocialAuthButton
-        onClick={handleGoogleRegister}
-        type="register"
-        disabled={loading}
-      />
+      {/* ソーシャル認証ボタン */}
+      <div className="space-y-3">
+        <SocialAuthButton
+          onClick={handleGoogleRegister}
+          type="register"
+          disabled={loading}
+        />
+        <LineAuthButton 
+          type="register" 
+          disabled={loading} 
+        />
+      </div>
     </div>
   );
 };

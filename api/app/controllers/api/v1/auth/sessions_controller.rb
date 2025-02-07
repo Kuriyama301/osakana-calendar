@@ -7,6 +7,7 @@ module Api
         respond_to :json
         skip_before_action :verify_signed_out_user
         before_action :configure_sign_in_params, only: [:create]
+        before_action :verify_user_and_token, only: [:destroy]
 
         def create
           Rails.logger.info "ログイン試行パラメータ: #{params.inspect}"
@@ -14,11 +15,70 @@ module Api
         end
 
         def destroy
-          token = extract_token_from_header
-          handle_logout(token)
+          Rails.logger.info "ログアウト処理開始: user_id=#{@current_user&.id}"
+
+          begin
+            invalidate_current_token
+            perform_sign_out
+            render_success('ログアウトしました')
+          rescue StandardError => e
+            Rails.logger.error "Logout error: #{e.class} - #{e.message}"
+            Rails.logger.error e.backtrace.join("\n")
+            render_error('ログアウト処理中にエラーが発生しました', :internal_server_error)
+          end
         end
 
         private
+
+        def verify_user_and_token
+          token = extract_token_from_header
+          return render_error('トークンが見つかりません', :unauthorized) unless token
+
+          begin
+            @token_payload = decode_jwt_token(token)
+            @current_user = User.find(@token_payload['sub'])
+
+            Rails.logger.info "Token verification successful: user=#{@current_user.id}, jti=#{@token_payload['jti']}"
+            true
+          rescue JWT::DecodeError => e
+            Rails.logger.error "Token decode error: #{e.message}"
+            render_error('無効なトークンです', :unauthorized)
+            false
+          rescue ActiveRecord::RecordNotFound => e
+            Rails.logger.error "User not found: #{e.message}"
+            render_error('ユーザーが見つかりません', :unauthorized)
+            false
+          end
+        end
+
+        def decode_and_verify_token(token)
+          @token_payload = decode_jwt_token(token)
+          true
+        rescue JWT::DecodeError => e
+          Rails.logger.error "トークン検証エラー: #{e.message}"
+          render_error('無効なトークンです', :unauthorized)
+          false
+        end
+
+        def invalidate_current_token
+          return unless @token_payload
+
+          JwtDenylist.create!(
+            jti: @token_payload['jti'],
+            exp: Time.at(@token_payload['exp'])
+          )
+          Rails.logger.info "Token blacklisted: #{@token_payload['jti']}"
+        end
+
+        def perform_sign_out
+          if Devise.sign_out_all_scopes
+            sign_out
+            Rails.logger.info "全スコープからサインアウトしました"
+          else
+            sign_out(resource_name)
+            Rails.logger.info "ユーザー #{@current_user.id} をサインアウトしました"
+          end
+        end
 
         def authenticate_user_and_respond
           user = User.find_by(email: sign_in_params[:email])
@@ -26,13 +86,15 @@ module Api
           if user&.valid_password?(sign_in_params[:password])
             handle_successful_login(user)
           else
-            render_error('ログインに失敗しました', :unauthorized)
+            render_error('メールアドレスまたはパスワードが正しくありません', :unauthorized)
           end
         end
 
         def handle_successful_login(user)
           sign_in(resource_name, user)
-          token = user.generate_jwt
+          token = generate_jwt_token(user)
+
+          Rails.logger.info "ユーザー #{user.id} のログインが完了しました"
 
           render json: {
             status: 'success',
@@ -50,54 +112,51 @@ module Api
           }, status: :ok
         end
 
+        def generate_jwt_token(resource)
+          JWT.encode(
+            {
+              sub: resource.id,
+              exp: (Time.zone.now + ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours).to_i).to_i,
+              jti: SecureRandom.uuid,
+              iat: Time.zone.now.to_i
+            },
+            ENV.fetch('DEVISE_JWT_SECRET_KEY'),
+            'HS256'
+          )
+        rescue StandardError => e
+          Rails.logger.error "JWT generation error: #{e.message}"
+          raise
+        end
+
+        def decode_jwt_token(token)
+          JWT.decode(
+            token,
+            ENV.fetch('DEVISE_JWT_SECRET_KEY'),
+            true,
+            { algorithm: 'HS256' }
+          ).first
+        rescue JWT::DecodeError => e
+          Rails.logger.error "JWT decode error: #{e.message}"
+          raise
+        end
+
         def extract_token_from_header
-          token = request.headers['Authorization']&.split&.last
-          return token if token.present?
+          auth_header = request.headers['Authorization']
+          return nil unless auth_header&.start_with?('Bearer ')
 
-          render_error('トークンが提供されていません', :unauthorized)
-          nil
+          auth_header.split(' ').last
         end
 
-        def handle_logout(token)
-          return unless token
-
-          begin
-            jwt_payload = decode_jwt_token(token)
-            process_logout(jwt_payload)
-          rescue JWT::DecodeError => e
-            handle_jwt_error(e)
-          rescue ActiveRecord::RecordNotUnique
-            render_success('ログアウトしました')
-          rescue StandardError => e
-            handle_unexpected_error(e)
-          end
+        def sign_in_params
+          params.require(:user).permit(:email, :password)
         end
 
-        def process_logout(jwt_payload)
-          user = User.find_by(id: jwt_payload['sub'])
-          if user
-            blacklist_token(jwt_payload)
-            sign_out(user)
-            render_success('ログアウトしました')
-          else
-            render_error('ユーザーが見つかりません', :not_found)
-          end
+        def configure_sign_in_params
+          devise_parameter_sanitizer.permit(:sign_in, keys: [:email])
         end
 
-        def blacklist_token(jwt_payload)
-          JwtDenylist.find_or_create_by!(jti: jwt_payload['jti']) do |record|
-            record.exp = Time.zone.at(jwt_payload['exp'])
-          end
-        end
-
-        def handle_jwt_error(error)
-          Rails.logger.error "JWT decode error: #{error.message}"
-          render_error(error.message, :unauthorized)
-        end
-
-        def handle_unexpected_error(error)
-          Rails.logger.error "Unexpected error: #{error.message}"
-          render_error('ログアウト処理中にエラーが発生しました', :internal_server_error)
+        def resource_name
+          :api_v1_user
         end
 
         def render_success(message)
@@ -112,39 +171,6 @@ module Api
             status: 'error',
             message: message
           }, status: status
-        end
-
-        def sign_in_params
-          params.require(:user).permit(:email, :password)
-        end
-
-        def configure_sign_in_params
-          devise_parameter_sanitizer.permit(:sign_in, keys: [:email])
-        end
-
-        def auth_options
-          { scope: resource_name, recall: "#{controller_path}#create" }
-        end
-
-        def generate_jwt_token(resource)
-          JWT.encode(
-            {
-              sub: resource.id,
-              exp: (Time.zone.now + ENV.fetch('DEVISE_JWT_EXPIRATION_TIME', 24.hours).to_i).to_i,
-              jti: SecureRandom.uuid,
-              iat: Time.zone.now.to_i
-            },
-            ENV.fetch('DEVISE_JWT_SECRET_KEY', nil),
-            'HS256'
-          )
-        end
-
-        def decode_jwt_token(token)
-          JWT.decode(token, ENV.fetch('DEVISE_JWT_SECRET_KEY', nil), true, algorithm: 'HS256').first
-        rescue JWT::ExpiredSignature
-          raise JWT::DecodeError, 'トークンが期限切れです'
-        rescue JWT::DecodeError
-          raise JWT::DecodeError, '無効なトークンです'
         end
       end
     end

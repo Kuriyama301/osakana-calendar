@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 module Api
   module V1
     module Auth
-      class OmniauthCallbacksController < ActionController::API
+      class OmniauthCallbacksController < ApplicationController
         include ActionController::MimeResponds
         include Devise::Controllers::Helpers
 
@@ -17,37 +15,16 @@ module Api
             user_info = fetch_google_user_info(access_token)
             Rails.logger.debug { "Google user info: #{user_info.inspect}" }
 
-            @user = find_or_create_user(user_info)
+            @user = find_or_create_user(user_info, 'google_oauth2')
 
             if @user&.persisted?
               sign_in @user
-              handle_successful_authentication
+              handle_successful_authentication('Google')
             else
               handle_failed_authentication
             end
           rescue StandardError => e
             handle_error(e, 'Google')
-          end
-        end
-
-        def line
-          Rails.logger.info 'Starting LINE callback'
-
-          begin
-            access_token = params[:access_token]
-            user_info = fetch_line_user_info(access_token)
-            Rails.logger.debug { "LINE user info: #{user_info.inspect}" }
-
-            @user = find_or_create_user(user_info)
-
-            if @user&.persisted?
-              sign_in @user
-              handle_successful_authentication
-            else
-              handle_failed_authentication
-            end
-          rescue StandardError => e
-            handle_error(e, 'LINE')
           end
         end
 
@@ -60,55 +37,44 @@ module Api
           JSON.parse(response.body)
         end
 
-        def fetch_line_user_info(access_token)
-          uri = URI('https://api.line.me/v2/profile')
-          request = Net::HTTP::Get.new(uri)
-          request['Authorization'] = "Bearer #{access_token}"
-
-          response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-            http.request(request)
-          end
-
-          JSON.parse(response.body)
-        end
-
-        def find_or_create_user(user_info)
+        def find_or_create_user(user_info, provider)
           user = User.find_by(email: user_info['email'])
 
           if user
-            update_oauth_credentials(user, user_info)
+            update_oauth_credentials(user, user_info, provider)
           else
-            create_oauth_user(user_info)
+            create_oauth_user(user_info, provider)
           end
         end
 
-        def update_oauth_credentials(user, user_info)
+        def update_oauth_credentials(user, user_info, provider)
           user.tap do |u|
-            u.provider = user_info['provider']
+            u.provider = provider
             u.uid = user_info['sub'] || user_info['userId']
+            u.profile_image_url = user_info['picture'] if user_info['picture']
             u.save if u.changed?
           end
-          user
         end
 
-        def create_oauth_user(user_info)
-          User.create(
+        def create_oauth_user(user_info, provider)
+          User.create!(
             email: user_info['email'],
-            provider: user_info['provider'],
+            provider: provider,
             uid: user_info['sub'] || user_info['userId'],
             name: user_info['name'],
             password: Devise.friendly_token[0, 20],
-            confirmed_at: Time.current
+            confirmed_at: Time.current,
+            profile_image_url: user_info['picture']
           )
         end
 
-        def handle_successful_authentication
+        def handle_successful_authentication(provider_name)
           token = @user.generate_jwt
           Rails.logger.info "Generated JWT token for user: #{@user.id}"
 
           render json: {
             status: 'success',
-            message: "Successfully authenticated with #{@user.provider.capitalize}",
+            message: "Successfully authenticated with #{provider_name}",
             data: UserSerializer.new(@user).serializable_hash,
             token: token
           }

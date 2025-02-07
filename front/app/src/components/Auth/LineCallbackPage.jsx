@@ -1,123 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import LoadingScreen from "../Common/LoadingScreen";
-import { tokenManager } from "../../utils/tokenManager";
-import client from "../../api/client";
 
 const LineCallbackPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setUser } = useAuth();
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(true);
 
-  // コンポーネントのマウント時のデバッグ
-  useEffect(() => {
-    console.log("LineCallbackPage mounted. Current URL:", window.location.href);
-  }, []);
-
   useEffect(() => {
     const handleCallback = async () => {
-      // デバッグログを保存する関数
-      const saveDebugLog = (step, data) => {
-        const logs = JSON.parse(
-          localStorage.getItem("LINE_AUTH_DEBUG") || "[]"
-        );
-        logs.push({
-          timestamp: new Date().toISOString(),
-          step,
-          data,
-        });
-        localStorage.setItem("LINE_AUTH_DEBUG", JSON.stringify(logs));
-      };
-
       try {
-        saveDebugLog("INIT", {
-          url: window.location.href,
-          hasToken: !!searchParams.get("token"),
-          hasAuthSuccess: !!searchParams.get("auth_success"),
-          hasUserData: !!searchParams.get("user_data"),
-        });
-
-        const token = searchParams.get("token");
-        const authSuccess = searchParams.get("auth_success");
-        const userDataStr = searchParams.get("user_data");
-
-        if (!token || !authSuccess || !userDataStr) {
-          saveDebugLog("ERROR", { message: "認証パラメータが不足しています" });
-          throw new Error("認証パラメータが不足しています");
+        const code = searchParams.get("code");
+        if (!code) {
+          throw new Error("認証コードが見つかりません");
         }
 
-        try {
-          const parsedUserData = JSON.parse(decodeURIComponent(userDataStr));
-          console.log("Raw parsed user data:", parsedUserData);
-
-          const userData = parsedUserData.data.attributes;
-          console.log("Processed user data:", userData);
-
-          saveDebugLog("USER_DATA_PARSED", {
-            id: userData.id,
-            email: userData.email,
-            name: userData.name,
-            fullData: userData,
-          });
-
-          tokenManager.setToken(token);
-          console.log("Token saved:", token.substring(0, 10) + "...");
-          saveDebugLog("TOKEN_SAVED", {
-            success: !!tokenManager.getToken(),
-            tokenPreview: token.substring(0, 10) + "...",
-          });
-
-          console.log("Data being saved to tokenManager:", userData);
-          tokenManager.setUser(userData);
-
-          console.log(
-            "Data retrieved from tokenManager:",
-            tokenManager.getUser()
-          );
-          saveDebugLog("USER_SAVED", {
-            success: !!tokenManager.getUser(),
-            savedData: tokenManager.getUser(),
-          });
-
-          client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          saveDebugLog("AUTH_HEADER_SET", {
-            token: token.substring(0, 10) + "...",
-          });
-
-          setUser(userData);
-          console.log("User data set in AuthContext:", userData);
-          saveDebugLog("AUTH_CONTEXT_UPDATED", {
-            success: true,
-            userData: userData,
-          });
-
-          navigate("/", { replace: true });
-          saveDebugLog("NAVIGATION_TRIGGERED", { destination: "/" });
-        } catch (err) {
-          console.error("Data processing error:", err);
-          saveDebugLog("ERROR", {
-            message: err.message,
-            stack: err.stack,
-          });
-          throw err;
-        }
+        // APIエンドポイントにリダイレクト
+        window.location.href = `/api/v1/auth/line/callback?code=${code}`;
       } catch (err) {
         setError(err.message);
-        tokenManager.clearAll();
-        delete client.defaults.headers.common["Authorization"];
-        saveDebugLog("CLEANUP", { error: err.message });
       } finally {
         setIsProcessing(false);
       }
     };
 
     handleCallback();
-  }, [searchParams, navigate, setUser]);
+  }, [searchParams]);
 
-  // エラー表示
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">

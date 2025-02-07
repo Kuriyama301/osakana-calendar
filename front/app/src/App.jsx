@@ -59,19 +59,19 @@ ErrorBoundary.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-// AuthParamsHandlerコンポーネントを作成
 function AuthParamsHandler({ children }) {
-  const auth = useAuth();
+  const { user, setUser } = useAuth(); // setUserが提供されていないため、useAuthから必要な関数を取得
+  const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
     const checkAuthParams = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get("token");
-      const authSuccess = params.get("auth_success");
-      const userDataStr = params.get("user_data");
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        const authSuccess = params.get("auth_success");
+        const userDataStr = params.get("user_data");
 
-      if (token && authSuccess && userDataStr) {
-        try {
+        if (token && authSuccess && userDataStr) {
           console.log("Processing auth params from URL");
           const userDataResponse = JSON.parse(decodeURIComponent(userDataStr));
           const userData = userDataResponse.data.attributes;
@@ -83,26 +83,34 @@ function AuthParamsHandler({ children }) {
           // 認証情報の保存
           tokenManager.setToken(token);
           tokenManager.setUser(userData);
-
-          if (auth && typeof auth.setUser === "function") {
-            auth.setUser(userData);
-          }
-
-          // 認証ヘッダーの設定
           client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+          // lineAuthを使用して状態を更新
+          if (typeof user === "undefined" || user === null) {
+            await new Promise((resolve) => {
+              tokenManager.setUser(userData);
+              window.location.reload(); // 必要に応じてページをリロード
+              resolve();
+            });
+          }
 
           // URLパラメータのクリーンアップ
           window.history.replaceState({}, "", "/");
-
           console.log("Auth params processed successfully");
-        } catch (error) {
-          console.error("Error processing auth params:", error);
         }
+      } catch (error) {
+        console.error("Error processing auth params:", error);
+      } finally {
+        setIsProcessing(false);
       }
     };
 
     checkAuthParams();
-  }, [auth]);
+  }, [user]);
+
+  if (isProcessing) {
+    return <LoadingScreen isOpen={true} />;
+  }
 
   return children;
 }

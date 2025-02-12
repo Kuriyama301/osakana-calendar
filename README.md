@@ -97,8 +97,6 @@ gem 'aws-sdk-ses'
     "react-dom": "^18.2.0",
     "axios": "^1.6.2",
     "tailwindcss": "^3.3.5",
-    "@mui/material": "^5.15.0",
-    "@mui/icons-material": "^5.15.0",
     "lucide-react": "^0.263.1"
   }
 }

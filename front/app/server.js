@@ -1,3 +1,9 @@
+/**
+* Express.jsサーバーの設定ファイル
+* 静的ファイルの配信、APIリクエストのプロキシ、
+* 開発/本番環境の切り替えを制御する
+*/
+
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";

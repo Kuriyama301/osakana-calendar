@@ -60,7 +60,7 @@ ErrorBoundary.propTypes = {
 };
 
 function AuthParamsHandler({ children }) {
-  const { user } = useAuth(); // setUserが提供されていないため、useAuthから必要な関数を取得
+  const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
@@ -80,21 +80,18 @@ function AuthParamsHandler({ children }) {
             throw new Error("Invalid user data format");
           }
 
-          // 認証情報の保存
           tokenManager.setToken(token);
           tokenManager.setUser(userData);
           client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-          // lineAuthを使用して状態を更新
           if (typeof user === "undefined" || user === null) {
             await new Promise((resolve) => {
               tokenManager.setUser(userData);
-              window.location.reload(); // 必要に応じてページをリロード
+              window.location.reload();
               resolve();
             });
           }
 
-          // URLパラメータのクリーンアップ
           window.history.replaceState({}, "", "/");
           console.log("Auth params processed successfully");
         }

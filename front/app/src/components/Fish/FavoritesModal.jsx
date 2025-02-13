@@ -1,3 +1,8 @@
+/**
+* お気に入りの魚一覧のモーダルコンポーネント
+* お気に入りに登録した魚の一覧表示、詳細表示を行う
+*/
+
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";

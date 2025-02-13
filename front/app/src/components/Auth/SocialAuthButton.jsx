@@ -1,7 +1,11 @@
+/**
+* Google認証ボタンのコンポーネント
+* Googleでのログイン・登録へ遷移するボタンを表示する
+*/
+
 import React from "react";
 import PropTypes from "prop-types";
 
-// Googleロゴ
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
     <path
@@ -23,7 +27,6 @@ const GoogleIcon = () => (
   </svg>
 );
 
-// Googleログイン/登録ボタンコンポーネント
 const SocialAuthButton = ({ onClick, type = "login", disabled = false }) => {
   const buttonText = type === "login" ? "Googleでログイン" : "Googleで登録";
 
@@ -42,7 +45,6 @@ const SocialAuthButton = ({ onClick, type = "login", disabled = false }) => {
   );
 };
 
-// PropTypesの定義
 SocialAuthButton.propTypes = {
   onClick: PropTypes.func.isRequired,
   type: PropTypes.oneOf(["login", "register"]),

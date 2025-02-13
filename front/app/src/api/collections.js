@@ -1,3 +1,8 @@
+/**
+* 魚のコレクション機能のAPI通信を管理
+* コレクションの取得、追加、削除などの通信処理などを記述
+*/
+
 import client from "./client";
 
 export const collectionsAPI = {

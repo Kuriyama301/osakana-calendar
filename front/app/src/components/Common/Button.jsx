@@ -1,3 +1,8 @@
+/**
+* 共通の青色ボタンコンポーネント
+* ボタンのスタイル、クリック時の動作を管理
+*/
+
 import React from "react";
 import PropTypes from "prop-types";
 

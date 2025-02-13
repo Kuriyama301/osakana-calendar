@@ -1,3 +1,9 @@
+/**
+* 認証状態管理のコンテキストコンポーネント
+* トークン管理、ログイン/ログアウト、OAuth認証など
+* アプリケーション全体の認証機能を制御する
+*/
+
 import { createContext, useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import { authAPI } from "../api/auth";
@@ -9,7 +15,6 @@ import { cancelAllRequests } from "../api/client";
 const TOKEN_CHECK_INTERVAL = 5 * 60 * 1000; // 5分
 const TOKEN_EXPIRY_BUFFER = 5 * 60 * 1000; // 5分
 
-// トークンの有効性チェック関数
 const isTokenValid = (token) => {
   if (!token) return false;
 
@@ -47,10 +52,8 @@ const AuthProvider = ({ children }) => {
     setUser(null);
     setError(null);
 
-    // 進行中のリクエストをキャンセル
     cancelAllRequests();
 
-    // 認証情報をクリア
     tokenManager.clearAll();
     delete client.defaults.headers.common["Authorization"];
 

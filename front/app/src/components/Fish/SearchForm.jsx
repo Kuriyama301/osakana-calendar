@@ -1,3 +1,9 @@
+/**
+* 魚の検索フォームのコンポーネント
+* 入力されたキーワードをバックエンドのAPIに送信して
+* 魚の検索を行う
+*/
+
 import React, { useState } from "react";
 import { Search, X } from "lucide-react";
 import PropTypes from "prop-types";

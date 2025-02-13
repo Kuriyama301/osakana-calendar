@@ -1,3 +1,8 @@
+/**
+* 新規会員登録フォームのコンポーネント
+* メールアドレスでの登録、Google・LINEでの登録機能を表示する
+*/
+
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";
@@ -239,7 +244,6 @@ const RegisterSection = ({ onSuccess }) => {
             )}
           </div>
         </div>
-        {/* ボタン */}
         <button
           type="submit"
           disabled={loading}

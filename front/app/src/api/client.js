@@ -1,17 +1,20 @@
+/**
+ * APIクライアントの設定と通信処理の管理
+ * axiosインスタンスの作成、リクエスト/レスポンスの前処理、エラーハンドリング、
+ * 認証トークンの管理を実行
+ */
+
 import axios from "axios";
 import { tokenManager } from "../utils/tokenManager";
 
-// アクティブなリクエストの管理
 const activeRequests = new Set();
 
-// APIのベースURL取得
 const getApiUrl = () => {
   return import.meta.env.PROD
     ? "https://osakana-calendar-api-7fca63533648.herokuapp.com"
     : "http://localhost:3000";
 };
 
-// axiosインスタンスの作成
 const client = axios.create({
   baseURL: getApiUrl(),
   headers: {
@@ -21,14 +24,12 @@ const client = axios.create({
   withCredentials: true,
 });
 
-// リクエストのクリーンアップ
 const cleanupRequest = (controller) => {
   if (activeRequests.has(controller)) {
     activeRequests.delete(controller);
   }
 };
 
-// 全てのアクティブなリクエストをキャンセル
 export const cancelAllRequests = () => {
   activeRequests.forEach((controller) => {
     try {
@@ -46,15 +47,12 @@ if (process.env.NODE_ENV === "test") {
     return config;
   });
 } else {
-  // リクエストインターセプター
   client.interceptors.request.use(
     (config) => {
-      // AbortControllerの設定
       const controller = new AbortController();
       activeRequests.add(controller);
       config.signal = controller.signal;
 
-      // クリーンアップ処理の設定
       config.signal.addEventListener("abort", () => cleanupRequest(controller));
 
       // 認証ヘッダーの設定
@@ -63,7 +61,6 @@ if (process.env.NODE_ENV === "test") {
         config.headers.Authorization = authHeader;
       }
 
-      // デバッグログ（開発環境のみ）
       if (process.env.NODE_ENV === "development") {
         console.group("API Request");
         console.log("URL:", config.url);
@@ -80,21 +77,17 @@ if (process.env.NODE_ENV === "test") {
     }
   );
 
-  // レスポンスインターセプター
   client.interceptors.response.use(
     (response) => {
-      // リクエストのクリーンアップ
       if (response.config.signal?.controller) {
         cleanupRequest(response.config.signal.controller);
       }
 
-      // トークンの処理
       const token = response.data?.token;
       if (token) {
         tokenManager.setToken(token);
       }
 
-      // デバッグログ（開発環境のみ）
       if (process.env.NODE_ENV === "development") {
         console.group("API Response");
         console.log("URL:", response.config.url);
@@ -106,19 +99,15 @@ if (process.env.NODE_ENV === "test") {
       return response;
     },
     (error) => {
-      // リクエストのクリーンアップ
       if (error.config?.signal?.controller) {
         cleanupRequest(error.config.signal.controller);
       }
 
-      // キャンセルされたリクエストの処理
       if (error.name === "CanceledError") {
         return Promise.reject(error);
       }
 
-      // 認証エラーの処理
       if (error.response?.status === 401) {
-        // トークンが無効な場合のみイベントを発行
         if (
           !error.config._retry &&
           error.response.data?.error !== "Token missing"
@@ -136,7 +125,6 @@ if (process.env.NODE_ENV === "test") {
         }
       }
 
-      // デバッグログ（開発環境のみ）
       if (process.env.NODE_ENV === "development") {
         console.group("API Error");
         console.log("URL:", error.config?.url);
@@ -150,7 +138,6 @@ if (process.env.NODE_ENV === "test") {
   );
 }
 
-// 初期トークン設定
 if (process.env.NODE_ENV !== "test") {
   const storedToken = tokenManager.getToken();
   if (storedToken) {

@@ -1,3 +1,9 @@
+/**
+* 魚の詳細情報のモーダルコンポーネント
+* バックエンドのAPIから取得した魚のデータ(画像、旬の季節、原産地、栄養、特徴)と
+* YouTube動画を表示する
+*/
+
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { searchYoutubeVideos } from "../../api/youtube";

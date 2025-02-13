@@ -1,3 +1,8 @@
+/**
+* カレンダーの日付表示部分のコンポーネント
+* 曜日の表示、日付のグリッド表示、日付の選択機能を管理する
+*/
+
 import PropTypes from "prop-types";
 import CalendarDay from "./CalendarDay";
 

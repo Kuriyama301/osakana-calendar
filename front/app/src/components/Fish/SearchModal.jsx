@@ -1,3 +1,9 @@
+/**
+* 魚の検索結果モーダルのコンポーネント
+* バックエンドのAPIから取得した検索結果の魚のリストを表示し、
+* 各魚の画像や詳細情報を見ることができる
+*/
+
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";
@@ -5,13 +11,11 @@ import FishDetails from "./FishDetails";
 import SeasonTerm from "./SeasonTerm";
 
 const SearchModal = ({ isOpen, onClose, searchResults }) => {
-  // 状態管理
   const [isAnimating, setIsAnimating] = useState(false);
   const [imageErrors, setImageErrors] = useState({});
   const [selectedFish, setSelectedFish] = useState(null);
   const [isFishDetailsOpen, setIsFishDetailsOpen] = useState(false);
 
-  // モーダルの開閉
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
@@ -21,7 +25,6 @@ const SearchModal = ({ isOpen, onClose, searchResults }) => {
     }
   }, [isOpen]);
 
-  // 画像読み込みエラー処理
   const handleImageError = (fishId, fishName) => {
     setImageErrors((prev) => ({
       ...prev,
@@ -32,7 +35,6 @@ const SearchModal = ({ isOpen, onClose, searchResults }) => {
 
   // 魚の詳細表示
   const handleFishClick = (fish) => {
-    // console.log('Fish clicked:', fish); // デバッグ用
     setSelectedFish(fish);
     setIsFishDetailsOpen(true);
   };
@@ -42,7 +44,6 @@ const SearchModal = ({ isOpen, onClose, searchResults }) => {
     setSelectedFish(null);
   };
 
-  // モーダルの非表示時には何もしない
   if (!isAnimating && !isOpen) return null;
 
   return (
@@ -52,7 +53,6 @@ const SearchModal = ({ isOpen, onClose, searchResults }) => {
       }`}
       onClick={onClose}
     >
-      {/* メインのモーダルコンテンツ */}
       <div
         className={`bg-white rounded-lg text-gray-800 relative w-full mx-4 sm:mx-8 md:mx-auto md:max-w-2xl 
           max-h-[90vh] flex flex-col overflow-hidden transform transition-all duration-300 ease-in-out 
@@ -63,7 +63,6 @@ const SearchModal = ({ isOpen, onClose, searchResults }) => {
           }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ヘッダー部分 */}
         <div className="sticky top-0 bg-white z-10 p-4 sm:p-6 border-b border-gray-200">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 pr-8 sm:pr-12">
             検索結果

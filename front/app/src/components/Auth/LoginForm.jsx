@@ -1,3 +1,9 @@
+/**
+* ログインフォームのコンポーネント
+* メールアドレスとパスワードでのログイン、Google・LINEでのログイン、
+* パスワードリセットのフォームを表示する
+*/
+
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";
@@ -19,18 +25,15 @@ const LoginForm = ({ onSuccess }) => {
   const [error, setError] = useState(null);
   const [showResetModal, setShowResetModal] = useState(false);
 
-  // 入力値の更新処理
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    // エラーをクリア
     setError(null);
   };
 
-  // 入力値のクリア処理
   const handleClear = (fieldName) => {
     setFormData((prev) => ({
       ...prev,
@@ -46,10 +49,8 @@ const LoginForm = ({ onSuccess }) => {
     try {
       await login(formData.email, formData.password);
 
-      // フォームをリセット
       setFormData({ email: "", password: "" });
 
-      // 成功時のコールバックを実行
       if (onSuccess) {
         onSuccess();
       }
@@ -65,7 +66,6 @@ const LoginForm = ({ onSuccess }) => {
     setShowResetModal(true);
   };
 
-  // GoogleLogin処理を修正
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {

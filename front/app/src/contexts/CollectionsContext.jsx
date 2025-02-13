@@ -1,3 +1,8 @@
+/**
+* 魚図鑑のコレクション管理のコンテキストコンポーネント
+* ユーザーが食べた魚の記録データを管理する
+*/
+
 import { createContext } from "react";
 import PropTypes from "prop-types";
 import { useCollectionsState } from "../hooks/useCollectionsState";

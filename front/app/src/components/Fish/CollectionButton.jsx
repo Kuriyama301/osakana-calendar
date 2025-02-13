@@ -1,3 +1,8 @@
+/**
+* 魚のコレクションボタンのコンポーネント
+* 食べた魚の記録・削除の操作
+*/
+
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Utensils } from "lucide-react";
@@ -10,7 +15,6 @@ const CollectionButton = ({ fishId }) => {
   const { collections, addCollection, removeCollection } = useCollections();
   const [isCollected, setIsCollected] = useState(false);
 
-  // コレクション状態を更新
   useEffect(() => {
     if (collections && fishId) {
       setIsCollected(collections.some((fish) => fish.id === fishId));
@@ -35,7 +39,6 @@ const CollectionButton = ({ fishId }) => {
     }
   };
 
-  // 未認証時に空のボタンを返す
   if (!isAuthenticated()) {
     return <div style={{ display: "none" }} />;
   }

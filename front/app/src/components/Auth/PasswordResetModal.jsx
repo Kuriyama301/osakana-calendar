@@ -1,3 +1,9 @@
+/**
+* パスワードリセットのモーダルコンポーネント
+* メールアドレスの入力から、パスワードリセットメールを送信する
+* AWS SESの利用
+*/
+
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";

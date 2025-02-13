@@ -1,3 +1,8 @@
+/**
+* カレンダーの日付セルのコンポーネント
+* 1日分の日付表示、選択状態の表示を行う
+*/
+
 import PropTypes from "prop-types";
 
 const CalendarDay = ({ date, isSelected, onClick }) => (

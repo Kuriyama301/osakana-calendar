@@ -1,3 +1,9 @@
+/**
+* 旬の魚一覧のモーダルコンポーネント 
+* 指定された日付の旬の魚データをバックエンドのAPIから取得して、
+* 魚のリストと詳細情報を表示する
+*/
+
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";

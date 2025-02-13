@@ -1,3 +1,9 @@
+/**
+* Express.jsサーバーの設定ファイル
+* 静的ファイルの配信、APIリクエストのプロキシ、
+* 開発/本番環境の切り替えを制御する
+*/
+
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -18,10 +24,8 @@ app.use((req, res, next) => {
 });
 
 if (NODE_ENV === "production") {
-  // 静的ファイルの提供
   app.use(express.static(path.join(__dirname, "dist")));
 
-  // APIリクエストの処理
   app.use("/api", (req, res, next) => {
     if (!req.url.startsWith("/v1")) {
       next();
@@ -31,7 +35,6 @@ if (NODE_ENV === "production") {
     res.redirect(apiUrl);
   });
 
-  // その他のルートをindex.htmlに転送
   app.get("*", (req, res) => {
     if (!req.url.startsWith("/api")) {
       res.sendFile(path.join(__dirname, "dist", "index.html"));
@@ -43,7 +46,6 @@ if (NODE_ENV === "production") {
   });
 }
 
-// エラーハンドリング（_nextを使用）
 app.use((err, req, res, _next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });

@@ -15,7 +15,7 @@ export default [
         ...globals.node, // Node.js のグローバル変数を有効にする
         ...globals.vitest,
         process: true,
-        NODE_ENV: true, // ここを追加して NODE_ENV の未定義エラーを解消
+        NODE_ENV: true,
         vi: true,
         describe: true,
         test: true,

@@ -1,10 +1,13 @@
+/**
+* 認証トークン管理のユーティリティ関数
+* トークンとユーザー情報の保存、取得、削除を環境に応じてCookieまたはLocalStorageで管理する
+*/
+
 import Cookies from "js-cookie";
 
-// 定数定義
 const TOKEN_COOKIE_KEY = "auth_token";
 const USER_COOKIE_KEY = "user_data";
 
-// Cookie設定のベース
 const COOKIE_OPTIONS = {
   secure: true,
   sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
@@ -14,12 +17,10 @@ const COOKIE_OPTIONS = {
     process.env.NODE_ENV === "production" ? "osakana-calendar.com" : undefined,
 };
 
-// デバッグログ設定
 const debug = process.env.NODE_ENV !== "production";
 const log = debug ? console.log : () => {};
 
 export const tokenManager = {
-  // トークンの保存
   setToken(token) {
     if (!token) return;
 
@@ -36,7 +37,6 @@ export const tokenManager = {
     }
   },
 
-  // ユーザー情報の保存
   setUser(user) {
     if (!user) return;
 
@@ -52,7 +52,6 @@ export const tokenManager = {
     }
   },
 
-  // トークンの取得
   getToken() {
     try {
       const token =
@@ -67,7 +66,6 @@ export const tokenManager = {
     }
   },
 
-  // ユーザー情報の取得
   getUser() {
     try {
       const userData =
@@ -82,7 +80,6 @@ export const tokenManager = {
     }
   },
 
-  // 全てのデータを削除
   clearAll() {
     try {
       if (process.env.NODE_ENV === "production") {
@@ -92,7 +89,6 @@ export const tokenManager = {
         localStorage.removeItem(TOKEN_COOKIE_KEY);
         localStorage.removeItem(USER_COOKIE_KEY);
       }
-      // 進行中のリクエストをキャンセル
       if (window.activeRequests) {
         window.activeRequests.forEach((controller) => controller.abort());
         window.activeRequests = [];
@@ -103,7 +99,6 @@ export const tokenManager = {
     }
   },
 
-  // 認証ヘッダーの形式でトークンを取得
   getAuthHeader() {
     const token = this.getToken();
     const header = token ? `Bearer ${token}` : null;
@@ -111,7 +106,6 @@ export const tokenManager = {
     return header;
   },
 
-  // 認証状態の確認
   isAuthenticated() {
     const hasToken = !!this.getToken();
     const hasUser = !!this.getUser();

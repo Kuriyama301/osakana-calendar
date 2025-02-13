@@ -1,3 +1,8 @@
+/**
+* アカウント削除モーダルのコンポーネント
+* アカウント削除の確認画面表示、削除処理の実行を行う
+*/
+
 import React from "react";
 import { X } from "lucide-react";
 import { useModal } from "../../hooks/useModal";

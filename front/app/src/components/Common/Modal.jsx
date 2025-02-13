@@ -1,3 +1,8 @@
+/**
+* 共通モーダルのコンポーネント
+* タイトル、閉じるボタン、スクロール可能なモーダルを表示
+*/
+
 import React from "react";
 import { X } from "lucide-react";
 import { useModal } from "../../hooks/useModal";
@@ -14,7 +19,6 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         isAnimating ? "opacity-100" : "opacity-0"
       }`}
     >
-      {/* オーバーレイ背景 */}
       <div
         className={`absolute inset-0 bg-black ${
           isAnimating ? "opacity-50" : "opacity-0"
@@ -22,7 +26,6 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         onClick={onClose}
       />
 
-      {/* モーダルコンテンツ */}
       <div className="fixed inset-0 flex items-center justify-center">
         <div
           className={`bg-white rounded-lg text-gray-800 relative transition-all duration-300 

@@ -1,14 +1,17 @@
+/**
+ * 認証機能に関するAPI通信を管理
+ * ユーザー登録、ログイン/ログアウト、パスワードリセット、ソーシャル認証（Google、LINE）などの
+ * 認証関連の通信処理を実行
+ */
+
 import client from "./client";
 import { tokenManager } from "../utils/tokenManager";
 
-// レスポンスエラーを整形するヘルパー関数
 const formatError = (error) => {
-  // APIからの標準エラーレスポンス
   if (error.response?.data?.status === "error") {
     return error.response.data.message;
   }
 
-  // バリデーションエラー
   if (error.response?.data?.errors) {
     return Object.values(error.response.data.errors)
       .flat()
@@ -16,12 +19,10 @@ const formatError = (error) => {
       .join(", ");
   }
 
-  // その他のエラー
   if (error.response?.data?.error) {
     return error.response.data.error;
   }
 
-  // ネットワークエラー
   if (error.message === "Network Error") {
     return "サーバーに接続できません。インターネット接続を確認してください。";
   }
@@ -29,7 +30,6 @@ const formatError = (error) => {
   return "エラーが発生しました。しばらく経ってからお試しください。";
 };
 
-// トークン関連の処理を共通化
 const handleAuthToken = (token) => {
   if (!token) {
     console.warn("No auth token received");
@@ -39,14 +39,12 @@ const handleAuthToken = (token) => {
   client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
 
-// 認証情報のクリア処理を共通化
 const clearAuthInfo = () => {
   tokenManager.clearAll();
   delete client.defaults.headers.common["Authorization"];
 };
 
 export const authAPI = {
-  // サインアップ
   signup: async (email, password, passwordConfirmation, name) => {
     try {
       console.log("Signup attempt for:", email);
@@ -121,7 +119,6 @@ export const authAPI = {
     }
   },
 
-  // メール確認
   confirmEmail: async (token) => {
     try {
       const response = await client.get("/api/v1/auth/confirmation", {
@@ -134,7 +131,6 @@ export const authAPI = {
     }
   },
 
-  // パスワードリセットメールの送信リクエスト
   requestPasswordReset: async (email) => {
     try {
       const response = await client.post("/api/v1/auth/password", {
@@ -147,7 +143,6 @@ export const authAPI = {
     }
   },
 
-  // パスワードリセット
   resetPassword: async (password, passwordConfirmation, resetToken) => {
     try {
       const response = await client.put("/api/v1/auth/password", {

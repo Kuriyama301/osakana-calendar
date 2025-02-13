@@ -1,3 +1,8 @@
+/**
+* 動画キャッシュのユーティリティ
+* 魚の動画検索結果を一時的にキャッシュに保存してAPI呼び出しの回数を減らす
+*/
+
 const CACHE_CONFIG = {
   expirationTime: process.env.NODE_ENV === 'development'
     ? 1000 * 60 * 5    // 開発環境: 5分
@@ -9,7 +14,6 @@ class VideoCache {
     this.cache = new Map();
     this.expirationTime = CACHE_CONFIG.expirationTime;
     
-    // 設定情報をログ出力
     if (process.env.NODE_ENV === 'development') {
       console.log('キャッシュ設定:', {
         環境: process.env.NODE_ENV,

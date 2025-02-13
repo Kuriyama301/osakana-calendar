@@ -1,3 +1,8 @@
+/**
+* サブカレンダーのヘッダー部分のコンポーネント
+* 年月の表示、前月・次月への移動ボタンを表示
+*/
+
 import PropTypes from "prop-types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 

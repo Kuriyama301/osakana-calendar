@@ -1,3 +1,8 @@
+/**
+* サブカレンダーのコンポーネント
+* 月単位のカレンダー表示、月の切り替え、日付選択機能を表示する
+*/
+
 import React from "react";
 import { useCalendar } from "../../hooks/useCalendar";
 import CalendarHeader from "./CalendarHeader";

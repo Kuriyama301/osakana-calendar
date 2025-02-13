@@ -1,3 +1,8 @@
+/**
+* OGP設定のユーティリティ関数
+* サイトのOGPを設定
+*/
+
 export const setupOGP = () => {
   const baseUrl = import.meta.env.VITE_FRONT_URL;
 

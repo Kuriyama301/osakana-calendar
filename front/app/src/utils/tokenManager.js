@@ -1,3 +1,8 @@
+/**
+* 認証トークン管理のユーティリティ関数
+* トークンとユーザー情報の保存、取得、削除を環境に応じてCookieまたはLocalStorageで管理する
+*/
+
 import Cookies from "js-cookie";
 
 const TOKEN_COOKIE_KEY = "auth_token";

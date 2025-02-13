@@ -1,3 +1,8 @@
+/**
+* メールアドレス確認画面のコンポーネント
+* メール認証の確認処理、認証状態の表示、画面遷移を行う
+*/
+
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { authAPI } from "../../api/auth";

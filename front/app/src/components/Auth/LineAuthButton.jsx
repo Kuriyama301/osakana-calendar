@@ -1,8 +1,12 @@
+/**
+* LINE認証ボタンのコンポーネント
+* LINEログイン、登録への遷移処理、ボタンの表示を行う
+*/
+
 import React from "react";
 import PropTypes from "prop-types";
 import { authAPI } from "../../api/auth";
 
-// LINEロゴ（公式ロゴのSVGパス）
 const LineIcon = () => (
   <svg
     className="w-5 h-5"
@@ -16,7 +20,6 @@ const LineIcon = () => (
   </svg>
 );
 
-// LINEログイン/登録ボタンコンポーネント
 const LineAuthButton = ({ type = "login", disabled = false }) => {
   const buttonText = type === "login" ? "LINEでログイン" : "LINEで登録";
 

@@ -1,3 +1,8 @@
+/**
+* パスワード再設定フォームのコンポーネント
+* 新しいパスワードの入力、確認入力、更新処理を表示する
+*/
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { X } from "lucide-react";
@@ -55,7 +60,6 @@ const NewPasswordForm = () => {
       );
       setStatus("success");
 
-      // 成功メッセージを表示して3秒後にログインページへ遷移
       setTimeout(() => {
         navigate("/");
       }, 3000);
@@ -65,7 +69,6 @@ const NewPasswordForm = () => {
     }
   };
 
-  // トークンがない場合はエラーメッセージを表示
   if (!resetToken) {
     return (
       <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">

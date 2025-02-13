@@ -1,3 +1,8 @@
+/**
+* LINE認証のコールバック画面のコンポーネント
+* LINE認証後に受け取ったコードを処理して、認証の結果を表示する
+*/
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import LoadingScreen from "../Common/LoadingScreen";
@@ -16,7 +21,6 @@ const LineCallbackPage = () => {
           throw new Error("認証コードが見つかりません");
         }
 
-        // APIエンドポイントにリダイレクト
         window.location.href = `/api/v1/auth/line/callback?code=${code}`;
       } catch (err) {
         setError(err.message);

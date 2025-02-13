@@ -1,3 +1,9 @@
+/**
+* ホームページのコンポーネント
+* メインカレンダー、サブカレンダー、ナビゲーション、各種モーダルを
+* 配置して画面全体のレイアウトを制御する
+*/
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import { MainCalendar, SubCalendar } from "../components";
@@ -25,7 +31,6 @@ const NavItem = ({ icon, label, onClick }) => (
   </li>
 );
 
-// PropTypes
 NavItem.propTypes = {
   icon: PropTypes.node.isRequired,
   label: PropTypes.string.isRequired,
@@ -49,7 +54,6 @@ const HomePage = () => {
     closeModal: closeFishModal,
   } = useDailyFishModal();
 
-  // 検索関連の状態
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
@@ -102,7 +106,7 @@ const HomePage = () => {
     {
       icon: <Home size={20} />,
       label: "HOME",
-      onClick: handleHomeClick, // クリックハンドラを追加
+      onClick: handleHomeClick,
     },
     {
       icon: <Utensils size={20} />,

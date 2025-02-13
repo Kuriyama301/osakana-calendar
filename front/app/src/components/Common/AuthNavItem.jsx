@@ -1,3 +1,8 @@
+/**
+* ログイン状態に応じたナビゲーションアイテムのコンポーネント
+* ログイン・未ログイン状態の表示、ユーザーメニューの操作が可能
+*/
+
 import React, { useState, useRef, useEffect } from "react";
 import { UserCircle, LogOut } from "lucide-react";
 import PropTypes from "prop-types";

@@ -1,3 +1,8 @@
+/**
+* ヘルプモーダルのコンポーネント
+* 利用規約、プライバシーポリシー、使い方ガイド、お問い合わせなどの情報を表示する
+*/
+
 import React, { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { X, Info, Lock, Mail, Book } from "lucide-react";

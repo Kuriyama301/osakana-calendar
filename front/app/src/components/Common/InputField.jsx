@@ -1,3 +1,8 @@
+/**
+* 入力フォームのコンポーネント
+* ラベル、入力欄、エラーメッセージを表示する
+*/
+
 import React from "react";
 import PropTypes from "prop-types";
 

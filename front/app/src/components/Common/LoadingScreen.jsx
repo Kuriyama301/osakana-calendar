@@ -1,3 +1,8 @@
+/**
+* ローディング画面のコンポーネント
+* データ読み込み中のアニメーションとメッセージを表示
+*/
+
 import React, { useState, useEffect } from "react";
 import { BeatLoader } from "react-spinners";
 import PropTypes from "prop-types";

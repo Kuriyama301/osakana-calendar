@@ -1,3 +1,8 @@
+/**
+* Viteの設定ファイル
+* ビルド設定、プラグイン、環境変数、テスト設定、開発サーバーの設定を定義する
+*/
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 

@@ -9,7 +9,6 @@ class VideoCache {
     this.cache = new Map();
     this.expirationTime = CACHE_CONFIG.expirationTime;
     
-    // 設定情報をログ出力
     if (process.env.NODE_ENV === 'development') {
       console.log('キャッシュ設定:', {
         環境: process.env.NODE_ENV,

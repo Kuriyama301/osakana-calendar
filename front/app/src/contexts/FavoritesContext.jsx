@@ -1,3 +1,8 @@
+/**
+* お気に入りの魚の管理コンテキストコンポーネント
+* お気に入りデータの取得、追加、削除機能を制御する
+*/
+
 import {
   createContext,
   useContext,
@@ -57,7 +62,6 @@ export const FavoritesProvider = ({ children }) => {
     [fetchFavorites]
   );
 
-  // 初期データを取得
   useEffect(() => {
     const initializeFavorites = async () => {
       await fetchFavorites();

@@ -1,3 +1,8 @@
+/**
+* アカウント削除機能のコンテキストコンポーネント
+* アカウント削除処理の実行とモーダル表示を制御する
+*/
+
 import { createContext, useContext, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +20,6 @@ export const DeleteAccountProvider = ({ children }) => {
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
 
-  // アカウント削除処理
   const deleteAccount = useCallback(async () => {
     if (!isAuthenticated()) {
       setError("ログインが必要です");
@@ -26,11 +30,9 @@ export const DeleteAccountProvider = ({ children }) => {
     setError("");
 
     try {
-      // アカウント削除APIを呼び出し
       const response = await authAPI.deleteAccount();
 
       if (response.status === "success") {
-        // クリーンアップ処理
         try {
           await logout();
           closeModal();
@@ -43,7 +45,6 @@ export const DeleteAccountProvider = ({ children }) => {
           });
         } catch (cleanupError) {
           console.error("Cleanup after deletion failed:", cleanupError);
-          // クリーンアップに失敗してもユーザーには成功メッセージを表示
           navigate("/", {
             replace: true,
             state: {
@@ -62,7 +63,6 @@ export const DeleteAccountProvider = ({ children }) => {
     }
   }, [isAuthenticated, navigate, logout]);
 
-  // モーダルを開く
   const openModal = useCallback(() => {
     if (!isAuthenticated()) {
       setError("ログインが必要です");
@@ -72,7 +72,6 @@ export const DeleteAccountProvider = ({ children }) => {
     setError("");
   }, [isAuthenticated]);
 
-  // モーダルを閉じる
   const closeModal = useCallback(() => {
     if (!isDeleting) {
       setIsModalOpen(false);

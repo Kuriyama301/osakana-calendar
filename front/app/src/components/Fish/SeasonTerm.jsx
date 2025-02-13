@@ -1,3 +1,8 @@
+/**
+* 旬の期間表示のコンポーネント
+* 魚の旬の開始月(上中下旬)と終了月(上中下旬)を表示する
+*/
+
 import PropTypes from "prop-types";
 
 const SeasonTerm = ({ season }) => {

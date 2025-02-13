@@ -1,3 +1,8 @@
+/**
+* 魚の詳細情報のモーダルコンポーネント
+* バックエンドのAPIから取得した魚のデータ(画像、旬の季節、原産地、栄養、特徴)とYouTube動画を表示する
+*/
+
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { X } from "lucide-react";

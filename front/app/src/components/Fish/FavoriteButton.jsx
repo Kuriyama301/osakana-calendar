@@ -1,3 +1,8 @@
+/**
+* お気に入りボタンのコンポーネント
+* 魚のお気に入り登録・解除の操作を行う
+*/
+
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Heart } from "lucide-react";
@@ -35,7 +40,6 @@ const FavoriteButton = ({ fishId }) => {
     }
   };
 
-  // 未認証時に空のボタンを返す
   if (!isAuthenticated()) {
     return <div style={{ display: "none" }} />;
   }

@@ -1,3 +1,8 @@
+/**
+ * 魚の一覧を表示するコンポーネント  
+ * 検索フォームで魚の名前を検索、結果が出ると魚の画像、名前、旬の時期を一覧表示する。
+ */
+
 import PropTypes from "prop-types";
 import SeasonTerm from "./SeasonTerm";
 import React from "react";

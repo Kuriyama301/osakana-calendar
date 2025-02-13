@@ -1,3 +1,8 @@
+/**
+* 魚の情報取得に関するAPI通信を管理
+* 日付による魚の取得、魚の検索機能の通信処理を記述
+*/
+
 import client from "./client";
 
 export const getFishByDate = async (date) => {
@@ -9,7 +14,6 @@ export const getFishByDate = async (date) => {
     const formattedDate =
       date instanceof Date ? date.toISOString().split("T")[0] : date;
 
-    // baseURLが設定されているため、先頭のスラッシュを削除
     const response = await client.get("api/v1/calendar/fish", {
       params: { date: formattedDate },
     });
@@ -17,7 +21,7 @@ export const getFishByDate = async (date) => {
     return response.data;
   } catch (error) {
     if (error.response?.status === 404) {
-      return []; // 魚が見つからない場合は空配列
+      return [];
     }
     console.error("Failed to fetch fish data:", error);
     throw new Error(

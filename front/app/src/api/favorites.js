@@ -1,3 +1,9 @@
+/**
+* お気に入り機能のAPI通信を管理
+* お気に入りの取得、追加、削除などの通信処理を記述
+*/
+
+
 import client from "./client";
 
 export const favoritesAPI = {

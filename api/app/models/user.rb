@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # ユーザー情報を管理するモデル
-# 認証、お気に入り、図鑑機能の管理とJWTトークンの処理を行う
+# 認証、お気に入り、コレクション機能の管理とJWTトークンの処理を行う
 class User < ApplicationRecord
   # JWTトークンの無効化戦略を組み込み
   include Devise::JWT::RevocationStrategies::Denylist
@@ -22,7 +22,7 @@ class User < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :favorite_fishes, through: :favorites, source: :fish
 
-  # 図鑑機能の関連付け
+  # コレクション機能の関連付け
   has_many :fish_collections, dependent: :destroy
   has_many :collected_fishes, through: :fish_collections, source: :fish
 

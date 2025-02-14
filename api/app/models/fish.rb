@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # 魚の基本情報を管理するメインモデル
-# 魚の詳細情報、画像、旬の時期、お気に入り、収集状態を管理
+# 魚の詳細情報、画像、旬の時期、お気に入り、コレクション状態を管理
 class Fish < ApplicationRecord
   # 関連付け：旬の時期（削除時に関連レコードも削除）
   has_many :fish_seasons, dependent: :destroy

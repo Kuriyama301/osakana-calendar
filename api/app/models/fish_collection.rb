@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# ユーザーの魚図鑑（コレクション）を管理するモデル
+# ユーザーのコレクションを管理するモデル
 # ユーザーと魚の中間テーブルとして機能し、収集した魚を記録
 class FishCollection < ApplicationRecord
   # アソシエーション：ユーザーに属する

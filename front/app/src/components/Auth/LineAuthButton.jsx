@@ -24,7 +24,15 @@ const LineAuthButton = ({ type = "login", disabled = false }) => {
   const buttonText = type === "login" ? "LINEでログイン" : "LINEで登録";
 
   const handleClick = () => {
+    // デバッグ用のログを追加
+    console.log("LINE認証の環境変数:", {
+      channelId: import.meta.env.VITE_LINE_CHANNEL_ID,
+      callbackUrl: import.meta.env.VITE_LINE_CALLBACK_URL,
+    });
+
     const lineAuthUrl = authAPI.lineAuth.getAuthUrl();
+    console.log("生成されたLINE認証URL:", lineAuthUrl);
+
     window.location.href = lineAuthUrl;
   };
 

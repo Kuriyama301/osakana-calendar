@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# Active Storageの初期設定ファイル
+# 画像保存サービスとURLの基本設定を管理
+
 Rails.application.configure do
   # Active Storage基本設定
   config.active_storage.service = Rails.env.production? ? :amazon : :local

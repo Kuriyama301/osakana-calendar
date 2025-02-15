@@ -185,19 +185,11 @@ export const authAPI = {
   // LINE認証
   lineAuth: {
     getAuthUrl: () => {
-      // 環境変数のチェック
-      const channelId = import.meta.env.VITE_LINE_CHANNEL_ID;
-      const callbackUrl = import.meta.env.VITE_LINE_CALLBACK_URL;
-
-      if (!channelId) {
-        console.error("LINE Channel IDが設定されていません");
-        throw new Error("LINE認証の設定が不完全です");
-      }
-
-      if (!callbackUrl) {
-        console.error("LINE Callback URLが設定されていません");
-        throw new Error("LINE認証の設定が不完全です");
-      }
+      // 環境変数のチェックとフォールバック値の設定
+      const channelId = import.meta.env.VITE_LINE_CHANNEL_ID || "2006841498";
+      const callbackUrl =
+        import.meta.env.VITE_LINE_CALLBACK_URL ||
+        "https://osakana-calendar-api-7fca63533648.herokuapp.com/api/v1/auth/line/callback";
 
       const params = {
         response_type: "code",

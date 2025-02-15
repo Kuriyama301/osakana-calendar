@@ -21,7 +21,16 @@ const LineCallbackPage = () => {
           throw new Error("認証コードが見つかりません");
         }
 
-        window.location.href = `/api/v1/auth/line/callback?code=${code}`;
+        // フォールバック値を含む環境変数の設定
+        const apiUrl =
+          import.meta.env.VITE_API_URL ||
+          "https://osakana-calendar-api-7fca63533648.herokuapp.com";
+
+        // URLの生成とリダイレクト
+        const callbackUrl = `${apiUrl}/api/v1/auth/line/callback?code=${code}`;
+        console.log("Redirecting to:", callbackUrl);
+
+        window.location.href = callbackUrl;
       } catch (err) {
         setError(err.message);
       } finally {

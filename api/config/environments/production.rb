@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# 本番環境の設定ファイル
+# アプリケーションの本番環境での動作設定を管理
+
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
@@ -51,7 +56,7 @@ Rails.application.configure do
     from: ENV.fetch('MAILER_FROM', 'info@osakana-calendar.com')
   }
 
-  # SMTP設定
+  # AWS SESメール設定
   config.action_mailer.smtp_settings = {
     address: 'email-smtp.ap-northeast-1.amazonaws.com',
     port: 587,
@@ -62,7 +67,7 @@ Rails.application.configure do
     domain: frontend_host
   }
 
-  # Action Cableの設定
+  # Action Cable設定（現在未使用）
   # Rails.application.config.action_cable.disable_request_forgery_protection = true
   # Rails.application.config.action_cable.allowed_request_origins = [
   #   ENV.fetch('FRONTEND_URL', 'https://www.osakana-calendar.com')

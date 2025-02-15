@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# アプリケーション全体の設定ファイル
+# Railsアプリケーションの基本設定を管理
+
 require 'rails'
 require 'active_model/railtie'
 require 'active_record/railtie'
@@ -10,8 +15,13 @@ require 'action_mailer/railtie'
 
 module App
   class Application < Rails::Application
+    # Rails 7.0の設定を使用
     config.load_defaults 7.0
+
+    # APIモードを有効化
     config.api_only = true
+
+    # タイムゾーン設定
     config.time_zone = "Tokyo"
     config.active_record.default_timezone = :local
 

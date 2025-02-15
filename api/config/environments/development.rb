@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# 開発環境の設定ファイル
+# アプリケーションの開発時の動作設定を管理
+
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
@@ -52,6 +57,7 @@ Rails.application.configure do
     host: ENV.fetch('VITE_FRONT_URL', 'http://localhost:5173').gsub(%r{^https?://}, '')
   }
 
+  # AWS SESメール設定
   config.action_mailer.smtp_settings = {
     address: 'email-smtp.ap-northeast-1.amazonaws.com',
     port: 587,
@@ -64,7 +70,6 @@ Rails.application.configure do
 
   # メールのデバッグログ
   config.action_mailer.logger = Logger.new(STDOUT)
-
   config.log_level = :debug
   config.log_headers = true
 end

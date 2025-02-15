@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# Devise認証の初期設定ファイル
+# 認証機能全般の設定を管理
+
 require 'devise'
 require 'devise/jwt'
 require 'devise/orm/active_record'

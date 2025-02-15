@@ -1,4 +1,7 @@
-require 'json'
+# frozen_string_literal: true
+
+# シードデータ投入スクリプト
+# ユーザーと魚の初期データを作成・更新
 
 # JSONファイルを読み込み、パースする関数
 def load_json_file(file_path)
@@ -9,6 +12,7 @@ rescue JSON::ParserError => e
 end
 
 # ユーザーデータを処理する関数
+# メール送信を一時的に無効化してユーザーを作成
 def process_user_data(data)
   return unless data['users']
 
@@ -50,6 +54,7 @@ def process_user_data(data)
 end
 
 # 魚のデータを処理する関数
+# 魚の基本情報、画像、旬の時期を設定
 def process_fish_data(data)
   ActiveRecord::Base.transaction do
     data['fish'].each do |fish_data|
@@ -63,10 +68,8 @@ def process_fish_data(data)
 
       puts "Processing fish: #{fish.name}"
 
-      # 既存の画像があれば削除（オプション）
+      # 画像の処理
       fish.image.purge if fish.image.attached?
-
-      # 画像の添付
       blob_data = data['active_storage_blobs'].find { |b| b['id'] == fish_data['active_storage_attachments'][0]['blob_id'] }
       if blob_data
         image_filename = blob_data['filename']
@@ -90,7 +93,7 @@ def process_fish_data(data)
 
       fish.save!
 
-      # シーズン情報の作成
+      # 旬情報の作成
       fish_data['fish_seasons'].each do |season_data|
         FishSeason.find_or_create_by!(
           fish: fish,

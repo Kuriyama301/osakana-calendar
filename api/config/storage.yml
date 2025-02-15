@@ -1,11 +1,19 @@
+# frozen_string_literal: true
+
+# ファイルストレージの設定ファイル
+# 環境ごとのファイル保存方法を管理
+
+# テスト環境設定
 test:
   service: Disk
   root: <%= Rails.root.join("tmp/storage") %>
 
+# 開発環境設定
 local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
+# 本番環境設定（AWS S3）
 amazon:
   service: S3
   access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>

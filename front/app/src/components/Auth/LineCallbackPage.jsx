@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import LoadingScreen from "../Common/LoadingScreen";
+import { authAPI } from "../../api/auth";
 
 const LineCallbackPage = () => {
   const [searchParams] = useSearchParams();
@@ -21,17 +22,14 @@ const LineCallbackPage = () => {
           throw new Error("認証コードが見つかりません");
         }
 
-        // フォールバック値を含む環境変数の設定
-        const apiUrl =
-          import.meta.env.VITE_API_URL ||
-          "https://osakana-calendar-api-7fca63533648.herokuapp.com";
+        // authAPIを使用してLINE認証を処理
+        await authAPI.lineAuth.handleCallback(code);
+        console.log("LINE認証が完了しました");
 
-        // URLの生成とリダイレクト
-        const callbackUrl = `${apiUrl}/api/v1/auth/line/callback?code=${code}`;
-        console.log("Redirecting to:", callbackUrl);
-
-        window.location.href = callbackUrl;
+        // 認証成功後にホームページにリダイレクト
+        navigate("/");
       } catch (err) {
+        console.error("LINE認証エラー:", err);
         setError(err.message);
       } finally {
         setIsProcessing(false);
@@ -39,7 +37,7 @@ const LineCallbackPage = () => {
     };
 
     handleCallback();
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   if (error) {
     return (

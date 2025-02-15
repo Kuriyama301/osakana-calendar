@@ -185,13 +185,29 @@ export const authAPI = {
   // LINE認証
   lineAuth: {
     getAuthUrl: () => {
+      // 環境変数のチェック
+      const channelId = import.meta.env.VITE_LINE_CHANNEL_ID;
+      const callbackUrl = import.meta.env.VITE_LINE_CALLBACK_URL;
+
+      if (!channelId) {
+        console.error("LINE Channel IDが設定されていません");
+        throw new Error("LINE認証の設定が不完全です");
+      }
+
+      if (!callbackUrl) {
+        console.error("LINE Callback URLが設定されていません");
+        throw new Error("LINE認証の設定が不完全です");
+      }
+
       const params = {
         response_type: "code",
-        client_id: import.meta.env.VITE_LINE_CHANNEL_ID,
-        redirect_uri: import.meta.env.VITE_LINE_CALLBACK_URL,
+        client_id: channelId,
+        redirect_uri: callbackUrl,
         state: crypto.randomUUID(),
         scope: "profile openid email",
       };
+
+      console.log("LINE認証パラメータ:", params);
 
       const queryString = new URLSearchParams(params).toString();
       return `https://access.line.me/oauth2/v2.1/authorize?${queryString}`;

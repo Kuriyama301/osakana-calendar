@@ -1,12 +1,16 @@
 /**
  * 認証機能に関するAPI通信を管理
- * ユーザー登録、ログイン/ログアウト、パスワードリセット、ソーシャル認証（Google、LINE）などの
- * 認証関連の通信処理を実行
+ * Api::V1::Auth名前空間のコントローラーとの通信を処理
+ * ユーザー登録、ログイン/ログアウト、パスワードリセット、ソーシャル認証などの認証関連の通信を実行
  */
 
 import client from "./client";
 import { tokenManager } from "../utils/tokenManager";
 
+/**
+ * エラーレスポンスを整形
+ * バックエンドからの各種エラーレスポンスを統一された形式に変換
+ */
 const formatError = (error) => {
   if (error.response?.data?.status === "error") {
     return error.response.data.message;
@@ -30,6 +34,10 @@ const formatError = (error) => {
   return "エラーが発生しました。しばらく経ってからお試しください。";
 };
 
+/**
+ * JWT認証トークンの処理
+ * Api::V1::Auth::SessionsControllerから受け取ったトークンを保存
+ */
 const handleAuthToken = (token) => {
   if (!token) {
     console.warn("No auth token received");
@@ -39,12 +47,21 @@ const handleAuthToken = (token) => {
   client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
 
+/**
+ * 認証情報のクリア
+ * ログアウトやエラー時にトークンと認証ヘッダーを削除
+ */
 const clearAuthInfo = () => {
   tokenManager.clearAll();
   delete client.defaults.headers.common["Authorization"];
 };
 
 export const authAPI = {
+  /**
+   * ユーザー登録
+   * POST /api/v1/auth にリクエストを送信
+   * Api::V1::Auth::RegistrationsController#createを呼び出し
+   */
   signup: async (email, password, passwordConfirmation, name) => {
     try {
       console.log("Signup attempt for:", email);
@@ -67,7 +84,12 @@ export const authAPI = {
     }
   },
 
-  // ログイン
+  /**
+   * ログイン処理
+   * POST /api/v1/auth/sign_in にリクエストを送信
+   * Api::V1::Auth::SessionsController#createを呼び出し
+   * JWTトークンを受け取り保存
+   */
   login: async (email, password) => {
     try {
       const response = await client.post("/api/v1/auth/sign_in", {
@@ -93,7 +115,12 @@ export const authAPI = {
     }
   },
 
-  // ログアウト
+  /**
+   * ログアウト処理
+   * DELETE /api/v1/auth/sign_out にリクエストを送信
+   * Api::V1::Auth::SessionsController#destroyを呼び出し
+   * 認証情報をクリア
+   */
   logout: async () => {
     try {
       const token = tokenManager.getToken();
@@ -119,6 +146,11 @@ export const authAPI = {
     }
   },
 
+  /**
+   * メールアドレス確認
+   * GET /api/v1/auth/confirmation にリクエストを送信
+   * Api::V1::Auth::ConfirmationsController#showを呼び出し
+   */
   confirmEmail: async (token) => {
     try {
       const response = await client.get("/api/v1/auth/confirmation", {
@@ -131,6 +163,11 @@ export const authAPI = {
     }
   },
 
+  /**
+   * パスワードリセットリクエスト
+   * POST /api/v1/auth/password にリクエストを送信
+   * Api::V1::Auth::PasswordsController#createを呼び出し
+   */
   requestPasswordReset: async (email) => {
     try {
       const response = await client.post("/api/v1/auth/password", {
@@ -143,6 +180,11 @@ export const authAPI = {
     }
   },
 
+  /**
+   * パスワードリセット実行
+   * PUT /api/v1/auth/password にリクエストを送信
+   * Api::V1::Auth::PasswordsController#updateを呼び出し
+   */
   resetPassword: async (password, passwordConfirmation, resetToken) => {
     try {
       const response = await client.put("/api/v1/auth/password", {
@@ -159,7 +201,11 @@ export const authAPI = {
     }
   },
 
-  // Google認証
+  /**
+   * Google認証
+   * POST /api/v1/auth/google_oauth2/callback にリクエストを送信
+   * Api::V1::Auth::OmniauthCallbacksController#google_oauth2を呼び出し
+   */
   googleAuth: async (credential) => {
     try {
       console.log("Starting Google authentication");
@@ -182,7 +228,11 @@ export const authAPI = {
     }
   },
 
-  // LINE認証
+  /**
+   * LINE認証
+   * LINE OAuthフローを管理し、コールバックでトークンを取得
+   * Api::V1::Auth::LineControllerと連携
+   */
   lineAuth: {
     getAuthUrl: () => {
       // 環境変数のチェックとフォールバック値の設定
@@ -225,7 +275,11 @@ export const authAPI = {
     },
   },
 
-  // アカウント削除
+  /**
+   * アカウント削除
+   * DELETE /api/v1/auth にリクエストを送信
+   * Api::V1::Auth::RegistrationsController#destroyを呼び出し
+   */
   deleteAccount: async () => {
     try {
       const token = tokenManager.getToken();

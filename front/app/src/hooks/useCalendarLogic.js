@@ -5,6 +5,9 @@
  * @param {number} initialYearRange - 初期表示する年数範囲（デフォルト: 前後5年）
  * @returns {Object} カレンダーデータと拡張関数を含むオブジェクト
  */
+
+import { useState, useCallback, useEffect } from "react";
+
 export const useCalendarLogic = (initialYearRange = 5) => {
   // カレンダーの日付データを管理するstate
   const [calendarData, setCalendarData] = useState([]);

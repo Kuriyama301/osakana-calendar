@@ -1,3 +1,10 @@
+# frozen_string_literal: true
+
+# OAuth認証コールバックのベースコントローラー
+# GoogleアカウントでのOAuth認証を処理し、ユーザー認証を行う
+# リクエスト形式: POST /api/v1/auth/google_oauth2/callback
+# フロントエンド連携: SocialAuthButton.jsxからの認証リクエストを処理
+
 module Api
   module V1
     module Auth
@@ -7,6 +14,9 @@ module Api
 
         respond_to :json
 
+        # Google OAuth認証コールバックの処理
+        # @param [String] credential Googleから受け取ったアクセストークン
+        # @return [JSON] 認証結果とユーザー情報
         def google_oauth2
           Rails.logger.info 'Starting google_oauth2 callback'
 
@@ -30,6 +40,9 @@ module Api
 
         private
 
+        # Googleユーザー情報の取得
+        # @param [String] access_token Googleアクセストークン
+        # @return [Hash] ユーザープロフィール情報
         def fetch_google_user_info(access_token)
           auth_uri = URI('https://www.googleapis.com/oauth2/v3/userinfo')
           auth_uri.query = URI.encode_www_form({ access_token: access_token })
@@ -37,6 +50,10 @@ module Api
           JSON.parse(response.body)
         end
 
+        # ユーザーの検索または作成
+        # @param [Hash] user_info Googleから取得したユーザー情報
+        # @param [String] provider 認証プロバイダー名
+        # @return [User] 既存または新規作成されたユーザー
         def find_or_create_user(user_info, provider)
           user = User.find_by(email: user_info['email'])
 
@@ -47,6 +64,11 @@ module Api
           end
         end
 
+        # 既存ユーザーのOAuth認証情報を更新
+        # @param [User] user 更新対象のユーザー
+        # @param [Hash] user_info 新しいユーザー情報
+        # @param [String] provider 認証プロバイダー名
+        # @return [User] 更新されたユーザー
         def update_oauth_credentials(user, user_info, provider)
           user.tap do |u|
             u.provider = provider
@@ -56,6 +78,10 @@ module Api
           end
         end
 
+        # 新規OAuth認証ユーザーの作成
+        # @param [Hash] user_info ユーザー情報
+        # @param [String] provider 認証プロバイダー名
+        # @return [User] 作成されたユーザー
         def create_oauth_user(user_info, provider)
           User.create!(
             email: user_info['email'],
@@ -68,6 +94,9 @@ module Api
           )
         end
 
+        # 認証成功時の処理
+        # @param [String] provider_name 認証プロバイダー名
+        # @return [JSON] トークンとユーザー情報を含むレスポンス
         def handle_successful_authentication(provider_name)
           token = @user.generate_jwt
           Rails.logger.info "Generated JWT token for user: #{@user.id}"
@@ -80,6 +109,8 @@ module Api
           }
         end
 
+        # 認証失敗時の処理
+        # @return [JSON] エラー情報を含むレスポンス
         def handle_failed_authentication
           render json: {
             status: 'error',
@@ -88,6 +119,9 @@ module Api
           }, status: :unprocessable_entity
         end
 
+        # エラー発生時の処理
+        # @param [StandardError] error 発生したエラー
+        # @param [String] provider エラーが発生した認証プロバイダー名
         def handle_error(error, provider)
           Rails.logger.error "#{provider} OAuth Error: #{error.class}: #{error.message}"
           Rails.logger.error error.backtrace.join("\n")
